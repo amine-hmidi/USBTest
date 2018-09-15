@@ -46,10 +46,10 @@ CONFIG -= qt
 
 CONFIG(debug, debug|release) {
 ############ DEBUG OUPUT
-    DESTDIR = build/USBTest/debug
+    DESTDIR = build/debug
 } else {
 ############ RELEASE OUPUT
-    DESTDIR = build/USBTest/release
+    DESTDIR = build/release
 }
 
 
@@ -74,8 +74,6 @@ QMAKE_CLEAN += $${DESTDIR}/USBTest
 ############
 DEFINES += \
     STANDARD_USB \
-    #DFU_ST_EXTENSION \
-    #USB_IN_DFU_MODE
 
 #################################################################################################
 ############################### PROJECT SOURCE/INCLUDE FILES ####################################
@@ -83,40 +81,27 @@ DEFINES += \
 
 ############ SOURCE FILES
 SOURCES += \
-    ../Src/main.cpp \
-    ../Src/StandardUSB/standard_usb.cpp \
-    ../Src/StandardUSB/usb_standard_requests.cpp \
-    ../Src/StandardUSB/usb_descriptors_requests.cpp \
-    #../Src/DFU1.1/dfu_class.cpp \
-    #../Src/DFU1.1/dfu_requests.cpp \
-    #../Src/DFU1.1StExtension/dfu_st_extension.cpp \
-    #../Src/DFU1.1StExtension/dfu_st_special_cmds.cpp \
-    ../Src/CommandLineInterface/usb_test_cli_common.cpp \
-    ../Src/CommandLineInterface/usb_test_cli.cpp \
-    #../Src/CommandLineInterface/usb_test_cli_dfu_se.cpp \
-    #../Src/CommandLineInterface/usb_test_cli_dfu.cpp \
-    ../Src/CommandLineInterface/usb_test_cli_copyrights_warranty.cpp \
-    #../Src/FileManager/dfu_file.cpp
-    ../Src/CommandLineInterface/usb_test_cli_std_usb.cpp
+    ../../Src/main.cpp \
+    ../../Src/StandardUSB/standard_usb.cpp \
+    ../../Src/StandardUSB/usb_standard_requests.cpp \
+    ../../Src/StandardUSB/usb_descriptors_requests.cpp \
+    ../../Src/CommandLineInterface/usb_test_cli_common.cpp \
+    ../../Src/CommandLineInterface/usb_test_cli.cpp \
+    ../../Src/CommandLineInterface/usb_test_cli_copyrights_warranty.cpp \
+    ../../Src/CommandLineInterface/usb_test_cli_std_usb.cpp
 
 
 ############ INCLUDE FILES
 HEADERS += \
-    ../Inc/StandardUSB/standard_usb.h \
-    #../Inc/DFU1.1/dfu_class.h \
-    #../Inc/DFU1.1StExtension/dfu_st_extension.h \
-    ../Inc/CommandLineInterface/usb_test_cli.h \
-    #../Inc/FileManager/dfu_file.h
+    ../../Inc/StandardUSB/standard_usb.h \
+    ../../Inc/CommandLineInterface/usb_test_cli.h \
 
 
 ############ INCLUDE DIRECTORIES
 INCLUDEPATH += \
-    ../Inc/ \
-    ../Inc/StandardUSB/ \
-    #../Inc/DFU1.1/ \
-    #../Inc/DFU1.1StExtension/ \
-    ../Inc/CommandLineInterface/ \
-    #../Inc/FileManager/
+    ../../Inc/ \
+    ../../Inc/StandardUSB/ \
+    ../../Inc/CommandLineInterface/ \
 
 
 #################################################################################################
@@ -126,15 +111,15 @@ INCLUDEPATH += \
 
 ############ COMMON BETWEEN LINUX AND WINDOWS
 INCLUDEPATH += \
-    ../ExternalLibs/cxxopts-2_0/include
+    ../../ExternalLibs/cxxopts-2_0/include
 
 win32 {
 ############ INCLUDE DIRECTORIES
 INCLUDEPATH += \
-    ../ExternalLibs/libusb-1.0.22/include/
+    ../../ExternalLibs/libusb-1.0.22/include/
 
 ############ LIBS(.dll, .so, .lib & .a)
-LIBS += ../ExternalLibs/libusb-1.0.22/MinGW32/static/libusb-1.0.a
+LIBS += ../../ExternalLibs/libusb-1.0.22/MinGW32/static/libusb-1.0.a
 }
 
 unix {
