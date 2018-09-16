@@ -436,8 +436,12 @@ void StandardUSB::DisplayData16(uint8_t *data, size_t size)
         std::cout << "0x" << std::setw(8) << static_cast<uint32_t>(0x10 * nbr) << "       ";
         for (uint32_t j = 0; j < remain; j += 2)
         {
-            uint16_t value = static_cast<uint16_t>((*(data + (nbr * 0x10) + j)) | \
-                             (static_cast<uint32_t>((*(data + (nbr * 0x10) + j + 1))) << 8));
+            uint16_t value = static_cast<uint16_t>(*(data + (nbr * 0x10) + j));
+            if ((j + 1) < remain)
+                value |=  static_cast<uint16_t>((static_cast<uint32_t>
+                                                 ((*(data + (nbr * 0x10) + j + 1))) << 8));
+
+
             std::cout << "0x" << std::setw(4) << static_cast<uint32_t>(value);
             if (j != 0x0E)
                 std::cout << "   ";
@@ -484,10 +488,14 @@ void StandardUSB::DisplayData32(uint8_t *data, size_t size)
         std::cout << "0x" << std::setw(8) << static_cast<uint32_t>(0x20 * nbr) << "       ";
         for (uint32_t j = 0; j < remain; j += 4)
         {
-            uint32_t value = (*(data + (nbr * 0x20) + j)) | \
-                             ((static_cast<uint32_t>((*(data + (nbr * 0x20) + j + 1)))) << 8)  | \
-                             ((static_cast<uint32_t>((*(data + (nbr * 0x20) + j + 2)))) << 16) | \
-                             ((static_cast<uint32_t>((*(data + (nbr * 0x20) + j + 3)))) << 24);
+            uint32_t value = (*(data + (nbr * 0x20) + j));
+            if ((j + 1) < remain)
+                value |= ((static_cast<uint32_t>((*(data + (nbr * 0x20) + j + 1)))) << 8);
+            if ((j + 2) < remain)
+                value |= ((static_cast<uint32_t>((*(data + (nbr * 0x20) + j + 2)))) << 16);
+            if ((j + 3) < remain)
+                value |= ((static_cast<uint32_t>((*(data + (nbr * 0x20) + j + 3)))) << 24);
+
             std::cout << "0x" << std::setw(8) << static_cast<uint32_t>(value);
             if (j != 0x1C)
                 std::cout << "   ";
@@ -538,14 +546,21 @@ void StandardUSB::DisplayData64(uint8_t *data, size_t size)
         std::cout << "0x" << std::setw(8) << static_cast<uint32_t>(0x20 * nbr) << "       ";
         for (uint32_t j = 0; j < remain; j += 8)
         {
-            uint64_t value = (*(data + (nbr * 0x20) + j)) | \
-                             ((static_cast<uint64_t>((*(data + (nbr * 0x20) + j + 1)))) << 8)  | \
-                             ((static_cast<uint64_t>((*(data + (nbr * 0x20) + j + 2)))) << 16) | \
-                             ((static_cast<uint64_t>((*(data + (nbr * 0x20) + j + 3)))) << 24) | \
-                             ((static_cast<uint64_t>((*(data + (nbr * 0x20) + j + 4)))) << 32) | \
-                             ((static_cast<uint64_t>((*(data + (nbr * 0x20) + j + 5)))) << 40) | \
-                             ((static_cast<uint64_t>((*(data + (nbr * 0x20) + j + 6)))) << 48) | \
-                             ((static_cast<uint64_t>((*(data + (nbr * 0x20) + j + 7)))) << 56);
+            uint64_t value = (*(data + (nbr * 0x20) + j));
+            if ((j + 1) < remain)
+                value |= ((static_cast<uint64_t>((*(data + (nbr * 0x20) + j + 1)))) << 8);
+            if ((j + 2) < remain)
+                value |= ((static_cast<uint64_t>((*(data + (nbr * 0x20) + j + 2)))) << 16);
+            if ((j + 3) < remain)
+                value |= ((static_cast<uint64_t>((*(data + (nbr * 0x20) + j + 3)))) << 24);
+            if ((j + 4) < remain)
+                value |= ((static_cast<uint64_t>((*(data + (nbr * 0x20) + j + 4)))) << 32);
+            if ((j + 5) < remain)
+                value |= ((static_cast<uint64_t>((*(data + (nbr * 0x20) + j + 5)))) << 40);
+            if ((j + 6) < remain)
+                value |= ((static_cast<uint64_t>((*(data + (nbr * 0x20) + j + 6)))) << 48);
+            if ((j + 7) < remain)
+                value |= ((static_cast<uint64_t>((*(data + (nbr * 0x20) + j + 7)))) << 56);
 
             std::cout << "0x" << std::setw(16) << static_cast<uint64_t>(value);
             if (j != 0x1C)

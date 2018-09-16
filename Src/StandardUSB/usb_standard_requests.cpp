@@ -344,7 +344,7 @@ int StandardUSB::DeviceSetCongiguration(uint16_t configuration)
         return result;
     }
 
-    if(result != 1)
+    if(result)
     {
         std::cout << "Error:  USB set device configuration error, Unexpected nbr of byte "\
                   << " transfered (0x" << std::hex << std::setw(4) << std::setfill('0') \

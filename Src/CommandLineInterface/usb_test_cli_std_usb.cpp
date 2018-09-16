@@ -164,7 +164,7 @@ void USBTestCli::DisplayUSBHelp()
     std::cout << "\t                            the USB Class\n";
     std::cout << "\t    --idvendor              The vendor id of the usb device\n";
     std::cout << "\t    --idproduct             The product id of the usb device\n";
-    std::cout << "\t  , --timeout               USB transfer timeout in ms\n";
+    std::cout << "\t    --timeout               USB transfer timeout in ms\n";
     std::cout << "\t    --display_desc          Display device & configuration descriptors\n";
     /* **** */
     std::cout << "\t    --dev_getstatus         Send a usb device get status request\n";
@@ -212,7 +212,7 @@ void USBTestCli::DisplayUSBHelp()
     std::cout << "\t    --wIndex                The index field for the control packet\n";
     /* **** */
     std::cout << "\t    --file                  File from/to which to data will be transfered\n";
-    std::cout << "\t    --size                  The data buffer length";
+    std::cout << "\t    --size                  The data buffer length\n";
     std::cout << "\t    --data0                 Data to be transfer is NULL, size = 0\n";
     std::cout << "\t    --data8                 Data to be transfer is a byte, size = 1\n";
     std::cout << "\t    --data16                Data to be transfer is a half word, size = 2\n";
@@ -518,7 +518,7 @@ void USBTestCli::GetDeviceDesriptor(const cxxopts::ParseResult &result)
 
     if (static_cast<size_t>(result_l) != size)
     {
-        std::cout << "Warning: The actual transfered data length is: " << std::hex << std::setw(4)\
+        std::cout << "Warning: The actual transfered data length is :0x" << std::hex << std::setw(4)\
                   << std::setfill('0') << result_l << "\n";
 
         size = static_cast<size_t>(result_l);
@@ -592,7 +592,7 @@ void USBTestCli::SetDeviceDesriptor(const cxxopts::ParseResult &result)
 
     if (!result.count("file"))
     {
-        std::cout << "Error: Missing target file option --filee\n";
+        std::cout << "Error: Missing target file option --file\n";
         return;
     }
 
@@ -635,8 +635,8 @@ void USBTestCli::GetDeviceConfig(const cxxopts::ParseResult &result)
     if (this->usb_device->DeviceGetCongiguration(config))
         return;
 
-    std::cout << "Info: USB current device configuration: "<< std::hex << std::setw(2) << \
-                 std::setfill('0') << static_cast<uint32_t>(config);
+    std::cout << "Info: USB current device configuration: 0x"<< std::hex << std::setw(2) << \
+                 std::setfill('0') << static_cast<uint32_t>(config) << "\n";
 }
 
 
@@ -663,7 +663,7 @@ void USBTestCli::SetDeviceConfig(const cxxopts::ParseResult &result)
     if (this->usb_device->DeviceSetCongiguration(config))
         return;
 
-    std::cout << "Info: USB set device configuration Done";
+    std::cout << "Info: USB set device configuration Done\n";
 }
 
 
@@ -1020,12 +1020,11 @@ void USBTestCli::ClaimInterface(const cxxopts::ParseResult &result)
         return;
     }
     /* Get the List of interfaces to claim */
-    std::vector<int> interfaces = result["interface"].as<std::vector<int>>();
-    for (const auto& interface : interfaces)
-    {
-        if (!this->usb_device->USBClaimInterface(interface))
-            std::cout << "Info: Claim usb device interface: " << interface << " Done\n";
-    }
+    uint16_t interface = result["interface"].as<uint16_t>();
+    if (this->usb_device->USBClaimInterface(interface))
+        return;
+
+    std::cout << "Info: Claim usb device interface: " << interface << " Done\n";
 }
 
 
@@ -1047,12 +1046,9 @@ void USBTestCli::ReleaseInterface(const cxxopts::ParseResult &result)
         return;
     }
     /* Get the List of interfaces to release */
-    std::vector<int> interfaces = result["interface"].as<std::vector<int>>();
-    for (const auto& interface : interfaces)
-    {
-        this->usb_device->USBReleaseInterface(interface);
-        std::cout << "Info: Release usb device interface: " << interface << " Done\n";
-    }
+    uint16_t interface = result["interface"].as<uint16_t>();
+    this->usb_device->USBReleaseInterface(interface);
+    std::cout << "Info: Release usb device interface: " << interface << " Done\n";
 }
 
 
@@ -1168,6 +1164,7 @@ uint8_t *USBTestCli::GetDataFile(const cxxopts::ParseResult &result, size_t &siz
 
         /* allocate and fill in the data */
         uint8_t *data = new(std::nothrow) uint8_t[size];
+        if (!data)
         {
             std::cout << "Error: USB control transfer failed, Memory allocation error\n" ;
             return nullptr;
