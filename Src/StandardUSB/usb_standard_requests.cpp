@@ -426,8 +426,8 @@ int StandardUSB::InterfaceClearFeature(uint16_t interface, uint16_t feature)
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to Clear USB Interface :0x"  << std::hex << std::setw(4) \
-                  << std::setfill('0') << static_cast<uint32_t>(interface) << " , feature: 0x" \
+        std::cout << "Error:  Unable to Clear USB Interface :0x"  << std::hex << std::setw(2) \
+                  << std::setfill('0') << static_cast<uint32_t>(interface) << ", feature: 0x" \
                   << std::hex << std::setw(4) << std::setfill('0') \
                   << static_cast<uint32_t>(feature) << ", " \
                   << GetStrError(static_cast<libusb_error>(result)) << "\n";
@@ -595,7 +595,7 @@ int StandardUSB::EndpointGetStatus(uint16_t endpoint, uint16_t &status)
         return result;
     }
 
-    if(result != 1)
+    if(result != 2)
     {
         std::cout << "Error:  USB get endpoint status error, Unexpected nbr of byte transfered"\
                   << " (0x" << std::hex << std::setw(4) << std::setfill('0') \
@@ -702,11 +702,10 @@ int StandardUSB::EndpointSetFeature(uint16_t endpoint, uint16_t feature)
  * @param frame frame index
  * @return 0 on success, libusb_error otherwise
  */
-int StandardUSB::EndpointSynchFrame(uint16_t endpoint, uint16_t frame)
+int StandardUSB::EndpointSynchFrame(uint16_t endpoint, uint16_t &frame)
 {
     uint8_t req_t = (LIBUSB_ENDPOINT_OUT|LIBUSB_REQUEST_TYPE_STANDARD|LIBUSB_RECIPIENT_ENDPOINT);
-    uint8_t data[2] = {static_cast<uint8_t>(frame & 0xFF),
-                       static_cast<uint8_t>((frame >> 8) & 0xFF)};
+    uint8_t data[2] = {0x00};
 
     int result = libusb_control_transfer(this->usb_handle,\
                  /* bmRequestType */     req_t,
@@ -733,6 +732,9 @@ int StandardUSB::EndpointSynchFrame(uint16_t endpoint, uint16_t frame)
                   << static_cast<uint32_t>(result) << " , expected 0x02)\n";
         return -99;
     }
+
+    frame = static_cast<uint16_t>(data[0] |
+            static_cast<uint16_t>(static_cast<uint32_t>(data[1]) << 8));
 
     return 0;
 }

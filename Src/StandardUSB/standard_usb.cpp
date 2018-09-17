@@ -197,13 +197,13 @@ void StandardUSB::DisplayDeviceDescriptor()
                  static_cast<uint32_t>(usb_device_descriptor->bcdDevice)        << "\n";
     std::cout << "\tiManufacturer      : 0x" << std::setw(2) <<\
                  static_cast<uint32_t>(usb_device_descriptor->iManufacturer) << " (" << \
-                 GetStringDescriptor(usb_device_descriptor->iManufacturer, 0x0409) << ")\n";
+                 GetStringDescriptor(usb_device_descriptor->iManufacturer, 0x409) << ")\n";
     std::cout << "\tiProduct           : 0x" << std::setw(2) <<\
                  static_cast<uint32_t>(usb_device_descriptor->iProduct) << " (" <<
-                 GetStringDescriptor(usb_device_descriptor->iProduct, 0x0409) << ")\n";
+                 GetStringDescriptor(usb_device_descriptor->iProduct, 0x409) << ")\n";
     std::cout << "\tiSerialNumber      : 0x" << std::setw(2) <<\
                  static_cast<uint32_t>(usb_device_descriptor->iSerialNumber) << " (" << \
-                 GetStringDescriptor(usb_device_descriptor->iSerialNumber, 0x0409) << ")\n";
+                 GetStringDescriptor(usb_device_descriptor->iSerialNumber, 0x409) << ")\n";
     std::cout << "\tbNumConfigurations : 0x" << std::setw(2) <<\
                  static_cast<uint32_t>(usb_device_descriptor->bNumConfigurations) << "\n";
 }
@@ -613,7 +613,7 @@ void StandardUSB::ListUSBDevices()
             continue;
 
         /* get the device string descriptor */
-        uint8_t data[512] = {0x00};
+        uint8_t data[255] = {0x00};
         uint8_t bmRequestType = (LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_STANDARD | \
                                  LIBUSB_RECIPIENT_DEVICE);
         uint16_t wValue = static_cast<uint16_t>((static_cast<uint32_t>(LIBUSB_DT_STRING) << 8) | \
@@ -625,7 +625,7 @@ void StandardUSB::ListUSBDevices()
                                              /* wValue        */     wValue,
                                              /* wIndex        */     0x0409,
                                              /* data          */     data,
-                                             /* length        */     512,
+                                             /* length        */     255,
                                              /* timeout       */     StandardUSB::time_out);
 
         /* close the device */
@@ -689,32 +689,26 @@ int8_t StandardUSB::OpenDevice()
     }
 
     /* get the current configuration descriptor */
-    int config = 0x00;
-    if (!libusb_get_configuration(this->usb_handle, &config) && config)
+    uint8_t config = 0x00;
+    if (DeviceGetCongiguration(config))
     {
-        /* requets the active configuration descriptor */
-        this->usb_config_descriptor = GetConfigurationDescriptor(static_cast<uint8_t>(config - 1));
-        if (!this->usb_config_descriptor)
-        {
-            CloseDevice();
-            return -1;
-        }
-
-        return 0;
-    }
-
-    /* otherwise set the device configuration to 0x01 */
-    int result = libusb_set_configuration(this->usb_handle, 0x01);
-    if (result)
-    {
-        std::cout << "Error: Unable to set the device configuration to 0x01, " << \
-                     GetStrError(static_cast<libusb_error>(result)) << "\n";
         CloseDevice();
         return -1;
     }
 
+    /* if the device is not configured set the config to 1 */
+    if(!config)
+    {
+        config = 0x01;
+        if (DeviceSetCongiguration(config))
+        {
+            CloseDevice();
+            return -1;
+        }
+    }
+
     /* requets the active configuration descriptor */
-    this->usb_config_descriptor = GetConfigurationDescriptor(0x00);
+    this->usb_config_descriptor = GetConfigurationDescriptor(config - 1);
     if (!this->usb_config_descriptor)
     {
         CloseDevice();

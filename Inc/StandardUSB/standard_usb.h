@@ -116,7 +116,7 @@ public:
     int EndpointGetStatus(uint16_t endpoint, uint16_t &status);
     int EndpointClearFeature(uint16_t endpoint, uint16_t feature);
     int EndpointSetFeature(uint16_t endpoint, uint16_t feature);
-    int EndpointSynchFrame(uint16_t endpoint, uint16_t frame);
+    int EndpointSynchFrame(uint16_t endpoint, uint16_t &frame);
 
     /* ****************************************************************************************** */
     /* *********************************** Messaging Functions ********************************** */

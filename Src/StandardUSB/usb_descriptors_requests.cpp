@@ -98,16 +98,16 @@ libusb_config_descriptor *StandardUSB::GetConfigurationDescriptor(uint8_t index)
 std::string StandardUSB::GetStringDescriptor(uint8_t index, uint16_t language)
 {
     std::string str;
-    uint8_t data[512] = {0x00};
+    uint8_t data[255] = {0x00};
 
-    int result = DeviceGetDescriptor(LIBUSB_DT_STRING, index, language, data, 512);
+    int result = DeviceGetDescriptor(0x3, index, language, data, 255);
     if (result < 0)
         return str;
 
     for (int i = 2; i < result; i++)
     {
         if (*(data + i) != 0)
-            str += static_cast<char>((*(data + i)));
+            str += *(reinterpret_cast<int8_t *>(reinterpret_cast<void *>(data)) + i);
     }
 
     return str;

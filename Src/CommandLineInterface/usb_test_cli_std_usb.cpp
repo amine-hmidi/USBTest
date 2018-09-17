@@ -68,7 +68,7 @@ void USBTestCli::InitUSBCommands()
             ("dev_setdesc", "Send a standard usb device set descriptor request")
             ("dev_getconfig", "Send a standard usb device get configuration request")
             ("dev_setconfig", "Send a standard usb device set configuration request")
-            ("dev_getsrtdesc", "Send a standard usb device get string descriptor")
+            ("dev_getstrdesc", "Send a standard usb device get string descriptor")
 
             /* Standard interface requests */
             ("inter_getstatus", "Send a standard usb interface get status request")
@@ -103,8 +103,6 @@ void USBTestCli::InitUSBCommands()
             ("endpoint", "The endpoint index on which to opertaion will be executed",\
              cxxopts::value<uint16_t>())
             ("feature", "The feature to be disabled or enabled",\
-             cxxopts::value<uint16_t>())
-            ("frame", "The frame to synchronize",\
              cxxopts::value<uint16_t>())
 
             /* interface communication option */
@@ -175,7 +173,7 @@ void USBTestCli::DisplayUSBHelp()
     std::cout << "\t    --dev_setdesc           Send a usb device set descriptor request\n";
     std::cout << "\t    --dev_getconfig         Send a usb device get configuration request\n";
     std::cout << "\t    --dev_setconfig         Send a usb device set configuration request\n";
-    std::cout << "\t    --dev_getsrtdesc        Send a standard usb device get string descriptor\n";
+    std::cout << "\t    --dev_getstrdesc        Send a standard usb device get string descriptor\n";
     /* **** */
     std::cout << "\t    --inter_getstatus       Send a usb interface get status request\n";
     std::cout << "\t    --inter_clearfeat       Send a usb interface clear featute request\n";
@@ -197,7 +195,6 @@ void USBTestCli::DisplayUSBHelp()
     std::cout << "\t    --altsetting            The interface's alternate setting index\n";
     std::cout << "\t    --endpoint              The endpoint index\n";
     std::cout << "\t    --feature               The feature index\n";
-    std::cout << "\t    --frame                 The frame index\n";
     /* **** */
     std::cout << "\t    --claim_interface       Request the ownership of the given interface\n";
     std::cout << "\t    --release_interface     Release the previously claimed interface\n";
@@ -674,7 +671,7 @@ void USBTestCli::SetDeviceConfig(const cxxopts::ParseResult &result)
  */
 void USBTestCli::GetStringDescriptor(const cxxopts::ParseResult &result)
 {
-    if (!result.count("dev_getsrtdesc"))
+    if (!result.count("dev_getstrdesc"))
         return;
 
     std::cout << "\n";
@@ -695,12 +692,7 @@ void USBTestCli::GetStringDescriptor(const cxxopts::ParseResult &result)
 
     std::string str = this->usb_device->GetStringDescriptor(index, language);
     if (str.size())
-    {
-        std::cout << "Info: String descriptor, index: 0x" << std::hex << std::setw(2) << \
-                     std::setfill('0') << static_cast<uint16_t>(index) << ", language: 0x" << \
-                     std::hex << std::setw(4) << std::setfill('0') << language << ", " << \
-                     str << "\n";
-    }
+        std::cout << "Info: String descriptor: " << str << "\n";
 }
 
 
@@ -727,9 +719,9 @@ void USBTestCli::GetInterfaceStatus(const cxxopts::ParseResult &result)
     if (this->usb_device->InterfaceGetStatus(interface, status))
         return;
 
-    std::cout << "Info: USB interface: 0x" << std::hex << std::setw(4) << std::setfill('0') << \
+    std::cout << "Info: USB interface: 0x" << std::hex << std::setw(2) << std::setfill('0') << \
                  interface << " status: 0x" << std::hex << std::setw(4) << std::setfill('0') << \
-                 status << " Done\n";
+                 status << "\n";
 }
 
 
@@ -762,7 +754,7 @@ void USBTestCli::ClearInterfaceFeature(const cxxopts::ParseResult &result)
     if (this->usb_device->InterfaceClearFeature(interface, feature))
         return;
 
-    std::cout << "Info: USB clear interface: 0x"<< std::hex << std::setw(4) << std::setfill('0') <<\
+    std::cout << "Info: USB clear interface: 0x"<< std::hex << std::setw(2) << std::setfill('0') <<\
                  interface << " feature: 0x" << std::hex << std::setw(4) << std::setfill('0') << \
                  feature << " Done\n";
 }
@@ -797,7 +789,7 @@ void USBTestCli::SetInterfaceFeature(const cxxopts::ParseResult &result)
     if (this->usb_device->InterfaceSetFeature(interface, feature))
         return;
 
-    std::cout << "Info: USB set interface: 0x"<< std::hex << std::setw(4) << std::setfill('0') <<\
+    std::cout << "Info: USB set interface: 0x"<< std::hex << std::setw(2) << std::setfill('0') <<\
                  interface << " feature: 0x" << std::hex << std::setw(4) << std::setfill('0') << \
                  feature << " Done\n";
 }
@@ -892,7 +884,7 @@ void USBTestCli::GetEndpointStatus(const cxxopts::ParseResult &result)
 
     std::cout << "Info: USB endpoint: 0x" << std::hex << std::setw(4) << std::setfill('0') << \
                  ep << " status: 0x" << std::hex << std::setw(4) << std::setfill('0') << \
-                 status << " Done\n";
+                 status << "\n";
 }
 
 
@@ -985,13 +977,7 @@ void USBTestCli::SyncEndpointFrame(const cxxopts::ParseResult &result)
     }
     uint16_t endpoint = result["endpoint"].as<uint16_t>();
 
-    if (!result.count("frame"))
-    {
-        std::cout << "Error: Missing --feature option:\n";
-        return;
-    }
-    uint16_t frame = result["frame"].as<uint16_t>();
-
+    uint16_t frame = 0x00;
     if (this->usb_device->EndpointSynchFrame(endpoint, frame))
         return;
 
