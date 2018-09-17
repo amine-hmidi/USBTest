@@ -1,0 +1,881 @@
+##############################################
+# (1) Listing the connected usb devices:
+##############################################
+
+    list the currently connected usb devices with their correspending idVendor, idProduct and their
+product name.
+
+Example:
+
+    Input: --list
+
+    Output on success:
+
+    Info: USB devices' list:
+    Info:	idVendor: 0x1d6b idProduct: 0x0002 EHCI Host Controller
+    Info:	idVendor: 0x1d6b idProduct: 0x0003 xHCI Host Controller
+    Info:	idVendor: 0x04f2 idProduct: 0xb446 TOSHIBA Web Camera - HD
+    Info:	idVendor: 0x046d idProduct: 0xc31c USB Keyboard
+    Info:	idVendor: 0x046d idProduct: 0xc077 USB Optical Mouse
+    Info:	idVendor: 0x1d6b idProduct: 0x0002 xHCI Host Controller
+
+##############################################
+# (2) Connecting to an usb device
+##############################################
+
+    Before performing any control input/output operation with the device, the host must connect to
+the target device first, using the following cli options:
+    --usb
+    --idvendor='usbidvendor'
+    --idproduct='usbidproduct'
+
+Example:
+
+    Input: --usb --idvendor=0x4f2 --idproduct=0xb446
+
+    Output on success:
+
+    Info: Establishing connection with target device:
+    Info: Connection established
+
+    Output on failure:
+
+    Info: Establishing connection with target device:
+    Error:  Unable to open USB device, Access denied (insufficient permissions)
+
+##############################################
+# (3) Control input/output operations
+##############################################
+
+    Although some usb class use the control endpoint (ep0) as a mean to transfer data from/to
+devices, control transfer is typically used for status and enumeration requests.
+Every control packet must respect the following format:
+
+ ----------------------------------------------------------------------------------------
+| Offset | Field          |   Size  |   Value      |   Description                       |
+ ----------------------------------------------------------------------------------------
+|    0   | bmRequestType  |    1    |  Bit-Map     |   Bit7 Transfer Direction           |
+|        |                |         |              |   0 = Host to Device                |
+|        |                |         |              |   1 = Device to Host                |
+|        |                |         |              |   Bit6..5 Type                      |
+|        |                |         |              |   0 = Standard                      |
+|        |                |         |              |   1 = Class                         |
+|        |                |         |              |   2 = Vendor                        |
+|        |                |         |              |   3 = Reserved                      |
+|        |                |         |              |   Bit4..0 Recipient                 |
+|        |                |         |              |   0 = Device                        |
+|        |                |         |              |   1 = Interface                     |
+|        |                |         |              |   2 = Endpoint                      |
+|        |                |         |              |   3 = Other                         |
+|        |                |         |              |   Bit4..31 = Reserved               |
+ ----------------------------------------------------------------------------------------
+|   1    | bRequest       |    1    |     Value    |   Request                           |
+ ----------------------------------------------------------------------------------------
+|   2    | wValue         |    2    |     Value    |   Value                             |
+ ----------------------------------------------------------------------------------------
+|   4    | wIndex         |    2    | Index/Offset |   Index                             |
+ ----------------------------------------------------------------------------------------
+|   6    | wLength        |    2    |      nbr     |   Number of bytes to be transfered  |
+ ----------------------------------------------------------------------------------------
+|   8    | Data           | wLength |       -      |   Data to be transfered             |
+ ----------------------------------------------------------------------------------------
+
+In this application user can send control packets using the followng options:
+
+    --control                   : setup a control packet
+    --bmRequestType='value'     : specify bmRequestType value
+    --bRequest='value'          : specify bRequest value
+    --wValue='value'            : specify wValue value
+    --wIndex='value'            : specify wIndex value
+
+If the packet transfer direction is Device-to-Host, then the user should use the --ep_in option and
+the --size option to specify the maximum nbr of bytes to be received.
+Otherwise, the user can specify the data source using these options:
+
+    --data0                     : data is NULL and wLength=0
+    --data8='value'             : 1 byte data and wLength=1
+    --data16='value'            : 2 bytes data and wLength=2
+    --data32='value'            : 4 bytes data and wLength=4 (*)
+    --data64='value'            : 8 bytes data and wLength=8 (*)
+    --file='file path'          : extract data from file and wLength=file_size (*)
+
+(*) If the user wants to transfert a number of bytes smaller than the one provided by the data
+source, then he can use the --size option to specify the data length.
+
+Example:
+    Send a usb get device descriptor request and display the received data as 16bits:
+
+    Input: --control --bmRequestType=0x80 --bRequest=0x6 --wValue=0x101 --wIndex=0x409 --ep_in
+    --size=0x80 --display16
+
+    Output on success:
+
+    Info: USB control transfer:
+    Warning : The actual size of transfered data is :0x0012
+    Info: USB control transfer Done
+
+    OFFSET           0x0000   0x0002   0x0004   0x0006   0x0008   0x000A   0x000C   0x000E
+
+    0x00000000       0x0112   0x0200   0x0000   0x4000   0x148f   0x5370   0x0101   0x0201
+    0x00000010       0x0103
+
+Example:
+    Send a usb get device descriptor request, display the received data as 16bits, than store the
+    received data in a file
+
+    Input: --control --bmRequestType=0x80 --bRequest=0x6 --wValue=0x101 --wIndex=0x409 --ep_in
+    --size=0x80 --display16 --file=./test_device_descriptor.bin
+
+    Output on success:
+
+    Info: USB control transfer:
+    Warning : The actual size of transfered data is :0x0012
+    Info: USB control transfer Done
+    Info: Writing in target file: ./test_device_descriptor.bin Done
+
+    OFFSET           0x0000   0x0002   0x0004   0x0006   0x0008   0x000A   0x000C   0x000E
+
+    0x00000000       0x0112   0x0200   0x0000   0x4000   0x148f   0x5370   0x0101   0x0201
+    0x00000010       0x0103
+
+**********************************************
+* (3-1) Device standard requests
+**********************************************
+
+    Currently there are eight Standard Device requests, all of which are detailed below.
+
+ --------------------------------------------------------------------------------------------------
+|Request               | bmRequestType | bRequest |   wValue   |  wIndex  | wLength   | Data       |
+ --------------------------------------------------------------------------------------------------
+| GET_STATUS           |     0x80      |   0x00   |    0x00    |   0x00   |    0x02   | Status     |
+ --------------------------------------------------------------------------------------------------
+| CLEAR_FEATURE        |     0x00      |   0x01   |  Feature   |   0x00   |    0x00   | NULL       |
+ --------------------------------------------------------------------------------------------------
+| SET_FEATURE          |     0x00      |   0x03   |  Feature   |   0x00   |    0x00   | NULL       |
+ --------------------------------------------------------------------------------------------------
+| SET_ADDRESS          |     0x00      |   0x05   |  Address   |   0x00   |    0x00   | NULL       |
+ --------------------------------------------------------------------------------------------------
+| GET_DESCRIPTOR       |     0x80      |   0x06   | type&index | language | Desc size | Descriptor |
+ --------------------------------------------------------------------------------------------------
+| SET_DESCRIPTOR       |     0x00      |   0x07   | type&index | language | Desc size | Descriptor |
+ --------------------------------------------------------------------------------------------------
+| GET_CONFIGURATION    |     0x80      |   0x08   |    0x00    |   0x00   |    0x01   | Conf value |
+ --------------------------------------------------------------------------------------------------
+| SET_CONFIGURATION    |     0x00      |   0x09   | conf value |   0x00   |    0x00   | NULL       |
+ --------------------------------------------------------------------------------------------------
+
+----------------------------------------------
+- (3-1-a) Device get status
+----------------------------------------------
+
+    In this application user can request the usb device status using the control packet options:
+    --control
+    --bmRequestType=0x80
+    --bRequest=0
+    --wValue=0
+    --wIndex=0
+    --ep_in
+    --size=0x2
+    --display8(16/32/64)
+
+or the dedicated cli option:
+    --dev_getstatus
+
+Example:
+    Send a usb get device status using the control packet options.
+
+    Input: --control --bmRequestType=0x80 --bRequest=0 --wValue=0 --wIndex=0 --ep_in --size=2
+    --display16
+
+    Output on success:
+
+    Info: USB control transfer:
+    Info: USB control transfer Done
+
+    OFFSET           0x0000   0x0002   0x0004   0x0006   0x0008   0x000A   0x000C   0x000E
+
+    0x00000000       0x0000
+
+Example:
+    Send a usb get device status using dedicated option.
+
+    Input: --dev_getstatus
+
+    Output on success:
+
+    Info: USB get device status:
+    Info: USB device status: 0x0000
+
+----------------------------------------------
+- (3-1-b) Device clear feature
+----------------------------------------------
+
+    In this application user can send a usb device clear feature using the control packet options:
+    --control
+    --bmRequestType=0
+    --bRequest=0x1
+    --wValue='feature_index'
+    --wIndex=0
+    --data0
+
+or the dedicated cli options:
+    --dev_clearfeat
+    --feature='feature_index'
+
+Example:
+    Clear usb device's feature nbr 1 using the control packet options.
+
+    Input: --control --bmRequestType=0 --bRequest=0x1 --wValue=0x1 --wIndex=0 --data0
+
+Example:
+    Clear usb device's feature nbr 0 using dedicated option.
+
+    Input: --dev_clearfeat --feature=0
+
+----------------------------------------------
+- (3-1-c) Device set feature
+----------------------------------------------
+
+    In this application user can send a usb device set feature using the control packet options:
+    --control
+    --bmRequestType=0
+    --bRequest=0x3
+    --wValue='feature_index'
+    --wIndex=0
+    --data0
+
+or the dedicated cli options:
+    --dev_setfeat
+    --feature='feature_index'
+
+Example:
+    Set usb device's feature nbr 1 using the control packet options.
+
+    Input: --control --bmRequestType=0 --bRequest=0x3 --wValue=0x1 --wIndex=0 --data0
+
+Example:
+    Set usb device's feature nbr 0 using dedicated options.
+
+    Input: --dev_setfeat --feature=0
+
+----------------------------------------------
+- (3-1-d) Device set address
+----------------------------------------------
+
+    In this application user can set a usb device's address using the control packet options:
+    --control
+    --bmRequestType=0
+    --bRequest=0x5
+    --wValue='device_address'
+    --wIndex=0
+    --data0
+
+or the dedicated cli options:
+    --dev_setadd
+    --address='device_address'
+
+Example:
+    Set usb device's address to 0x32 using the control packet options.
+
+    Input: --control --bmRequestType=0 --bRequest=0x5 --wValue=0x32 --wIndex=0 --data0
+
+Example:
+    Set usb device's address to 0x32 using dedicated options.
+
+    Input: --dev_setadd --address=0x32
+
+----------------------------------------------
+- (3-1-e) Device get descriptor
+----------------------------------------------
+
+    In this application user can request a usb descriptor using the control packet options:
+    --control
+    --bmRequestType=0x80
+    --bRequest=0x6
+    --wValue='((desc_type << 8)|desc_index)'
+    --wIndex='language_id'
+    --size='maximum_size'
+    --ep_in
+    --display8(16/32/64)
+
+or the dedicated cli options:
+    --dev_getdesc
+    --type='desc_type'
+    --index='desc_index'
+    --language='language_id'
+    --size='maximum_size'
+    --display8(16/32/64) (optional)
+
+Example:
+    request the usb device descriptor using the control packet options.
+
+    Input: --control --bmRequestType=0x80 --bRequest=0x6 --wValue=0x101 --wIndex=0x409 --size=0x80
+    --ep_in --display16
+
+    Output on success:
+
+    Info: USB control transfer:
+    Warning : The actual size of transfered data is :0x0012
+    Info: USB control transfer Done
+
+    OFFSET           0x0000   0x0002   0x0004   0x0006   0x0008   0x000A   0x000C   0x000E
+
+    0x00000000       0x0112   0x0200   0x0000   0x4000   0x148f   0x5370   0x0101   0x0201
+    0x00000010       0x0103
+
+
+Example:
+    request the usb device descriptor using the dedicated cli options.
+
+    Input: --dev_getdesc --type=1 --index=1 --language=0x409 --size=0x80 --display16
+
+    Output on success:
+
+    Info: USB device get descriptor:
+    Warning: The actual transfered data length is :0x0012
+
+    OFFSET           0x0000   0x0002   0x0004   0x0006   0x0008   0x000A   0x000C   0x000E
+
+    0x00000000       0x0112   0x0200   0x0000   0x4000   0x148f   0x5370   0x0101   0x0201
+    0x00000010       0x0103
+
+----------------------------------------------
+- (3-1-f) Device set descriptor
+----------------------------------------------
+
+    In this application user can set a usb descriptor using the control packet options:
+    --control
+    --bmRequestType=0
+    --bRequest=0x7
+    --wValue='((desc_type << 8)|desc_index)'
+    --wIndex='language_id'
+    --file='file_path'  <- file containing the descriptor's data
+    --size='data_size"
+
+or the dedicated cli options:
+    --dev_setdesc
+    --type='type'
+    --index='index'
+    --language='language_id'
+    --file='file_path'  <- file containing the descriptor's data
+    --size='data_size"
+
+----------------------------------------------
+- (3-1-g) Device get current configuration
+----------------------------------------------
+
+    In this application user can request a usb device's current configuration using the control
+packet options:
+    --control
+    --bmRequestType=0x80
+    --bRequest=0x8
+    --wValue=0
+    --wIndex=0
+    --size=1
+    --ep_in
+    --display8(16/32/64)
+
+or the dedicated cli options:
+    --dev_getconfig
+
+Example:
+    request the usb device's current configuration using the control packet options.
+
+    Input: --control --bmRequestType=0x80 --bRequest=0x8 --wValue=0 --wIndex=0 --size=1 --ep_in
+    --display16
+
+    Output on success:
+
+    Info: USB control transfer:
+    Info: USB control transfer Done
+
+    OFFSET           0x0000   0x0002   0x0004   0x0006   0x0008   0x000A   0x000C   0x000E
+
+    0x00000000       0x0001
+
+Example:
+    request the usb device's current configuration using the dedicated cli options.
+
+    Input: --dev_getconfig
+
+    Output on success:
+
+    Info: USB get device configuration:
+    Info: USB current device configuration: 0x01
+
+----------------------------------------------
+- (3-1-h) Device set configuration
+----------------------------------------------
+
+    In this application user can set a usb device's configuration using the control packet options:
+    --control
+    --bmRequestType=0
+    --bRequest=0x9
+    --wValue='config_index'
+    --wIndex=0
+    --data0
+
+or the dedicated cli options:
+    --dev_setconfig
+    --config='config_index'
+
+Example:
+    Set the usb device's configuration to 0x0 using the control packet options.
+
+    Input: --control --bmRequestType=0 --bRequest=0x9 --wValue=0 --wIndex=0 --data0
+
+    Output on success:
+
+    Info: USB control transfer:
+    Info: USB control transfer Done
+
+Example:
+    Set the usb device's configuration to 0x0 using the dedicated cli options.
+
+    Input: --dev_setconfig --config=0
+
+    Output on success:
+
+    Info: USB set device configuration:
+    Info: USB set device configuration Done
+
+----------------------------------------------
+- (3-1-i) Device get string descriptor
+----------------------------------------------
+
+    In this application user can request a usb device's string descriptor using the control
+packet options:
+    --control
+    --bmRequestType=0x80
+    --bRequest=0x6
+    --wValue= '(0x300|desc_index)'
+    --wIndex='language_id'
+    --size='maximum_size'
+    --ep_in
+    --display8(16/32/64)
+
+or the get descriptor cli options:
+    --dev_getdesc
+    --type=0x3
+    --index='desc_index'
+    --language='language_id'
+    --size='maximum_size'
+    --display8(16/32/64) (optional)
+
+or the dedicated cli options:
+    --dev_getstrdesc
+    --index='desc_index'
+    --language='language_id'
+
+Example:
+    Request the usb device's string descriptor with index 0x2 using the control packet options.
+
+    Input: --control --bmRequestType=0x80 --bRequest=0x6 --wValue=0x302 --wIndex=0x409 --ep_in
+    --size=0x80 --display16
+
+    Output on success:
+
+    Info: USB control transfer:
+    Warning : The actual size of transfered data is :0x001e
+    Info: USB control transfer Done
+
+    OFFSET           0x0000   0x0002   0x0004   0x0006   0x0008   0x000A   0x000C   0x000E
+
+    0x00000000       0x031e   0x0038   0x0030   0x0032   0x002e   0x0031   0x0031   0x0020
+    0x00000010       0x006e   0x0020   0x0057   0x004c   0x0041   0x004e   0x0000
+
+Example:
+    Request the usb device's string descriptor with index 0x2 using the get descriptor options.
+
+    Input: --dev_getdesc --type=0x3 --index=0x2 --language=0x409 --size=0x80 --display16
+
+    Output on success:
+
+    Info: USB device get descriptor:
+    Warning: The actual transfered data length is :0x001e
+
+    OFFSET           0x0000   0x0002   0x0004   0x0006   0x0008   0x000A   0x000C   0x000E
+
+    0x00000000       0x031e   0x0038   0x0030   0x0032   0x002e   0x0031   0x0031   0x0020
+    0x00000010       0x006e   0x0020   0x0057   0x004c   0x0041   0x004e   0x0000
+
+Example:
+    Request the usb device's string descriptor with index 0x2 using the dedicated options.
+
+    Input: --dev_getstrdesc --index=0x2 --language=0x409
+
+    Output on success:
+
+    Info: USB get string descriptor:
+    Info: String descriptor: 802.11 n WLAN
+
+**********************************************
+* (3-2) Interface standard requests
+**********************************************
+
+    Currently there are five Standard Interface requests, all of which are detailed below.
+
+ --------------------------------------------------------------------------------------------------
+|Request               | bmRequestType | bRequest |   wValue   |  wIndex  | wLength   | Data       |
+ --------------------------------------------------------------------------------------------------
+| GET_STATUS           |     0x81      |   0x00   |    0x00    |interface |    0x02   | Status     |
+ --------------------------------------------------------------------------------------------------
+| CLEAR_FEATURE        |     0x01      |   0x01   |  Feature   |interface |    0x00   | NULL       |
+ --------------------------------------------------------------------------------------------------
+| SET_FEATURE          |     0x01      |   0x03   |  Feature   |interface |    0x00   | NULL       |
+ --------------------------------------------------------------------------------------------------
+| GET_INTERFACE        |     0x81      |   0x0A   |    0x00    |interface |    0x01   | Alt setting|
+ --------------------------------------------------------------------------------------------------
+| SET_INTERFACE        |     0x01      |   0x0B   |Alt setting |interface |    0x00   | NULL       |
+ --------------------------------------------------------------------------------------------------
+
+----------------------------------------------
+- (3-2-a) Claiming the usb interface
+----------------------------------------------
+
+Before issuing any of the above commands, the user must first request the ownership of the given
+interface from the host OS via the following options:
+    --claim_interface
+    --interface='interface_index'
+
+Example
+    requesting the ownership of interface nbr: 0x0 from the host OS
+
+    Input: --claim_interface --interface=0
+
+    Output on success:
+
+    Info: Claim usb device interface:
+    Info: Claim usb device interface: 0 Done
+
+----------------------------------------------
+- (3-2-b) Interface get status
+----------------------------------------------
+
+    In this application user can request a usb interface's status using the control packet options:
+    --control
+    --bmRequestType=0x81
+    --bRequest=0
+    --wValue= 0
+    --wIndex='interface_index'
+    --size=0x2
+    --ep_in
+    --display8(16/32/64)
+
+or the dedicated cli options:
+    --inter_getstatus
+    --interface='interface_index'
+
+Example:
+    Request the usb Interface nbr 0x0 status using the control packet options.
+
+    Input: --control --bmRequestType=0x81 --bRequest=0 --wValue= 0 --wIndex=0 --size=0x2 --ep_in
+    --display16
+
+    Output on success:
+
+    Info: USB control transfer:
+    Info: USB control transfer Done
+
+    OFFSET           0x0000   0x0002   0x0004   0x0006   0x0008   0x000A   0x000C   0x000E
+
+    0x00000000       0x0000
+
+Example:
+    Request the usb Interface nbr 0x0 status using the dedicated options.
+
+    Input: --inter_getstatus --interface=0
+
+    Output on success:
+
+    Info: USB get interface status:
+    Info: USB interface: 0x00 status: 0x0000
+
+----------------------------------------------
+- (3-2-c) Interface clear feature
+----------------------------------------------
+
+    In this application user can clear a usb interface's feature using the control packet options:
+    --control
+    --bmRequestType=0x1
+    --bRequest=0x1
+    --wValue='feature_index'
+    --wIndex='interface_index'
+    --data0
+
+or the dedicated cli options:
+    --inter_clearfeat
+    --interface='interface_index'
+    --feature='feature_index'
+
+Example:
+    Clear the usb Interface nbr 0x0, feature nbr 0x0 using the control packet options.
+
+    Input: --control --bmRequestType=0x1 --bRequest=0x1 --wValue=0 --wIndex=0 --data0
+
+Example:
+    Clear the usb Interface nbr 0x0, feature nbr 0x0 using the dedicated options.
+
+    Input: --inter_clearfeat --interface=0 --feature=0
+
+----------------------------------------------
+- (3-2-d) Interface set feature
+----------------------------------------------
+
+    In this application user can set a usb interface's feature using the control packet options:
+    --control
+    --bmRequestType=0x1
+    --bRequest=0x3
+    --wValue='feature_index'
+    --wIndex='interface_index'
+    --data0
+
+or the dedicated cli options:
+    --inter_setfeat
+    --interface='interface_index'
+    --feature='feature_index'
+
+Example:
+    Set the usb Interface nbr 0x0, feature nbr 0x0 using the control packet options.
+
+    Input: --control --bmRequestType=0x1 --bRequest=0x3 --wValue=0 --wIndex=0 --data0
+
+Example:
+    Clear the usb Interface nbr 0x0, feature nbr 0x0 using the dedicated options.
+
+    Input: --inter_setfeat --interface=0 --feature=0
+
+----------------------------------------------
+- (3-2-e) Interface get active alternate setting
+----------------------------------------------
+
+    In this application user can request a usb interface's active alternate setting using the
+control packet options:
+    --control
+    --bmRequestType=0x81
+    --bRequest=0xA
+    --wValue=0
+    --wIndex='interface_index'
+    --size=0x1
+    --display16
+
+or the dedicated cli options:
+    --inter_getalt
+    --interface='interface_index'
+
+Example:
+    Request the usb Interface nbr 0x0, active alternate setting using the control packet options.
+
+    Input: --control --bmRequestType=0x81 --bRequest=0xA --wValue=0 --wIndex=0 --size=0x1 --ep_in
+    --display16
+
+    Output on success:
+
+    Info: USB control transfer:
+    Info: USB control transfer Done
+
+    OFFSET           0x0000   0x0002   0x0004   0x0006   0x0008   0x000A   0x000C   0x000E
+
+    0x00000000       0x0000
+
+Example:
+    Request the usb Interface nbr 0x0, active alternate setting using the dedicated options.
+
+    Input: --inter_getalt --interface=0
+
+    Output on success:
+
+    Info: USB get interface alternate setting:
+    Info: USB interface: 0x0000 alternate setting: 0x0000
+
+----------------------------------------------
+- (3-2-f) Interface set alternate setting
+----------------------------------------------
+
+    In this application user can set a usb interface's alternate setting using the control packet
+options:
+    --control
+    --bmRequestType=0x1
+    --bRequest=0x11
+    --wValue='alt_setting_index'
+    --wIndex='interface_index'
+    --data0
+
+or the dedicated cli options:
+    --inter_setalt
+    --interface='interface_index'
+    --altsetting='alt_setting_index'
+
+PS: It recommended to use the dedicated cli option for setting the interface alternate setting
+instead of using the control packet option, because it has the advantage of telling the host OS that
+the device has changed the active alternate setting in the given interface.
+
+Example:
+    Set the usb Interface nbr 0x0, alternate setting nbr 0x1 using the control packet options.
+
+    Input: --control --bmRequestType=0x1 --bRequest=0xb --wValue=0x1 --wIndex=0 --data0
+
+    Output on success:
+
+    Info: USB control transfer:
+    Info: USB control transfer Done
+
+Example:
+    Set the usb Interface nbr 0x0, alternate setting nbr 0x1 using the dedicated options.
+
+    Input: --inter_setalt --interface=0 --altsetting=1
+
+    Output on success:
+
+    Info: USB set interface alternate setting:
+    Info: USB set interface: 0x0000 alternate setting: 0x0001 Done
+
+**********************************************
+* (3-3) Endpoint standard requests
+**********************************************
+
+    Currently there are four Standard Endpoint requests, all of which are detailed below.
+
+ --------------------------------------------------------------------------------------------------
+|Request               | bmRequestType | bRequest |   wValue   |  wIndex  | wLength   | Data       |
+ --------------------------------------------------------------------------------------------------
+| GET_STATUS           |     0x82      |   0x00   |    0x00    | endpoint |    0x02   | Status     |
+ --------------------------------------------------------------------------------------------------
+| CLEAR_FEATURE        |     0x02      |   0x01   |  Feature   | endpoint |    0x00   | NULL       |
+ --------------------------------------------------------------------------------------------------
+| SET_FEATURE          |     0x02      |   0x03   |  Feature   | endpoint |    0x00   | NULL       |
+ --------------------------------------------------------------------------------------------------
+| SYNCH_FRAME          |     0x82      |   0x0C   |    0x00    | endpoint |    0x01   | frame index|
+ --------------------------------------------------------------------------------------------------
+
+PS: Before issuing any of the above commands, the user must first request the ownership of the
+endpoint associated interface from the host OS using the cli option defined in section
+'(3-2-a) Claiming the usb interface'
+
+----------------------------------------------
+- (3-3-a) Endpoint get status
+----------------------------------------------
+
+    In this application user can request a usb interface's status using the control packet options:
+    --control
+    --bmRequestType=0x82
+    --bRequest=0
+    --wValue= 0
+    --wIndex='endpoint_index'
+    --size=0x2
+    --ep_in
+    --display8(16/32/64)
+
+or the dedicated cli options:
+    --ep_getstatus
+    --endpoint='endpoint_index'
+
+Example:
+    Request the usb endpoint nbr 0x0 status using the control packet options.
+
+    Input: --control --bmRequestType=0x82 --bRequest=0 --wValue= 0 --wIndex=0 --size=0x2 --ep_in
+    --display16
+
+    Output on success:
+
+    Info: USB control transfer:
+    Info: USB control transfer Done
+
+    OFFSET           0x0000   0x0002   0x0004   0x0006   0x0008   0x000A   0x000C   0x000E
+
+    0x00000000       0x0000
+
+Example:
+    Request the usb endpoint nbr 0x0 status using the dedicated options.
+
+    Input: --ep_getstatus --endpoint=0
+
+    Output on success:
+
+    Info: USB get end point status:
+    Info: USB endpoint: 0x0000 status: 0x0000
+
+----------------------------------------------
+- (3-3-b) endpoint clear feature
+----------------------------------------------
+
+    In this application user can clear a usb endpoint's feature using the control packet options:
+    --control
+    --bmRequestType=0x2
+    --bRequest=0x1
+    --wValue='feature_index'
+    --wIndex='endpoint_index'
+    --data0
+
+or the dedicated cli options:
+    --ep_clearfeat
+    --endpoint='endpoint_index'
+    --feature='feature_index'
+
+Example:
+    Clear the usb endpoint nbr 0x1, feature nbr 0x0 using the control packet options.
+
+    Input: --control --bmRequestType=0x2 --bRequest=0x1 --wValue=0 --wIndex=0x1 --data0
+
+Example:
+    Clear the usb endpoint nbr 0x1, feature nbr 0x0 using the dedicated options.
+
+    Input: --ep_clearfeat --endpoint=0x1 --feature=0
+
+----------------------------------------------
+- (3-3-c) endpoint set feature
+----------------------------------------------
+
+    In this application user can set a usb endpoint's feature using the control packet options:
+    --control
+    --bmRequestType=0x2
+    --bRequest=0x3
+    --wValue='feature_index'
+    --wIndex='endpoint_index'
+    --data0
+
+or the dedicated cli options:
+    --ep_setfeat
+    --endpoint='endpoint_index'
+    --feature='feature_index'
+
+Example:
+    Set the usb endpoint nbr 0x1, feature nbr 0x0 using the control packet options.
+
+    Input: --control --bmRequestType=0x2 --bRequest=0x3 --wValue=0 --wIndex=0x1 --data0
+
+Example:
+    Set the usb endpoint nbr 0x1, feature nbr 0x0 using the dedicated options.
+
+    Input: --ep_setfeat --endpoint=0x1 --feature=0
+
+----------------------------------------------
+- (3-3-d) endpoint synch frame
+----------------------------------------------
+
+    In this application user can request to synchronize an usb endpoint's frame using the control
+packet options:
+    --control
+    --bmRequestType=0x82
+    --bRequest=0xc
+    --wValue=0
+    --wIndex='endpoint_index'
+    --size=0x2
+    --ep_in
+    --display8(16/32/64)
+
+or the dedicated cli options:
+    --ep_syncframe
+    --endpoint='endpoint_index'
+
+Example:
+    Request to synchronize the usb endpoint nbr 0x1, frame using the control packet options.
+
+    Input: --control --bmRequestType=0x82 --bRequest=0xc --wValue=0 --wIndex=1 --size=0x2 --ep_in
+    --display16
+
+Example:
+    Request to synchronize the usb endpoint nbr 0x1, frame using the dedicated options.
+
+    Input: --ep_syncframe --endpoint=0x1
+
