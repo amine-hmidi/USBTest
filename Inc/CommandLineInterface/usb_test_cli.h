@@ -128,8 +128,7 @@ private:
     void BulkTransfer(const cxxopts::ParseResult &result);
     void InterruptTransfer(const cxxopts::ParseResult &result);
     uint8_t *GetDataCli(const cxxopts::ParseResult &result, size_t &size);
-    uint8_t *GetDataFile(const cxxopts::ParseResult &result, size_t &size, \
-                                     std::string &file_path);
+    uint8_t *GetDataFile(const cxxopts::ParseResult &result, size_t &size);
 #endif
 
 

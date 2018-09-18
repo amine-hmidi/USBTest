@@ -1,3 +1,11 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+                                       Standard USB Commands
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    + https://www.beyondlogic.org/usbnutshell
+    + http://libusb.sourceforge.net/api-1.0/
+    + https://usb.org/
+
 ##############################################
 # (1) Listing the connected usb devices:
 ##############################################
@@ -88,8 +96,8 @@ In this application user can send control packets using the followng options:
     --wValue='value'            : specify wValue value
     --wIndex='value'            : specify wIndex value
 
-If the packet transfer direction is Device-to-Host, then the user should use the --ep_in option and
-the --size option to specify the maximum nbr of bytes to be received.
+If the packet transfer direction is Device-to-Host, then the user has to use the --size option to
+specify the maximum nbr of bytes to be received.
 Otherwise, the user can specify the data source using these options:
 
     --data0                     : data is NULL and wLength=0
@@ -105,8 +113,8 @@ source, then he can use the --size option to specify the data length.
 Example:
     Send a usb get device descriptor request and display the received data as 16bits:
 
-    Input: --control --bmRequestType=0x80 --bRequest=0x6 --wValue=0x101 --wIndex=0x409 --ep_in
-    --size=0x80 --display16
+    Input: --control --bmRequestType=0x80 --bRequest=0x6 --wValue=0x101 --wIndex=0x409 --size=0x80
+    --display16
 
     Output on success:
 
@@ -123,8 +131,8 @@ Example:
     Send a usb get device descriptor request, display the received data as 16bits, than store the
     received data in a file
 
-    Input: --control --bmRequestType=0x80 --bRequest=0x6 --wValue=0x101 --wIndex=0x409 --ep_in
-    --size=0x80 --display16 --file=./test_device_descriptor.bin
+    Input: --control --bmRequestType=0x80 --bRequest=0x6 --wValue=0x101 --wIndex=0x409 --size=0x80
+    --display16 --file=./test_device_descriptor.bin
 
     Output on success:
 
@@ -184,8 +192,7 @@ or the dedicated cli option:
 Example:
     Send a usb get device status using the control packet options.
 
-    Input: --control --bmRequestType=0x80 --bRequest=0 --wValue=0 --wIndex=0 --ep_in --size=2
-    --display16
+    Input: --control --bmRequestType=0x80 --bRequest=0 --wValue=0 --wIndex=0 --size=2 --display16
 
     Output on success:
 
@@ -295,7 +302,6 @@ Example:
     --wValue='((desc_type << 8)|desc_index)'
     --wIndex='language_id'
     --size='maximum_size'
-    --ep_in
     --display8(16/32/64)
 
 or the dedicated cli options:
@@ -310,7 +316,7 @@ Example:
     request the usb device descriptor using the control packet options.
 
     Input: --control --bmRequestType=0x80 --bRequest=0x6 --wValue=0x101 --wIndex=0x409 --size=0x80
-    --ep_in --display16
+    --display16
 
     Output on success:
 
@@ -372,7 +378,6 @@ packet options:
     --wValue=0
     --wIndex=0
     --size=1
-    --ep_in
     --display8(16/32/64)
 
 or the dedicated cli options:
@@ -381,8 +386,7 @@ or the dedicated cli options:
 Example:
     request the usb device's current configuration using the control packet options.
 
-    Input: --control --bmRequestType=0x80 --bRequest=0x8 --wValue=0 --wIndex=0 --size=1 --ep_in
-    --display16
+    Input: --control --bmRequestType=0x80 --bRequest=0x8 --wValue=0 --wIndex=0 --size=1 --display16
 
     Output on success:
 
@@ -451,7 +455,6 @@ packet options:
     --wValue= '(0x300|desc_index)'
     --wIndex='language_id'
     --size='maximum_size'
-    --ep_in
     --display8(16/32/64)
 
 or the get descriptor cli options:
@@ -470,8 +473,8 @@ or the dedicated cli options:
 Example:
     Request the usb device's string descriptor with index 0x2 using the control packet options.
 
-    Input: --control --bmRequestType=0x80 --bRequest=0x6 --wValue=0x302 --wIndex=0x409 --ep_in
-    --size=0x80 --display16
+    Input: --control --bmRequestType=0x80 --bRequest=0x6 --wValue=0x302 --wIndex=0x409 --size=0x80
+    --display16
 
     Output on success:
 
@@ -559,7 +562,6 @@ Example
     --wValue= 0
     --wIndex='interface_index'
     --size=0x2
-    --ep_in
     --display8(16/32/64)
 
 or the dedicated cli options:
@@ -569,8 +571,7 @@ or the dedicated cli options:
 Example:
     Request the usb Interface nbr 0x0 status using the control packet options.
 
-    Input: --control --bmRequestType=0x81 --bRequest=0 --wValue= 0 --wIndex=0 --size=0x2 --ep_in
-    --display16
+    Input: --control --bmRequestType=0x81 --bRequest=0 --wValue= 0 --wIndex=0 --size=0x2 --display16
 
     Output on success:
 
@@ -666,8 +667,7 @@ or the dedicated cli options:
 Example:
     Request the usb Interface nbr 0x0, active alternate setting using the control packet options.
 
-    Input: --control --bmRequestType=0x81 --bRequest=0xA --wValue=0 --wIndex=0 --size=0x1 --ep_in
-    --display16
+    Input: --control --bmRequestType=0x81 --bRequest=0xA --wValue=0 --wIndex=0 --size=1 --display16
 
     Output on success:
 
@@ -752,6 +752,15 @@ PS: Before issuing any of the above commands, the user must first request the ow
 endpoint associated interface from the host OS using the cli option defined in section
 '(3-2-a) Claiming the usb interface'
 
+PS: The wIndex field is used to specify the referring endpoint and direction for requests directed
+to an endpoint. Its format is shown below.
+
+ -------------------------------------------------------------------------------------
+| B15 | B14 | B13 | B12 | B11 | B10 | B9 | B8 | B7 | B6 | B5 | B4 | B3 | B2 | B1 | B0 |
+ -------------------------------------------------------------------------------------
+|  XX |  XX |  XX |  XX |  XX |  XX | XX | XX |Dir | XX | XX | XX |  Endpoint Number  |
+ -------------------------------------------------------------------------------------
+
 ----------------------------------------------
 - (3-3-a) Endpoint get status
 ----------------------------------------------
@@ -763,7 +772,6 @@ endpoint associated interface from the host OS using the cli option defined in s
     --wValue= 0
     --wIndex='endpoint_index'
     --size=0x2
-    --ep_in
     --display8(16/32/64)
 
 or the dedicated cli options:
@@ -773,8 +781,7 @@ or the dedicated cli options:
 Example:
     Request the usb endpoint nbr 0x0 status using the control packet options.
 
-    Input: --control --bmRequestType=0x82 --bRequest=0 --wValue= 0 --wIndex=0 --size=0x2 --ep_in
-    --display16
+    Input: --control --bmRequestType=0x82 --bRequest=0 --wValue=0 --wIndex=0 --size=2 --display16
 
     Output on success:
 
@@ -861,7 +868,6 @@ packet options:
     --wValue=0
     --wIndex='endpoint_index'
     --size=0x2
-    --ep_in
     --display8(16/32/64)
 
 or the dedicated cli options:
@@ -871,11 +877,79 @@ or the dedicated cli options:
 Example:
     Request to synchronize the usb endpoint nbr 0x1, frame using the control packet options.
 
-    Input: --control --bmRequestType=0x82 --bRequest=0xc --wValue=0 --wIndex=1 --size=0x2 --ep_in
-    --display16
+    Input: --control --bmRequestType=0x82 --bRequest=0xc --wValue=0 --wIndex=1 --size=2 --display16
 
 Example:
     Request to synchronize the usb endpoint nbr 0x1, frame using the dedicated options.
 
     Input: --ep_syncframe --endpoint=0x1
 
+##############################################
+# (4) Bulk input/output operations
+##############################################
+
+    USB bulk transfer is used for large amounts of data transactions, such as print-job sent to a
+printer or an image generated from a scanner. In this application user can exchange data with bulk
+endpoints using the follwing commands:
+
+    --bulk                      : setup a bulk packet
+    --endpoint='endpoint_index' : specify endpoint index (including the transfert direction)
+
+If the packet transfer direction is Device-to-Host, then the user has to use the --size option to
+specify the maximum nbr of bytes to be received.
+Otherwise, the user can specify the data source using these options:
+
+    --data0                     : data is NULL and wLength=0
+    --data8='value'             : 1 byte data and wLength=1
+    --data16='value'            : 2 bytes data and wLength=2
+    --data32='value'            : 4 bytes data and wLength=4 (*)
+    --data64='value'            : 8 bytes data and wLength=8 (*)
+    --file='file path'          : extract data from file and wLength=file_size (*)
+
+(*) If the user wants to transfert a number of bytes smaller than the one provided by the data
+source, then he can use the --size option to specify the data length.
+
+PS: the --endpoint option must refer to the endpoint index and direction.
+
+ -------------------------------------------------------------------------------------
+| B15 | B14 | B13 | B12 | B11 | B10 | B9 | B8 | B7 | B6 | B5 | B4 | B3 | B2 | B1 | B0 |
+ -------------------------------------------------------------------------------------
+|  XX |  XX |  XX |  XX |  XX |  XX | XX | XX |Dir | XX | XX | XX |  Endpoint Number  |
+ -------------------------------------------------------------------------------------
+
+Example:
+    Send a usb bulk transfer to endpoint 0x1, using a file as a data source and display the
+exchanged data as 16bits:
+
+    Input: --bulk --endpoint=0x1 --file=./test_bulk_out.bin --display16
+
+Example:
+    Request a usb bulk transfer from endpoint 0x2, store the recieved data in a file and display it
+as 16bits:
+
+    Input: --bulk --endpoint=0x82 --size=0x500 --file=./test_bulk_in.bin --display16
+
+##############################################
+# (5) Interrupt input/output operations
+##############################################
+
+    USB interrupt transfer is small device "initiated" communication requiring bounded latency.
+An Interrupt request is queued by the device until the host polls the USB device asking for data.
+In this application user can exchange data with interrupt endpoints using the follwing commands:
+
+    --interrupt                 : setup a interrupt packet
+    --endpoint='endpoint_index' : specify endpoint index (including the transfert direction)
+
+If the packet transfer direction is Device-to-Host, then the user has to use the --size option to
+specify the maximum nbr of bytes to be received.
+Otherwise, the user can specify the data source using these options:
+
+    --data0                     : data is NULL and wLength=0
+    --data8='value'             : 1 byte data and wLength=1
+    --data16='value'            : 2 bytes data and wLength=2
+    --data32='value'            : 4 bytes data and wLength=4 (*)
+    --data64='value'            : 8 bytes data and wLength=8 (*)
+    --file='file path'          : extract data from file and wLength=file_size (*)
+
+(*) If the user wants to transfert a number of bytes smaller than the one provided by the data
+source, then he can use the --size option to specify the data length.

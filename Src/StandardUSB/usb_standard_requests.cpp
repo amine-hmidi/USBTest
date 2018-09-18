@@ -57,7 +57,7 @@ int StandardUSB::DeviceGetStatus(uint16_t &status)
                  /* wIndex        */     0x00,
                  /* data          */     data,
                  /* length        */     0x02,
-                 /* timeout       */     StandardUSB::time_out);
+                 /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
@@ -98,7 +98,7 @@ int StandardUSB::DeviceClearFeature(uint16_t feature)
                  /* wIndex        */     0x00,
                  /* data          */     nullptr,
                  /* length        */     0x00,
-                 /* timeout       */     StandardUSB::time_out);
+                 /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
@@ -138,7 +138,7 @@ int StandardUSB::DeviceSetFeature(uint16_t feature)
                  /* wIndex        */     0x00,
                  /* data          */     nullptr,
                  /* length        */     0x00,
-                 /* timeout       */     StandardUSB::time_out);
+                 /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
@@ -178,7 +178,7 @@ int StandardUSB::DeviceSetAddress(uint16_t address)
                  /* wIndex        */     0x00,
                  /* data          */     nullptr,
                  /* length        */     0x00,
-                 /* timeout       */     StandardUSB::time_out);
+                 /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
@@ -224,7 +224,7 @@ int StandardUSB::DeviceGetDescriptor(uint8_t type, uint8_t index, uint16_t langu
                  /* wIndex        */     language,
                  /* data          */     data,
                  /* length        */     length,
-                 /* timeout       */     StandardUSB::time_out);
+                 /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
         std::cout << "Error:  Unable to Get USB Descriptor with type: 0x"  << std::hex \
@@ -260,7 +260,7 @@ int StandardUSB::DeviceSetDescriptor(uint8_t type, uint8_t index, uint16_t langu
                  /* wIndex        */     language,
                  /* data          */     data,
                  /* length        */     length,
-                 /* timeout       */     StandardUSB::time_out);
+                 /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
         std::cout << "Error:  Unable to Set USB Descriptor with type: 0x"  << std::hex \
@@ -293,7 +293,7 @@ int StandardUSB::DeviceGetCongiguration(uint8_t &data)
                  /* wIndex        */     0x00,
                  /* data          */     l_data,
                  /* length        */     1,
-                 /* timeout       */     StandardUSB::time_out);
+                 /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
@@ -333,7 +333,7 @@ int StandardUSB::DeviceSetCongiguration(uint16_t configuration)
                  /* wIndex        */     0x00,
                  /* data          */     nullptr,
                  /* length        */     0,
-                 /* timeout       */     StandardUSB::time_out);
+                 /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
@@ -379,7 +379,7 @@ int StandardUSB::InterfaceGetStatus(uint16_t interface, uint16_t &status)
                  /* wIndex        */     interface,
                  /* data          */     data,
                  /* length        */     0x02,
-                 /* timeout       */     StandardUSB::time_out);
+                 /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
@@ -422,7 +422,7 @@ int StandardUSB::InterfaceClearFeature(uint16_t interface, uint16_t feature)
                  /* wIndex        */     interface,
                  /* data          */     nullptr,
                  /* length        */     0x00,
-                 /* timeout       */     StandardUSB::time_out);
+                 /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
@@ -465,7 +465,7 @@ int StandardUSB::InterfaceSetFeature(uint16_t interface, uint16_t feature)
                   /* wIndex        */     interface,
                   /* data          */     nullptr,
                   /* length        */     0x00,
-                  /* timeout       */     StandardUSB::time_out);
+                  /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
@@ -510,7 +510,7 @@ int StandardUSB::InterfaceGetAltSetting(uint16_t interface, uint8_t &alt_setting
                  /* wIndex        */     interface,
                  /* data          */     l_data,
                  /* length        */     0x01,
-                 /* timeout       */     StandardUSB::time_out);
+                 /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
@@ -584,7 +584,7 @@ int StandardUSB::EndpointGetStatus(uint16_t endpoint, uint16_t &status)
                  /* wIndex        */     endpoint,
                  /* data          */     data,
                  /* length        */     0x02,
-                 /* timeout       */     StandardUSB::time_out);
+                 /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
@@ -628,7 +628,7 @@ int StandardUSB::EndpointClearFeature(uint16_t endpoint, uint16_t feature)
                  /* wIndex        */     endpoint,
                  /* data          */     nullptr,
                  /* length        */     0x00,
-                 /* timeout       */     StandardUSB::time_out);
+                 /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
@@ -670,7 +670,7 @@ int StandardUSB::EndpointSetFeature(uint16_t endpoint, uint16_t feature)
                  /* wIndex        */     endpoint,
                  /* data          */     nullptr,
                  /* length        */     0x00,
-                 /* timeout       */     StandardUSB::time_out);
+                 /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
@@ -714,7 +714,7 @@ int StandardUSB::EndpointSynchFrame(uint16_t endpoint, uint16_t &frame)
                  /* wIndex        */     endpoint,
                  /* data          */     data,
                  /* length        */     0x02,
-                 /* timeout       */     StandardUSB::time_out);
+                 /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {

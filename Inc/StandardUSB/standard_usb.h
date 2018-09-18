@@ -66,7 +66,9 @@ public:
     /* ****************************************************************************************** */
     /* ************************************* USB Attributes ************************************* */
     /* ****************************************************************************************** */
-    static void TimeOut(unsigned int t_ms)  { StandardUSB::time_out = t_ms;}
+    static void CtrTimeOut(unsigned int t_ms)  { StandardUSB::ctr_time_out = t_ms;}
+    static void BulkTimeOut(unsigned int t_ms)  { StandardUSB::bulk_time_out = t_ms;}
+    static void IntTimeOut(unsigned int t_ms)  { StandardUSB::interr_time_out = t_ms;}
     StandardUSB::USBClassType DeviceClass() const {return this->usb_class;}
     uint16_t IdProduct() const {return this->product_id;}
     uint16_t IdVendor() const {return this->vendor_id;}
@@ -140,8 +142,12 @@ protected:
     libusb_config_descriptor *usb_config_descriptor = nullptr;
     /* usb device class */
     USBClassType usb_class = USBClassType::NONE;
-    /* transfer timeout in ms */
-    static unsigned int time_out;
+    /* contol transfer timeout in ms */
+    static unsigned int ctr_time_out;
+    /* bulk transfer timeout in ms */
+    static unsigned int bulk_time_out;
+    /* interr transfer timeout in ms */
+    static unsigned int interr_time_out;
 
     /* ****************************************************************************************** */
     /* *********************************** Descriptors Requests ********************************* */

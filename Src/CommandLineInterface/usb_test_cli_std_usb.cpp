@@ -53,7 +53,11 @@ void USBTestCli::InitUSBCommands()
              cxxopts::value<uint16_t>())
             ("idproduct", "the product id of the fdu device",\
              cxxopts::value<uint16_t>())
-            ("timeout", "usb transfer time out in ms" ,\
+            ("timeout_c", "usb control transfer time out in ms" ,\
+             cxxopts::value<unsigned int>())
+            ("timeout_i", "usb interrupt transfer time out in ms" ,\
+             cxxopts::value<unsigned int>())
+            ("timeout_b", "usb bulk transfer time out in ms" ,\
              cxxopts::value<unsigned int>())
 
             /* *** */
@@ -109,7 +113,6 @@ void USBTestCli::InitUSBCommands()
             ("claim_interface", "Request the ownership of the given interface from the host OS")
             ("release_interface", "Release a previusly claimed interface")
             ("reset", "Release a previusly claimed interface")
-            ("ep_in", "A hint to the tool, Data will be transfered from device to host")
 
             /* Control requests options */
             ("control", "Send/receive data via control end point(0x00)")
@@ -162,7 +165,9 @@ void USBTestCli::DisplayUSBHelp()
     std::cout << "\t                            the USB Class\n";
     std::cout << "\t    --idvendor              The vendor id of the usb device\n";
     std::cout << "\t    --idproduct             The product id of the usb device\n";
-    std::cout << "\t    --timeout               USB transfer timeout in ms\n";
+    std::cout << "\t    --timeout_c             USB control transfer timeout in ms\n";
+    std::cout << "\t    --timeout_b             USB bulk transfer timeout in ms\n";
+    std::cout << "\t    --timeout_i             USB interrupt transfer timeout in ms\n";
     std::cout << "\t    --display_desc          Display device & configuration descriptors\n";
     /* **** */
     std::cout << "\t    --dev_getstatus         Send a usb device get status request\n";
@@ -199,14 +204,15 @@ void USBTestCli::DisplayUSBHelp()
     std::cout << "\t    --claim_interface       Request the ownership of the given interface\n";
     std::cout << "\t    --release_interface     Release the previously claimed interface\n";
     std::cout << "\t    --reset                 Perform a usb port reset\n";
-    std::cout << "\t    --ep_in                 A hint to  tell the tool that the data will be\n";
-    std::cout << "\t                            transfered from device to host\n";
     /* **** */
     std::cout << "\t    --control               Send/receive data via control end point(0x00)\n";
     std::cout << "\t    --bmRequestType         The request type field for the control packet\n";
     std::cout << "\t    --bRequest              The request field for the control packet\n";
     std::cout << "\t    --wValue                The value field for the control packet\n";
     std::cout << "\t    --wIndex                The index field for the control packet\n";
+    /* **** */
+    std::cout << "\t    --bulk                  Exchange data via bulk transfer packet\n";
+    std::cout << "\t    --interrupt             Exchange data via interrupt transfer\n";
     /* **** */
     std::cout << "\t    --file                  File from/to which to data will be transfered\n";
     std::cout << "\t    --size                  The data buffer length\n";
@@ -235,10 +241,22 @@ void USBTestCli::ParseUSBCmds(const cxxopts::ParseResult &result)
     if(result.count("list"))
         StandardUSB::ListUSBDevices();
 
-    if(result.count("timeout"))
+    if(result.count("timeout_c"))
     {
-        unsigned int timeout = result["timeout"].as<unsigned int>();
-        StandardUSB::TimeOut(timeout);
+        unsigned int timeout = result["timeout_c"].as<unsigned int>();
+        StandardUSB::CtrTimeOut(timeout);
+    }
+
+    if(result.count("timeout_i"))
+    {
+        unsigned int timeout = result["timeout_i"].as<unsigned int>();
+        StandardUSB::IntTimeOut(timeout);
+    }
+
+    if(result.count("timeout_b"))
+    {
+        unsigned int timeout = result["timeout_b"].as<unsigned int>();
+        StandardUSB::BulkTimeOut(timeout);
     }
 
     if(result.count("usb"))
@@ -1130,55 +1148,27 @@ uint8_t *USBTestCli::GetDataCli(const cxxopts::ParseResult &result, size_t &size
  * @param file_name file path to which the data will be written if its a download request
  * @return data pointer
  */
-uint8_t *USBTestCli::GetDataFile(const cxxopts::ParseResult &result, size_t &size,\
-                                            std::string &file_name)
+uint8_t *USBTestCli::GetDataFile(const cxxopts::ParseResult &result, size_t &size)
 {
     /* get the file path and open it depending on the --ep_in option */
     std::string file_path = result["file"].as<std::string>();
 
-    /* check if the data will be stransfered from device to host */
-    if(result.count("ep_in"))
-    {
-        /* get the size of data to be transfered */
-        if (!result.count("size"))
-        {
-            std::cout << "Error: Unable to send usb control transfer, "
-                         "missing the --size option\n" ;
-            return nullptr;
-        }
-        size = result["size"].as<size_t>();
+    size_t size_l = 0x00;
+    uint8_t *data = ReadBinFile(file_path, size_l);
+    if (!data)
+        return nullptr;
 
-        /* allocate and fill in the data */
-        uint8_t *data = new(std::nothrow) uint8_t[size];
-        if (!data)
-        {
-            std::cout << "Error: USB control transfer failed, Memory allocation error\n" ;
-            return nullptr;
-        }
-        std::memset(data, 0x00, size);
-
-        file_name = file_path;
-        return data;
-    }
-    else
+    size = size_l;
+    /* check the --size option */
+    if (result.count("size"))
     {
-        size_t size_l = 0x00;
-        uint8_t *data = ReadBinFile(file_path, size_l);
-        if (!data)
-            return nullptr;
+        size_t size_l = result["size"].as<size_t>();
+        if (size_l > size)
+            std::cout << "Warning: Ignoring --size option, value too big for file size\n";
 
         size = size_l;
-        /* check the --size option */
-        if (result.count("size"))
-        {
-            size_t size_l = result["size"].as<size_t>();
-            if (size_l > size)
-                std::cout << "Warning: Ignoring --size option, value too big for file size\n";
-
-            size = size_l;
-        }
-        return data;
     }
+    return data;
 }
 
 
@@ -1203,6 +1193,7 @@ void USBTestCli::ControlTransfer(const cxxopts::ParseResult &result)
         return;
     }
     bmrequesttype = result["bmRequestType"].as<uint8_t>();
+    uint8_t transfer_direction = static_cast<uint8_t>(bmrequesttype & 0x80);
 
     /* check bRequest */
     uint8_t brequest = 0x00;
@@ -1235,8 +1226,11 @@ void USBTestCli::ControlTransfer(const cxxopts::ParseResult &result)
     uint8_t *data = nullptr;
     size_t size = 0x00;
 
-    /* target file if any */
-    std::string file_name;
+    /* check the size for device to host transfer */
+    if (transfer_direction && !result.count("size"))
+    {
+        std::cout << "Error: Missing --size option\n";
+    }
 
     /* 1, 2, 4 or 8 bytes pointer data
      * ignore --file, check --size options if any
@@ -1254,15 +1248,15 @@ void USBTestCli::ControlTransfer(const cxxopts::ParseResult &result)
         data = nullptr;
         size = 0x00;
     }
-    /* data will transfered from/to file */
-    else if (result.count("file") && !result.count("data0"))
+    /* data will transfered from file */
+    else if (result.count("file") && !result.count("data0") && !transfer_direction)
     {
-        data = GetDataFile(result, size, file_name);
+        data = GetDataFile(result, size);
         if (!data)
             return;
     }
-
-    else if (result.count("size") && result.count("ep_in"))
+    /* data transfer from device to host */
+    else if (transfer_direction)
     {
         size = result["size"].as<size_t>();
         data = new(std::nothrow) uint8_t[size];
@@ -1305,8 +1299,12 @@ void USBTestCli::ControlTransfer(const cxxopts::ParseResult &result)
 
 
     /* write to the file */
-    if (!file_name.empty())
+    if (result.count("file") && transfer_direction)
+    {
+        std::string file_name = result["file"].as<std::string>();
         WriteBinFile(file_name, data, size);
+    }
+
 
     /* check data display */
     if (result.count("display8"))
@@ -1340,6 +1338,13 @@ void USBTestCli::BulkTransfer(const cxxopts::ParseResult &result)
         return;
     }
     uint8_t ep = result["endpoint"].as<uint8_t>();
+    uint8_t transfer_direction = static_cast<uint8_t>(ep & 0x80);
+
+    /* check the size for device to host transfer */
+    if (transfer_direction && !result.count("size"))
+    {
+        std::cout << "Error: Missing --size option\n";
+    }
 
     /* check the data to be sent */
     uint8_t *data = nullptr;
@@ -1365,14 +1370,14 @@ void USBTestCli::BulkTransfer(const cxxopts::ParseResult &result)
         size = 0x00;
     }
     /* data will transfered from/to file */
-    else if (result.count("file") && !result.count("data0"))
+    else if (result.count("file") && !result.count("data0") && !transfer_direction)
     {
-        data = GetDataFile(result, size, file_name);
+        data = GetDataFile(result, size);
         if (!data)
             return;
     }
 
-    else if (result.count("size") && result.count("ep_in"))
+    else if (transfer_direction)
     {
         size = result["size"].as<size_t>();
         data = new(std::nothrow) uint8_t[size];
@@ -1412,10 +1417,12 @@ void USBTestCli::BulkTransfer(const cxxopts::ParseResult &result)
     std::cout << "Info: USB Bulk transfer Done\n";
     /* get the nbr of bytes that were actually transferred */
 
-
     /* write to the file */
-    if (!file_name.empty())
+    if (result.count("file") && transfer_direction)
+    {
+        std::string file_name = result["file"].as<std::string>();
         WriteBinFile(file_name, data, size);
+    }
 
     /* check data display */
     if (result.count("display8"))
@@ -1449,6 +1456,13 @@ void USBTestCli::InterruptTransfer(const cxxopts::ParseResult &result)
         return;
     }
     uint8_t ep = result["endpoint"].as<uint8_t>();
+    uint8_t transfer_direction = static_cast<uint8_t>(ep & 0x80);
+
+    /* check the size for device to host transfer */
+    if (transfer_direction && !result.count("size"))
+    {
+        std::cout << "Error: Missing --size option\n";
+    }
 
     /* check the data to be sent */
     uint8_t *data = nullptr;
@@ -1474,14 +1488,14 @@ void USBTestCli::InterruptTransfer(const cxxopts::ParseResult &result)
         size = 0x00;
     }
     /* data will transfered from/to file */
-    else if (result.count("file") && !result.count("data0"))
+    else if (result.count("file") && !result.count("data0") && !transfer_direction)
     {
-        data = GetDataFile(result, size, file_name);
+        data = GetDataFile(result, size);
         if (!data)
             return;
     }
 
-    else if (result.count("size") && result.count("ep_in"))
+    else if (transfer_direction)
     {
         size = result["size"].as<size_t>();
         data = new(std::nothrow) uint8_t[size];
@@ -1521,10 +1535,12 @@ void USBTestCli::InterruptTransfer(const cxxopts::ParseResult &result)
     std::cout << "Info: USB Bulk transfer Done\n";
     /* get the nbr of bytes that were actually transferred */
 
-
     /* write to the file */
-    if (!file_name.empty())
+    if (result.count("file") && transfer_direction)
+    {
+        std::string file_name = result["file"].as<std::string>();
         WriteBinFile(file_name, data, size);
+    }
 
     /* check data display */
     if (result.count("display8"))
