@@ -500,7 +500,7 @@ void USBTestCli::GetDeviceDesriptor(const cxxopts::ParseResult &result)
 
     uint16_t language = 0x409;
     if (!result.count("language"))
-        std::cout << "Warning: Missing descriptor language option --language, proceeding with"\
+        std::cout << "Warning: Missing descriptor language option --language, proceeding with"
                      "value 0x409\n";
     else
         language = result["language"].as<uint16_t>();
@@ -592,7 +592,7 @@ void USBTestCli::SetDeviceDesriptor(const cxxopts::ParseResult &result)
 
     uint16_t language = 0x409;
     if (!result.count("language"))
-        std::cout << "Warning: Missing descriptor language option --language, proceeding with"\
+        std::cout << "Warning: Missing descriptor language option --language, proceeding with"
                      "value 0x409\n";
     else
         language = result["language"].as<uint16_t>();
@@ -650,8 +650,8 @@ void USBTestCli::GetDeviceConfig(const cxxopts::ParseResult &result)
     if (this->usb_device->DeviceGetCongiguration(config))
         return;
 
-    std::cout << "Info: USB current device configuration: 0x"<< std::hex << std::setw(2) << \
-                 std::setfill('0') << static_cast<uint32_t>(config) << "\n";
+    std::cout << "Info: USB current device configuration: 0x"<< std::hex << std::setw(2)
+              << std::setfill('0') << static_cast<uint32_t>(config) << "\n";
 }
 
 
@@ -737,9 +737,9 @@ void USBTestCli::GetInterfaceStatus(const cxxopts::ParseResult &result)
     if (this->usb_device->InterfaceGetStatus(interface, status))
         return;
 
-    std::cout << "Info: USB interface: 0x" << std::hex << std::setw(2) << std::setfill('0') << \
-                 interface << " status: 0x" << std::hex << std::setw(4) << std::setfill('0') << \
-                 status << "\n";
+    std::cout << "Info: USB interface: 0x" << std::hex << std::setw(2) << std::setfill('0')
+              << interface << " status: 0x" << std::hex << std::setw(4) << std::setfill('0')
+              << status << "\n";
 }
 
 
@@ -772,9 +772,9 @@ void USBTestCli::ClearInterfaceFeature(const cxxopts::ParseResult &result)
     if (this->usb_device->InterfaceClearFeature(interface, feature))
         return;
 
-    std::cout << "Info: USB clear interface: 0x"<< std::hex << std::setw(2) << std::setfill('0') <<\
-                 interface << " feature: 0x" << std::hex << std::setw(4) << std::setfill('0') << \
-                 feature << " Done\n";
+    std::cout << "Info: USB clear interface: 0x"<< std::hex << std::setw(2) << std::setfill('0')
+              << interface << " feature: 0x" << std::hex << std::setw(4) << std::setfill('0')
+              << feature << " Done\n";
 }
 
 
@@ -807,9 +807,9 @@ void USBTestCli::SetInterfaceFeature(const cxxopts::ParseResult &result)
     if (this->usb_device->InterfaceSetFeature(interface, feature))
         return;
 
-    std::cout << "Info: USB set interface: 0x"<< std::hex << std::setw(2) << std::setfill('0') <<\
-                 interface << " feature: 0x" << std::hex << std::setw(4) << std::setfill('0') << \
-                 feature << " Done\n";
+    std::cout << "Info: USB set interface: 0x"<< std::hex << std::setw(2) << std::setfill('0')
+              << interface << " feature: 0x" << std::hex << std::setw(4) << std::setfill('0')
+              << feature << " Done\n";
 }
 
 
@@ -842,9 +842,9 @@ void USBTestCli::SetInterfaceAltSetting(const cxxopts::ParseResult &result)
     if (this->usb_device->InterfaceSetAltSetting(interface, altsetting))
         return;
 
-    std::cout << "Info: USB set interface: 0x"<< std::hex << std::setw(4) << std::setfill('0') <<\
-                 interface << " alternate setting: 0x" << std::hex << std::setw(4) << \
-                 std::setfill('0') << static_cast<uint32_t>(altsetting) << " Done\n";
+    std::cout << "Info: USB set interface: 0x"<< std::hex << std::setw(4) << std::setfill('0')
+              << interface << " alternate setting: 0x" << std::hex << std::setw(4)
+              << std::setfill('0') << static_cast<uint32_t>(altsetting) << " Done\n";
 }
 
 
@@ -871,9 +871,9 @@ void USBTestCli::GetInterfaceAltSetting(const cxxopts::ParseResult &result)
     if (this->usb_device->InterfaceGetAltSetting(interface, altsetting))
         return;
 
-    std::cout << "Info: USB interface: 0x"<< std::hex << std::setw(4) << std::setfill('0') <<\
-                 interface << " alternate setting: 0x" << std::hex << std::setw(4) << \
-                 std::setfill('0') << static_cast<uint32_t>(altsetting) << "\n";
+    std::cout << "Info: USB interface: 0x"<< std::hex << std::setw(4) << std::setfill('0')
+              << interface << " alternate setting: 0x" << std::hex << std::setw(4)
+              << std::setfill('0') << static_cast<uint32_t>(altsetting) << "\n";
 }
 
 
@@ -900,9 +900,9 @@ void USBTestCli::GetEndpointStatus(const cxxopts::ParseResult &result)
     if (this->usb_device->EndpointGetStatus(ep, status))
         return;
 
-    std::cout << "Info: USB endpoint: 0x" << std::hex << std::setw(4) << std::setfill('0') << \
-                 ep << " status: 0x" << std::hex << std::setw(4) << std::setfill('0') << \
-                 status << "\n";
+    std::cout << "Info: USB endpoint: 0x" << std::hex << std::setw(4) << std::setfill('0')
+              << ep << " status: 0x" << std::hex << std::setw(4) << std::setfill('0')
+              << status << "\n";
 }
 
 
@@ -935,9 +935,9 @@ void USBTestCli::ClearEndpointFeature(const cxxopts::ParseResult &result)
     if (this->usb_device->EndpointClearFeature(endpoint, feature))
         return;
 
-    std::cout << "Info: USB clear endpoint: 0x"<< std::hex << std::setw(4) << std::setfill('0') <<\
-                 endpoint << " feature: 0x" << std::hex << std::setw(4) << std::setfill('0') << \
-                 feature << " Done\n";
+    std::cout << "Info: USB clear endpoint: 0x"<< std::hex << std::setw(4) << std::setfill('0')
+              << endpoint << " feature: 0x" << std::hex << std::setw(4) << std::setfill('0')
+              << feature << " Done\n";
 }
 
 
@@ -970,9 +970,9 @@ void USBTestCli::SetEndpointFeature(const cxxopts::ParseResult &result)
     if (this->usb_device->EndpointSetFeature(endpoint, feature))
         return;
 
-    std::cout << "Info: USB set endpoint: 0x"<< std::hex << std::setw(4) << std::setfill('0') <<\
-                 endpoint << " feature: 0x" << std::hex << std::setw(4) << std::setfill('0') << \
-                 feature << " Done\n";
+    std::cout << "Info: USB set endpoint: 0x"<< std::hex << std::setw(4) << std::setfill('0')
+              << endpoint << " feature: 0x" << std::hex << std::setw(4) << std::setfill('0')
+              << feature << " Done\n";
 }
 
 
@@ -999,9 +999,9 @@ void USBTestCli::SyncEndpointFrame(const cxxopts::ParseResult &result)
     if (this->usb_device->EndpointSynchFrame(endpoint, frame))
         return;
 
-    std::cout << "Info: USB sync endpoint: 0x"<< std::hex << std::setw(4) << std::setfill('0') <<\
-                 endpoint << " frame: 0x" << std::hex << std::setw(4) << std::setfill('0') << \
-                 frame << " Done\n";
+    std::cout << "Info: USB sync endpoint: 0x"<< std::hex << std::setw(4) << std::setfill('0')
+              << endpoint << " frame: 0x" << std::hex << std::setw(4) << std::setfill('0')
+              << frame << " Done\n";
 }
 
 
@@ -1279,8 +1279,8 @@ void USBTestCli::ControlTransfer(const cxxopts::ParseResult &result)
                                                         data, static_cast<uint16_t>(size));
     if (result_l < 0)
     {
-        std::cout << "Error: USB control transfer failed, " << \
-                     this->usb_device->GetStrError(static_cast<libusb_error>(result_l)) << "\n";
+        std::cout << "Error: USB control transfer failed, "
+                  << this->usb_device->GetStrError(result_l) << "\n";
         return;
     }
 
@@ -1289,8 +1289,8 @@ void USBTestCli::ControlTransfer(const cxxopts::ParseResult &result)
     {
         size = static_cast<uint16_t>(result_l);
         std::cout << std::hex << std::setfill ('0');
-        std::cout << "Warning : The actual size of transfered data is :0x" << std::setw(4) <<\
-                     size << "\n";
+        std::cout << "Warning : The actual size of transfered data is :0x" << std::setw(4)
+                  << size << "\n";
     }
 
 
@@ -1399,8 +1399,8 @@ void USBTestCli::BulkTransfer(const cxxopts::ParseResult &result)
     int result_l = this->usb_device->USBBulkTransfer(ep, data, static_cast<int>(size));
     if (result_l < 0)
     {
-        std::cout << "Error: USB Bulk transfer failed, " << \
-                     this->usb_device->GetStrError(static_cast<libusb_error>(result_l)) << "\n";
+        std::cout << "Error: USB Bulk transfer failed, "
+                  << this->usb_device->GetStrError(result_l) << "\n";
         return;
     }
 
@@ -1409,8 +1409,8 @@ void USBTestCli::BulkTransfer(const cxxopts::ParseResult &result)
     {
         size = static_cast<uint16_t>(result_l);
         std::cout << std::hex << std::setfill ('0');
-        std::cout << "Warning : The actual size of transfered data is :0x" << std::setw(4) <<\
-                     size << "\n";
+        std::cout << "Warning : The actual size of transfered data is :0x" << std::setw(4)
+                  << size << "\n";
     }
 
 
@@ -1517,8 +1517,8 @@ void USBTestCli::InterruptTransfer(const cxxopts::ParseResult &result)
     int result_l = this->usb_device->USBInterruptTransfer(ep, data, static_cast<int>(size));
     if (result_l < 0)
     {
-        std::cout << "Error: USB interrupt transfer failed, " << \
-                     this->usb_device->GetStrError(static_cast<libusb_error>(result_l)) << "\n";
+        std::cout << "Error: USB interrupt transfer failed, "
+                  << this->usb_device->GetStrError(result_l) << "\n";
         return;
     }
 
@@ -1527,8 +1527,8 @@ void USBTestCli::InterruptTransfer(const cxxopts::ParseResult &result)
     {
         size = static_cast<uint16_t>(result_l);
         std::cout << std::hex << std::setfill ('0');
-        std::cout << "Warning : The actual size of transfered data is :0x" << std::setw(4) <<\
-                     size << "\n";
+        std::cout << "Warning : The actual size of transfered data is :0x" << std::setw(4)
+                  << size << "\n";
     }
 
 

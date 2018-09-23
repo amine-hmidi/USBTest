@@ -34,7 +34,14 @@
 /* C Includes */
 
 /* User Includes */
-#include <libusb-1.0/libusb.h>
+
+
+/* Forward declarations of libusb types */
+struct libusb_device;
+struct libusb_device_handle;
+struct libusb_device_descriptor;
+struct libusb_config_descriptor;
+struct libusb_context;
 
 
 class StandardUSB
@@ -123,7 +130,7 @@ public:
     /* ****************************************************************************************** */
     /* *********************************** Messaging Functions ********************************** */
     /* ****************************************************************************************** */
-    static std::string GetStrError(libusb_error error);
+    static std::string GetStrError(int error);
     virtual void DisplayDescriptorsSet();
     void DisplayData8(uint8_t *data, size_t size);
     void DisplayData16(uint8_t *data, size_t size);

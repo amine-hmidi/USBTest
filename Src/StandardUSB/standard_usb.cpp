@@ -32,6 +32,7 @@
 
 /* User Includes */
 #include "standard_usb.h"
+#include <libusb-1.0/libusb.h>
 
 
 unsigned int StandardUSB::ctr_time_out = 1000;
@@ -87,7 +88,7 @@ StandardUSB::~StandardUSB()
  * @param error libusb_error
  * @return libusb_error as a std::string
  */
-std::string StandardUSB::GetStrError(libusb_error error)
+std::string StandardUSB::GetStrError(int error)
 {
     std::string error_msg;
 
@@ -178,37 +179,37 @@ void StandardUSB::DisplayDeviceDescriptor()
 {
     std::cout << std::hex << std::setfill ('0');
     std::cout << "Device Descriptor:\n";
-    std::cout << "\tbLength            : 0x" << std::setw(2) <<\
-                 static_cast<uint32_t>(usb_device_descriptor->bLength)          << "\n";
-    std::cout << "\tbDescriptorType    : 0x" << std::setw(2) <<\
-                 static_cast<uint32_t>(usb_device_descriptor->bDescriptorType)  << "\n";
-    std::cout << "\tbcdUSB             : 0x" << std::setw(4) <<\
-                 static_cast<uint32_t>(usb_device_descriptor->bcdUSB)           << "\n";
-    std::cout << "\tbDeviceClass       : 0x" << std::setw(2) <<\
-                 static_cast<uint32_t>(usb_device_descriptor->bDeviceClass)     << "\n";
-    std::cout << "\tbDeviceSubClass    : 0x" << std::setw(2) <<\
-                 static_cast<uint32_t>(usb_device_descriptor->bDeviceSubClass)  << "\n";
-    std::cout << "\tbDeviceProtocol    : 0x" << std::setw(2) <<\
-                 static_cast<uint32_t>(usb_device_descriptor->bDeviceProtocol)  << "\n";
-    std::cout << "\tbMaxPacketSize     : 0x" << std::setw(2) <<\
-                 static_cast<uint32_t>(usb_device_descriptor->bMaxPacketSize0)  << "\n";
-    std::cout << "\tidVendor           : 0x" << std::setw(4) <<\
-                 static_cast<uint32_t>(usb_device_descriptor->idVendor)         << "\n";
-    std::cout << "\tidProduct          : 0x" << std::setw(4) <<\
-                 static_cast<uint32_t>(usb_device_descriptor->idProduct)        << "\n";
-    std::cout << "\tbcdDevice          : 0x" << std::setw(4) <<\
-                 static_cast<uint32_t>(usb_device_descriptor->bcdDevice)        << "\n";
-    std::cout << "\tiManufacturer      : 0x" << std::setw(2) <<\
-                 static_cast<uint32_t>(usb_device_descriptor->iManufacturer) << " (" << \
-                 GetStringDescriptor(usb_device_descriptor->iManufacturer, 0x409) << ")\n";
-    std::cout << "\tiProduct           : 0x" << std::setw(2) <<\
-                 static_cast<uint32_t>(usb_device_descriptor->iProduct) << " (" <<
-                 GetStringDescriptor(usb_device_descriptor->iProduct, 0x409) << ")\n";
-    std::cout << "\tiSerialNumber      : 0x" << std::setw(2) <<\
-                 static_cast<uint32_t>(usb_device_descriptor->iSerialNumber) << " (" << \
-                 GetStringDescriptor(usb_device_descriptor->iSerialNumber, 0x409) << ")\n";
-    std::cout << "\tbNumConfigurations : 0x" << std::setw(2) <<\
-                 static_cast<uint32_t>(usb_device_descriptor->bNumConfigurations) << "\n";
+    std::cout << "\tbLength            : 0x" << std::setw(2)
+              << static_cast<uint32_t>(usb_device_descriptor->bLength)          << "\n";
+    std::cout << "\tbDescriptorType    : 0x" << std::setw(2)
+              << static_cast<uint32_t>(usb_device_descriptor->bDescriptorType)  << "\n";
+    std::cout << "\tbcdUSB             : 0x" << std::setw(4)
+              << static_cast<uint32_t>(usb_device_descriptor->bcdUSB)           << "\n";
+    std::cout << "\tbDeviceClass       : 0x" << std::setw(2)
+              << static_cast<uint32_t>(usb_device_descriptor->bDeviceClass)     << "\n";
+    std::cout << "\tbDeviceSubClass    : 0x" << std::setw(2)
+              << static_cast<uint32_t>(usb_device_descriptor->bDeviceSubClass)  << "\n";
+    std::cout << "\tbDeviceProtocol    : 0x" << std::setw(2)
+              << static_cast<uint32_t>(usb_device_descriptor->bDeviceProtocol)  << "\n";
+    std::cout << "\tbMaxPacketSize     : 0x" << std::setw(2)
+              << static_cast<uint32_t>(usb_device_descriptor->bMaxPacketSize0)  << "\n";
+    std::cout << "\tidVendor           : 0x" << std::setw(4)
+              << static_cast<uint32_t>(usb_device_descriptor->idVendor)         << "\n";
+    std::cout << "\tidProduct          : 0x" << std::setw(4)
+              << static_cast<uint32_t>(usb_device_descriptor->idProduct)        << "\n";
+    std::cout << "\tbcdDevice          : 0x" << std::setw(4)
+              << static_cast<uint32_t>(usb_device_descriptor->bcdDevice)        << "\n";
+    std::cout << "\tiManufacturer      : 0x" << std::setw(2)
+              << static_cast<uint32_t>(usb_device_descriptor->iManufacturer) << " ("
+              << GetStringDescriptor(usb_device_descriptor->iManufacturer, 0x409) << ")\n";
+    std::cout << "\tiProduct           : 0x" << std::setw(2)
+              << static_cast<uint32_t>(usb_device_descriptor->iProduct) << " ("
+              << GetStringDescriptor(usb_device_descriptor->iProduct, 0x409) << ")\n";
+    std::cout << "\tiSerialNumber      : 0x" << std::setw(2)
+              << static_cast<uint32_t>(usb_device_descriptor->iSerialNumber) << " ("
+              << GetStringDescriptor(usb_device_descriptor->iSerialNumber, 0x409) << ")\n";
+    std::cout << "\tbNumConfigurations : 0x" << std::setw(2)
+              << static_cast<uint32_t>(usb_device_descriptor->bNumConfigurations) << "\n";
 }
 
 
@@ -224,23 +225,23 @@ void StandardUSB::DisplayConfigurationDescriptor(bool display_extra)
 {
     std::cout << std::hex << std::setfill ('0');
     std::cout << "Configuration Descriptor:\n";
-    std::cout << "\tbLength             : 0x" << std::setw(2) << \
-                 static_cast<uint32_t>(usb_config_descriptor->bLength)             << "\n";
-    std::cout << "\tbDescriptorType     : 0x" << std::setw(2) << \
-                 static_cast<uint32_t>(usb_config_descriptor->bDescriptorType)     << "\n";
-    std::cout << "\twTotalLength        : 0x" << std::setw(4) << \
-                 static_cast<uint32_t>(usb_config_descriptor->wTotalLength)        << "\n";
-    std::cout << "\tbNumInterfaces      : 0x" << std::setw(2) << \
-                 static_cast<uint32_t>(usb_config_descriptor->bNumInterfaces)      << "\n";
-    std::cout << "\tbConfigurationValue : 0x" << std::setw(2) << \
-                 static_cast<uint32_t>(usb_config_descriptor->bConfigurationValue) << "\n";
-    std::cout << "\tiConfiguration      : 0x" << std::setw(2) << \
-                 static_cast<uint32_t>(usb_config_descriptor->iConfiguration) << " (" << \
-                 GetStringDescriptor(usb_config_descriptor->iConfiguration, 0x0409) << ")\n";
-    std::cout << "\tbmAttributes        : 0x" << std::setw(2) << \
-                 static_cast<uint32_t>(usb_config_descriptor->bmAttributes)        << "\n";
-    std::cout << "\tbMaxPower           : 0x" << std::setw(2) << \
-                 static_cast<uint32_t>(usb_config_descriptor->MaxPower)            << "\n";
+    std::cout << "\tbLength             : 0x" << std::setw(2)
+              << static_cast<uint32_t>(usb_config_descriptor->bLength)             << "\n";
+    std::cout << "\tbDescriptorType     : 0x" << std::setw(2)
+              << static_cast<uint32_t>(usb_config_descriptor->bDescriptorType)     << "\n";
+    std::cout << "\twTotalLength        : 0x" << std::setw(4)
+              << static_cast<uint32_t>(usb_config_descriptor->wTotalLength)        << "\n";
+    std::cout << "\tbNumInterfaces      : 0x" << std::setw(2)
+              << static_cast<uint32_t>(usb_config_descriptor->bNumInterfaces)      << "\n";
+    std::cout << "\tbConfigurationValue : 0x" << std::setw(2)
+              << static_cast<uint32_t>(usb_config_descriptor->bConfigurationValue) << "\n";
+    std::cout << "\tiConfiguration      : 0x" << std::setw(2)
+              << static_cast<uint32_t>(usb_config_descriptor->iConfiguration) << " ("
+              << GetStringDescriptor(usb_config_descriptor->iConfiguration, 0x0409) << ")\n";
+    std::cout << "\tbmAttributes        : 0x" << std::setw(2)
+              << static_cast<uint32_t>(usb_config_descriptor->bmAttributes)        << "\n";
+    std::cout << "\tbMaxPower           : 0x" << std::setw(2)
+              << static_cast<uint32_t>(usb_config_descriptor->MaxPower)            << "\n";
 
     for (uint8_t i = 0; i < usb_config_descriptor->bNumInterfaces; i++)
         DisplayInterfaceDescriptor(usb_config_descriptor->interface[i], display_extra);
@@ -249,8 +250,8 @@ void StandardUSB::DisplayConfigurationDescriptor(bool display_extra)
     {
         std::cout << "Configuration Descriptor Extra Bytes:\n";
         for (int i = 0; i < usb_config_descriptor->extra_length; i++)
-            std::cout << "\tByte nbr 0x" << std::setw(2) << static_cast<uint32_t>(i) << "   :0x" <<\
-                         std::setw(2) << static_cast<uint32_t>(*(usb_config_descriptor->extra + i))\
+            std::cout << "\tByte nbr 0x" << std::setw(2) << static_cast<uint32_t>(i) << "   :0x"
+                      << std::setw(2) << static_cast<uint32_t>(*(usb_config_descriptor->extra + i))
                       << "\n";
     }
 }
@@ -289,25 +290,25 @@ void StandardUSB::DisplayInterfaceAltDescriptor(const struct libusb_interface_de
 {
     std::cout << std::hex << std::setfill ('0');
     std::cout << "\t\tAlternate Setting Descriptor:\n";
-    std::cout << "\t\t\tbLength            : 0x" << std::setw(2) << \
-                 static_cast<uint32_t>(altset.bLength)             << "\n";
-    std::cout << "\t\t\tbDescriptorType    : 0x" << std::setw(2) << \
-                 static_cast<uint32_t>(altset.bDescriptorType)     << "\n";
-    std::cout << "\t\t\tbInterfaceNumber   : 0x" << std::setw(4) << \
-                 static_cast<uint32_t>(altset.bInterfaceNumber)    << "\n";
-    std::cout << "\t\t\tbAlternateSetting  : 0x" << std::setw(2) << \
-                 static_cast<uint32_t>(altset.bAlternateSetting)   << "\n";
-    std::cout << "\t\t\tbNumEndpoints      : 0x" << std::setw(2) << \
-                 static_cast<uint32_t>(altset.bNumEndpoints)       << "\n";
-    std::cout << "\t\t\tbInterfaceClass    : 0x" << std::setw(2) << \
-                 static_cast<uint32_t>(altset.bInterfaceClass)     << "\n";
-    std::cout << "\t\t\tbInterfaceSubClass : 0x" << std::setw(2) << \
-                 static_cast<uint32_t>(altset.bInterfaceSubClass)  << "\n";
-    std::cout << "\t\t\tbInterfaceProtocol : 0x" << std::setw(2) << \
-                 static_cast<uint32_t>(altset.bInterfaceProtocol)  << "\n";
-    std::cout << "\t\t\tiInterface         : 0x" << std::setw(2) << \
-                 static_cast<uint32_t>(altset.iInterface) << " (" << \
-                 GetStringDescriptor(altset.iInterface, 0x0409) << ")\n";
+    std::cout << "\t\t\tbLength            : 0x" << std::setw(2)
+              << static_cast<uint32_t>(altset.bLength)             << "\n";
+    std::cout << "\t\t\tbDescriptorType    : 0x" << std::setw(2)
+              << static_cast<uint32_t>(altset.bDescriptorType)     << "\n";
+    std::cout << "\t\t\tbInterfaceNumber   : 0x" << std::setw(4)
+              << static_cast<uint32_t>(altset.bInterfaceNumber)    << "\n";
+    std::cout << "\t\t\tbAlternateSetting  : 0x" << std::setw(2)
+              << static_cast<uint32_t>(altset.bAlternateSetting)   << "\n";
+    std::cout << "\t\t\tbNumEndpoints      : 0x" << std::setw(2)
+              << static_cast<uint32_t>(altset.bNumEndpoints)       << "\n";
+    std::cout << "\t\t\tbInterfaceClass    : 0x" << std::setw(2)
+              << static_cast<uint32_t>(altset.bInterfaceClass)     << "\n";
+    std::cout << "\t\t\tbInterfaceSubClass : 0x" << std::setw(2)
+              << static_cast<uint32_t>(altset.bInterfaceSubClass)  << "\n";
+    std::cout << "\t\t\tbInterfaceProtocol : 0x" << std::setw(2)
+              << static_cast<uint32_t>(altset.bInterfaceProtocol)  << "\n";
+    std::cout << "\t\t\tiInterface         : 0x" << std::setw(2)
+              << static_cast<uint32_t>(altset.iInterface) << " ("
+              << GetStringDescriptor(altset.iInterface, 0x0409) << ")\n";
 
     for (int i = 0; i < altset.bNumEndpoints; i++)
         DisplayEndpointDescriptor(altset.endpoint[i], display_extra);
@@ -316,8 +317,8 @@ void StandardUSB::DisplayInterfaceAltDescriptor(const struct libusb_interface_de
     {
         std::cout << "\t\tAlternate Setting Descriptor Extra Bytes:\n";
         for (int i = 0; i < altset.extra_length; i++)
-            std::cout << "\t\t\tByte nbr 0x" << std::setw(2) << static_cast<uint32_t>(i) << \
-                         "      :0x" << std::setw(2) << static_cast<uint32_t>(*(altset.extra + i)) \
+            std::cout << "\t\t\tByte nbr 0x" << std::setw(2) << static_cast<uint32_t>(i)
+                      << "      :0x" << std::setw(2) << static_cast<uint32_t>(*(altset.extra + i))
                       << "\n";
     }
 }
@@ -336,27 +337,27 @@ void StandardUSB::DisplayEndpointDescriptor(const struct libusb_endpoint_descrip
 {
     std::cout << std::hex << std::setfill ('0');
     std::cout << "\t\t\tEndpoint Descriptor:\n";
-    std::cout << "\t\t\t\tbLength            : 0x" << std::setw(2) << \
-                 static_cast<uint32_t>(endpoint.bLength)             << "\n";
-    std::cout << "\t\t\t\tbDescriptorType    : 0x" << std::setw(2) << \
-                 static_cast<uint32_t>(endpoint.bDescriptorType)     << "\n";
-    std::cout << "\t\t\t\tbEndpointAddress   : 0x" << std::setw(4) << \
-                 static_cast<uint32_t>(endpoint.bEndpointAddress)    << "\n";
-    std::cout << "\t\t\t\tbmAttributes       : 0x" << std::setw(2) << \
-                 static_cast<uint32_t>(endpoint.bmAttributes)        << "\n";
-    std::cout << "\t\t\t\tbInterval          : 0x" << std::setw(2) << \
-                 static_cast<uint32_t>(endpoint.wMaxPacketSize)      << "\n";
-    std::cout << "\t\t\t\tbInterfaceClass    : 0x" << std::setw(2) << \
-                 static_cast<uint32_t>(endpoint.bInterval)           << "\n";
+    std::cout << "\t\t\t\tbLength            : 0x" << std::setw(2)
+              << static_cast<uint32_t>(endpoint.bLength)             << "\n";
+    std::cout << "\t\t\t\tbDescriptorType    : 0x" << std::setw(2)
+              << static_cast<uint32_t>(endpoint.bDescriptorType)     << "\n";
+    std::cout << "\t\t\t\tbEndpointAddress   : 0x" << std::setw(4)
+              << static_cast<uint32_t>(endpoint.bEndpointAddress)    << "\n";
+    std::cout << "\t\t\t\tbmAttributes       : 0x" << std::setw(2)
+              << static_cast<uint32_t>(endpoint.bmAttributes)        << "\n";
+    std::cout << "\t\t\t\tbInterval          : 0x" << std::setw(2)
+              << static_cast<uint32_t>(endpoint.wMaxPacketSize)      << "\n";
+    std::cout << "\t\t\t\tbInterfaceClass    : 0x" << std::setw(2)
+              << static_cast<uint32_t>(endpoint.bInterval)           << "\n";
 
     if(display_extra && endpoint.extra_length)
     {
         std::cout << "\t\t\tEndpoint Descriptor Extra Bytes:\n";
         for (int i = 0; i < endpoint.extra_length; i++)
         {
-            std::cout << "\t\t\t\t\tByte nbr 0x" << std::setw(2) << static_cast<uint32_t>(i) << \
-                         "   :0x"<< std::setw(2) << static_cast<uint32_t>(*(endpoint.extra + i)) <<\
-                         "\n";
+            std::cout << "\t\t\t\t\tByte nbr 0x" << std::setw(2) << static_cast<uint32_t>(i)
+                      << "   :0x"<< std::setw(2) << static_cast<uint32_t>(*(endpoint.extra + i))
+                      << "\n";
         }
     }
 }
@@ -579,8 +580,8 @@ void StandardUSB::ListUSBDevices()
     ssize_t count = libusb_get_device_list(nullptr, &list);
     if (count < 0)
     {
-        std::cout << "Error:  Unable to list USB devices currently attached to the system, " << \
-                     GetStrError(static_cast<libusb_error>(count)) << "\n";
+        std::cout << "Error:  Unable to list USB devices currently attached to the system, "
+                  << GetStrError(static_cast<int>(count)) << "\n";
         return ;
     }
 
@@ -592,7 +593,7 @@ void StandardUSB::ListUSBDevices()
         if (libusb_get_device_descriptor(list[i], &dev_desc))
             continue;
 
-        std::cout << "Info:\tidVendor: 0x" << std::setw(4) << dev_desc.idVendor << " idProduct: 0x"\
+        std::cout << "Info:\tidVendor: 0x" << std::setw(4) << dev_desc.idVendor << " idProduct: 0x"
                   << std::setw(4) << dev_desc.idProduct ;
 
         /* open device */
@@ -602,19 +603,19 @@ void StandardUSB::ListUSBDevices()
 
         /* get the device string descriptor */
         uint8_t data[255] = {0x00};
-        uint8_t bmRequestType = (LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_STANDARD | \
+        uint8_t bmRequestType = (LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_STANDARD |
                                  LIBUSB_RECIPIENT_DEVICE);
-        uint16_t wValue = static_cast<uint16_t>((static_cast<uint32_t>(LIBUSB_DT_STRING) << 8) | \
+        uint16_t wValue = static_cast<uint16_t>((static_cast<uint32_t>(LIBUSB_DT_STRING) << 8) |
                                                 dev_desc.iProduct);
 
         int result = libusb_control_transfer(handle,\
-                                             /* bmRequestType */     bmRequestType,
-                                             /* bRequest      */     LIBUSB_REQUEST_GET_DESCRIPTOR,
-                                             /* wValue        */     wValue,
-                                             /* wIndex        */     0x0409,
-                                             /* data          */     data,
-                                             /* length        */     255,
-                                             /* timeout       */     StandardUSB::ctr_time_out);
+                     /* bmRequestType */     bmRequestType,
+                     /* bRequest      */     LIBUSB_REQUEST_GET_DESCRIPTOR,
+                     /* wValue        */     wValue,
+                     /* wIndex        */     0x0409,
+                     /* data          */     data,
+                     /* length        */     255,
+                     /* timeout       */     StandardUSB::ctr_time_out);
 
         /* close the device */
         libusb_close(handle);
@@ -777,8 +778,8 @@ libusb_device *StandardUSB::GetUSBDevice()
     ssize_t count = libusb_get_device_list(context, &list);
     if (count < 0)
     {
-        std::cout << "Error:  Unable to list USB devices currently attached to the system, " <<\
-                     GetStrError(static_cast<libusb_error>(count)) << "\n";
+        std::cout << "Error:  Unable to list USB devices currently attached to the system, "
+                  << GetStrError(static_cast<int>(count)) << "\n";
         return nullptr;
     }
 
@@ -801,9 +802,9 @@ libusb_device *StandardUSB::GetUSBDevice()
 
     if (!target)
     {
-        std::cout << std::hex << std::setw(4) << std::setfill('0') << "Error:  Unable to find USB" \
-                                                                      " device with idVendor: 0x" << this->vendor_id << " & idProduct: 0x" << \
-                     this->product_id << "\n";
+        std::cout << std::hex << std::setw(4) << std::setfill('0')
+                  << "Error:  Unable to find USB device with idVendor: 0x" << this->vendor_id
+                  << " & idProduct: 0x" << this->product_id << "\n";
 
         return nullptr;
     }
@@ -825,8 +826,7 @@ libusb_device_handle *StandardUSB::GetUSBHandle(libusb_device *device)
     int result = libusb_open(device, &handle);
     if(result < 0)
     {
-        std::cout << "Error:  Unable to open USB device, " << \
-                     GetStrError(static_cast<libusb_error>(result)) << "\n";
+        std::cout << "Error:  Unable to open USB device, " << GetStrError(result) << "\n";
         return nullptr;
     }
 
@@ -953,8 +953,8 @@ int StandardUSB::USBClaimInterface(int interface)
         {
             std::cout << "Error: Unable to detach kernel driver from interface: " << interface
                       << "\n";
-            std::cout << "Error: Failed to claim interface: " << interface << \
-                         " ," << GetStrError(static_cast<libusb_error>(result)) <<"\n";
+            std::cout << "Error: Failed to claim interface: " << interface << " ,"
+                      << GetStrError(result) << "\n";
             return result;
         }
     }
@@ -963,8 +963,8 @@ int StandardUSB::USBClaimInterface(int interface)
     int result = libusb_claim_interface(this->usb_handle, interface);
     if(result < 0)
     {
-        std::cout<< "Error: Unable to claim interface: " << interface <<\
-                    " ," << GetStrError(static_cast<libusb_error>(result)) <<"\n";
+        std::cout << "Error: Unable to claim interface: " << interface << " ,"
+                  << GetStrError(result) << "\n";
         return result;
     }
 

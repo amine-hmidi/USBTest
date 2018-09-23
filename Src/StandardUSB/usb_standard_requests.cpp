@@ -32,6 +32,7 @@
 
 /* User Includes */
 #include "standard_usb.h"
+#include <libusb-1.0/libusb.h>
 
 
 /* ********************************************************************************************** */
@@ -61,15 +62,14 @@ int StandardUSB::DeviceGetStatus(uint16_t &status)
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to request USB device status, " << \
-                     GetStrError(static_cast<libusb_error>(result)) << "\n";
+        std::cout << "Error:  Unable to request USB device status, " << GetStrError(result) << "\n";
         return result;
     }
 
     if(result != 2)
     {
-        std::cout << "Error:  USB get device status error, Unexpected nbr of byte transfered"\
-                  << " (0x" << std::hex << std::setw(4) << std::setfill('0') \
+        std::cout << "Error:  USB get device status error, Unexpected nbr of byte transfered"
+                  << " (0x" << std::hex << std::setw(4) << std::setfill('0')
                   << static_cast<uint32_t>(result) << " , expected 0x02)\n";
         return -99;
     }
@@ -102,17 +102,17 @@ int StandardUSB::DeviceClearFeature(uint16_t feature)
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to Clear USB device Feature: 0x" << std::hex   \
-                  << std::setw(4) << std::setfill('0') <<  static_cast<uint32_t>(feature) \
-                  << " ," << GetStrError(static_cast<libusb_error>(result)) << "\n";
+        std::cout << "Error:  Unable to Clear USB device Feature: 0x" << std::hex
+                  << std::setw(4) << std::setfill('0') <<  static_cast<uint32_t>(feature)
+                  << " ," << GetStrError(result) << "\n";
 
         return result;
     }
 
     if(result)
     {
-        std::cout << "Error:  USB clear device feature error, Unexpected nbr of byte transfered"\
-                  << " (0x" << std::hex << std::setw(4) << std::setfill('0') \
+        std::cout << "Error:  USB clear device feature error, Unexpected nbr of byte transfered"
+                  << " (0x" << std::hex << std::setw(4) << std::setfill('0')
                   << static_cast<uint32_t>(result) << " , expected 0x00)\n";
         return -99;
     }
@@ -142,17 +142,17 @@ int StandardUSB::DeviceSetFeature(uint16_t feature)
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to Set USB device Feature: 0x" << std::hex  \
-                  <<  std::setw(4) << std::setfill('0') << static_cast<uint32_t>(feature) \
-                  << " ," << GetStrError(static_cast<libusb_error>(result)) << "\n";
+        std::cout << "Error:  Unable to Set USB device Feature: 0x" << std::hex
+                  <<  std::setw(4) << std::setfill('0') << static_cast<uint32_t>(feature)
+                  << " ," << GetStrError(result) << "\n";
 
         return result;
     }
 
     if(result)
     {
-        std::cout << "Error:  USB set device feature error, Unexpected nbr of byte transfered"\
-                  << " (0x" << std::hex << std::setw(4) << std::setfill('0') \
+        std::cout << "Error:  USB set device feature error, Unexpected nbr of byte transfered"
+                  << " (0x" << std::hex << std::setw(4) << std::setfill('0')
                   << static_cast<uint32_t>(result) << " , expected 0x00)\n";
         return -99;
     }
@@ -182,17 +182,17 @@ int StandardUSB::DeviceSetAddress(uint16_t address)
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to Set USB device Address: 0x"  << std::hex \
-                  << std::setw(4) << std::setfill('0') << static_cast<uint32_t>(address)\
-                  << " ," << GetStrError(static_cast<libusb_error>(result)) << "\n";
+        std::cout << "Error:  Unable to Set USB device Address: 0x"  << std::hex
+                  << std::setw(4) << std::setfill('0') << static_cast<uint32_t>(address)
+                  << " ," << GetStrError(result) << "\n";
 
         return result;
     }
 
     if(result)
     {
-        std::cout << "Error:  USB set device address error, Unexpected nbr of byte transfered"\
-                  << " (0x" << std::hex << std::setw(4) << std::setfill('0') \
+        std::cout << "Error:  USB set device address error, Unexpected nbr of byte transfered"
+                  << " (0x" << std::hex << std::setw(4) << std::setfill('0')
                   << static_cast<uint32_t>(result) << " , expected 0x00)\n";
         return -99;
     }
@@ -227,11 +227,10 @@ int StandardUSB::DeviceGetDescriptor(uint8_t type, uint8_t index, uint16_t langu
                  /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
-        std::cout << "Error:  Unable to Get USB Descriptor with type: 0x"  << std::hex \
-                  << std::setw(4) << std::setfill('0') << static_cast<uint32_t>(type) \
-                  << " ,index: 0x" << static_cast<uint32_t>(index) <<" ,language: 0x" \
-                  << static_cast<uint32_t>(language) <<  " ," \
-                  << GetStrError(static_cast<libusb_error>(result)) << "\n";
+        std::cout << "Error:  Unable to Get USB Descriptor with type: 0x"  << std::hex
+                  << std::setw(4) << std::setfill('0') << static_cast<uint32_t>(type)
+                  << " ,index: 0x" << static_cast<uint32_t>(index) <<" ,language: 0x"
+                  << static_cast<uint32_t>(language) <<  " ," << GetStrError(result) << "\n";
 
     return result;
 }
@@ -263,11 +262,10 @@ int StandardUSB::DeviceSetDescriptor(uint8_t type, uint8_t index, uint16_t langu
                  /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
-        std::cout << "Error:  Unable to Set USB Descriptor with type: 0x"  << std::hex \
-                  << std::setw(4) << std::setfill('0') << static_cast<uint32_t>(type) \
-                  << " ,index: 0x" << static_cast<uint32_t>(index) <<" ,language: 0x" \
-                  << static_cast<uint32_t>(language) << " ," \
-                  << GetStrError(static_cast<libusb_error>(result)) << "\n";
+        std::cout << "Error:  Unable to Set USB Descriptor with type: 0x"  << std::hex
+                  << std::setw(4) << std::setfill('0') << static_cast<uint32_t>(type)
+                  << " ,index: 0x" << static_cast<uint32_t>(index) <<" ,language: 0x"
+                  << static_cast<uint32_t>(language) << " ," << GetStrError(result) << "\n";
 
     return result;
 }
@@ -297,15 +295,15 @@ int StandardUSB::DeviceGetCongiguration(uint8_t &data)
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to Get USB Configuration ,"  << std::hex << std::setw(4) \
-                  << std::setfill('0') << GetStrError(static_cast<libusb_error>(result)) << "\n";
+        std::cout << "Error:  Unable to Get USB Configuration ,"  << std::hex << std::setw(4)
+                  << std::setfill('0') << GetStrError(result) << "\n";
         return  result;
     }
 
     if(result != 1)
     {
-        std::cout << "Error:  USB get device configuration error, Unexpected nbr of byte "\
-                  << " transfered (0x" << std::hex << std::setw(4) << std::setfill('0') \
+        std::cout << "Error:  USB get device configuration error, Unexpected nbr of byte "
+                  << " transfered (0x" << std::hex << std::setw(4) << std::setfill('0')
                   << static_cast<uint32_t>(result) << " , expected 0x01)\n";
         return -99;
     }
@@ -337,17 +335,17 @@ int StandardUSB::DeviceSetCongiguration(uint16_t configuration)
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to Set USB Configuration 0x"  << std::hex << std::setw(4) \
-                  << std::setfill('0') << static_cast<uint32_t>(configuration) << " ," \
-                  << GetStrError(static_cast<libusb_error>(result)) << "\n";
+        std::cout << "Error:  Unable to Set USB Configuration 0x"  << std::hex << std::setw(4)
+                  << std::setfill('0') << static_cast<uint32_t>(configuration) << " ,"
+                  << GetStrError(result) << "\n";
 
         return result;
     }
 
     if(result)
     {
-        std::cout << "Error:  USB set device configuration error, Unexpected nbr of byte "\
-                  << " transfered (0x" << std::hex << std::setw(4) << std::setfill('0') \
+        std::cout << "Error:  USB set device configuration error, Unexpected nbr of byte "
+                  << " transfered (0x" << std::hex << std::setw(4) << std::setfill('0')
                   << static_cast<uint32_t>(result) << " , expected 0x00)\n";
         return -99;
     }
@@ -383,16 +381,16 @@ int StandardUSB::InterfaceGetStatus(uint16_t interface, uint16_t &status)
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to request USB Interface :0x"  << std::hex << std::setw(4) \
-                  << std::setfill('0') << static_cast<uint32_t>(interface) << " status, " \
-                  << GetStrError(static_cast<libusb_error>(result)) << "\n";
+        std::cout << "Error:  Unable to request USB Interface :0x"  << std::hex << std::setw(4)
+                  << std::setfill('0') << static_cast<uint32_t>(interface) << " status, "
+                  << GetStrError(result) << "\n";
         return result;
     }
 
     if(result != 2)
     {
-        std::cout << "Error:  USB get interface status error, Unexpected nbr of byte transfered"\
-                  << " (0x" << std::hex << std::setw(4) << std::setfill('0') \
+        std::cout << "Error:  USB get interface status error, Unexpected nbr of byte transfered"
+                  << " (0x" << std::hex << std::setw(4) << std::setfill('0')
                   << static_cast<uint32_t>(result) << " , expected 0x02)\n";
         return -99;
     }
@@ -426,19 +424,18 @@ int StandardUSB::InterfaceClearFeature(uint16_t interface, uint16_t feature)
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to Clear USB Interface :0x"  << std::hex << std::setw(2) \
-                  << std::setfill('0') << static_cast<uint32_t>(interface) << ", feature: 0x" \
-                  << std::hex << std::setw(4) << std::setfill('0') \
-                  << static_cast<uint32_t>(feature) << ", " \
-                  << GetStrError(static_cast<libusb_error>(result)) << "\n";
+        std::cout << "Error:  Unable to Clear USB Interface :0x"  << std::hex << std::setw(2)
+                  << std::setfill('0') << static_cast<uint32_t>(interface) << ", feature: 0x"
+                  << std::hex << std::setw(4) << std::setfill('0')
+                  << static_cast<uint32_t>(feature) << ", "<< GetStrError(result) << "\n";
 
         return result;
     }
 
     if(result)
     {
-        std::cout << "Error:  USB clear interface feature error, Unexpected nbr of byte transfered"\
-                  << " (0x" << std::hex << std::setw(4) << std::setfill('0') \
+        std::cout << "Error:  USB clear interface feature error, Unexpected nbr of byte transfered"
+                  << " (0x" << std::hex << std::setw(4) << std::setfill('0')
                   << static_cast<uint32_t>(result) << " , expected 0x00)\n";
         return -99;
     }
@@ -469,19 +466,18 @@ int StandardUSB::InterfaceSetFeature(uint16_t interface, uint16_t feature)
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to Set USB Interface :0x"  << std::hex << std::setw(4) \
-                  << std::setfill('0') << static_cast<uint32_t>(interface) << " , feature: 0x" \
-                  << std::hex << std::setw(4) << std::setfill('0') \
-                  << static_cast<uint32_t>(feature) << ", " \
-                  << GetStrError(static_cast<libusb_error>(result)) << "\n";
+        std::cout << "Error:  Unable to Set USB Interface :0x"  << std::hex << std::setw(4)
+                  << std::setfill('0') << static_cast<uint32_t>(interface) << " , feature: 0x"
+                  << std::hex << std::setw(4) << std::setfill('0')
+                  << static_cast<uint32_t>(feature) << ", " << GetStrError(result) << "\n";
 
         return result;
     }
 
     if(result != 1)
     {
-        std::cout << "Error:  USB set interface feature error, Unexpected nbr of byte transfered"\
-                  << " (0x" << std::hex << std::setw(4) << std::setfill('0') \
+        std::cout << "Error:  USB set interface feature error, Unexpected nbr of byte transfered"
+                  << " (0x" << std::hex << std::setw(4) << std::setfill('0')
                   << static_cast<uint32_t>(result) << " , expected 0x00)\n";
         return -99;
     }
@@ -514,18 +510,17 @@ int StandardUSB::InterfaceGetAltSetting(uint16_t interface, uint8_t &alt_setting
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to Get USB Interface :0x"  << std::hex << std::setw(4) \
-                  << std::setfill('0') <<    static_cast<uint32_t>(interface) \
-                  << " alternate setting nbr, " << GetStrError(static_cast<libusb_error>(result)) \
-                  << "\n";
+        std::cout << "Error:  Unable to Get USB Interface :0x"  << std::hex << std::setw(4)
+                  << std::setfill('0') <<    static_cast<uint32_t>(interface)
+                  << " alternate setting nbr, " << GetStrError(result) << "\n";
 
         return result;
     }
 
     if(result != 1)
     {
-        std::cout << "Error:  USB get interface alt setting error, Unexpected nbr of byte "\
-                  << " transfered (0x" << std::hex << std::setw(4) << std::setfill('0') \
+        std::cout << "Error:  USB get interface alt setting error, Unexpected nbr of byte "
+                  << " transfered (0x" << std::hex << std::setw(4) << std::setfill('0')
                   << static_cast<uint32_t>(result) << " , expected 0x01)\n";
         return -99;
     }
@@ -551,11 +546,10 @@ int StandardUSB::InterfaceSetAltSetting(uint16_t interface, uint8_t alt_setting)
      */
     int result = libusb_set_interface_alt_setting(this->usb_handle, interface, alt_setting);
     if(result < 0)
-        std::cout << "Error:  Unable to Set USB Interface :0x"  << std::hex << std::setw(4) \
-                  << std::setfill('0') << static_cast<uint32_t>(interface) \
-                  << " alternate setting nbr :0x" << std::hex << std::setw(4) \
-                  << static_cast<uint32_t>(alt_setting) <<  " ," \
-                  << GetStrError(static_cast<libusb_error>(result)) << "\n";
+        std::cout << "Error:  Unable to Set USB Interface :0x"  << std::hex << std::setw(4)
+                  << std::setfill('0') << static_cast<uint32_t>(interface)
+                  << " alternate setting nbr :0x" << std::hex << std::setw(4)
+                  << static_cast<uint32_t>(alt_setting) <<  " ," << GetStrError(result) << "\n";
 
     return result;
 }
@@ -588,23 +582,22 @@ int StandardUSB::EndpointGetStatus(uint16_t endpoint, uint16_t &status)
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to request USB endpoint status :0x"  << std::hex  \
-                  << std::setw(4) << std::setfill('0') <<  static_cast<uint32_t>(endpoint) \
-                  << " status, " << GetStrError(static_cast<libusb_error>(result)) << "\n";
+        std::cout << "Error:  Unable to request USB endpoint status :0x"  << std::hex
+                  << std::setw(4) << std::setfill('0') <<  static_cast<uint32_t>(endpoint)
+                  << " status, " << GetStrError(result) << "\n";
 
         return result;
     }
 
     if(result != 2)
     {
-        std::cout << "Error:  USB get endpoint status error, Unexpected nbr of byte transfered"\
-                  << " (0x" << std::hex << std::setw(4) << std::setfill('0') \
+        std::cout << "Error:  USB get endpoint status error, Unexpected nbr of byte transfered"
+                  << " (0x" << std::hex << std::setw(4) << std::setfill('0')
                   << static_cast<uint32_t>(result) << " , expected 0x02)\n";
         return -99;
     }
 
-    status = static_cast<uint16_t>(data[0] |\
-             (static_cast<uint32_t>(data[1]) << 8));
+    status = static_cast<uint16_t>(data[0] | (static_cast<uint32_t>(data[1]) << 8));
 
     return 0;
 }
@@ -632,17 +625,16 @@ int StandardUSB::EndpointClearFeature(uint16_t endpoint, uint16_t feature)
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to clear USB endpoint feature:0x"  << std::hex << std::setw(4)\
-                  << std::setfill('0') << static_cast<uint32_t>(endpoint) << std::hex \
-                  << std::setw(4) << std::setfill('0') << " , feature: 0x" \
-                  << static_cast<uint32_t>(feature) << ", " \
-                  << GetStrError(static_cast<libusb_error>(result)) << "\n";
+        std::cout << "Error:  Unable to clear USB endpoint feature:0x"  << std::hex << std::setw(4)
+                  << std::setfill('0') << static_cast<uint32_t>(endpoint) << std::hex
+                  << std::setw(4) << std::setfill('0') << " , feature: 0x"
+                  << static_cast<uint32_t>(feature) << ", " << GetStrError(result) << "\n";
     }
 
     if(result)
     {
-        std::cout << "Error:  USB clear endpoint feature error, Unexpected nbr of byte transfered"\
-                  << " (0x" << std::hex << std::setw(4) << std::setfill('0') \
+        std::cout << "Error:  USB clear endpoint feature error, Unexpected nbr of byte transfered"
+                  << " (0x" << std::hex << std::setw(4) << std::setfill('0')
                   << static_cast<uint32_t>(result) << " , expected 0x00)\n";
         return -99;
     }
@@ -674,19 +666,18 @@ int StandardUSB::EndpointSetFeature(uint16_t endpoint, uint16_t feature)
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to set USB endpoint feature:0x"  << std::hex << std::setw(4)\
-                  << std::setfill('0') << static_cast<uint32_t>(endpoint) << std::hex \
-                  << std::setw(4) << std::setfill('0') << " , feature: 0x" \
-                  << static_cast<uint32_t>(feature) << ", " \
-                  << GetStrError(static_cast<libusb_error>(result)) << "\n";
+        std::cout << "Error:  Unable to set USB endpoint feature:0x"  << std::hex << std::setw(4)
+                  << std::setfill('0') << static_cast<uint32_t>(endpoint) << std::hex
+                  << std::setw(4) << std::setfill('0') << " , feature: 0x"
+                  << static_cast<uint32_t>(feature) << ", " << GetStrError(result) << "\n";
 
         return result;
     }
 
     if(result)
     {
-        std::cout << "Error:  USB set endpoint feature error, Unexpected nbr of byte transfered"\
-                  << " (0x" << std::hex << std::setw(4) << std::setfill('0') \
+        std::cout << "Error:  USB set endpoint feature error, Unexpected nbr of byte transfered"
+                  << " (0x" << std::hex << std::setw(4) << std::setfill('0')
                   << static_cast<uint32_t>(result) << " , expected 0x00)\n";
         return -99;
     }
@@ -718,23 +709,22 @@ int StandardUSB::EndpointSynchFrame(uint16_t endpoint, uint16_t &frame)
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to Synchronize Frame Endpoint :0x"  << std::hex \
-                  << std::setw(4) << std::setfill('0') << static_cast<uint32_t>(endpoint) << ", " \
-                  << GetStrError(static_cast<libusb_error>(result)) << "\n";
+        std::cout << "Error:  Unable to Synchronize Frame Endpoint :0x"  << std::hex
+                  << std::setw(4) << std::setfill('0') << static_cast<uint32_t>(endpoint) << ", "
+                  << GetStrError(result) << "\n";
 
         return result;
     }
 
     if(result != 2)
     {
-        std::cout << "Error:  USB endpoint synchronize frame error, Unexpected nbr of byte "\
-                  << "transfered (0x" << std::hex << std::setw(4) << std::setfill('0') \
+        std::cout << "Error:  USB endpoint synchronize frame error, Unexpected nbr of byte "
+                  << "transfered (0x" << std::hex << std::setw(4) << std::setfill('0')
                   << static_cast<uint32_t>(result) << " , expected 0x02)\n";
         return -99;
     }
 
-    frame = static_cast<uint16_t>(data[0] |
-            static_cast<uint16_t>(static_cast<uint32_t>(data[1]) << 8));
+    frame = static_cast<uint16_t>(data[0] | (static_cast<uint32_t>(data[1]) << 8));
 
     return 0;
 }
