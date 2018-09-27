@@ -78,16 +78,8 @@ USBTestCli::USBTestCli(int &, char **&argv)
     /* Init CLI options */
     InitApplicationCommands();
 
-#if defined (STANDARD_USB) || defined (USB_IN_DFU_MODE) || defined (DFU_ST_EXTENSION)
+#if defined (STANDARD_USB)
     InitUSBCommands();
-#endif
-
-#if defined (USB_IN_DFU_MODE) || defined (DFU_ST_EXTENSION)
-    InitStdDFUCommands();
-#endif
-
-#if defined (DFU_ST_EXTENSION)
-    InitDFUSeCommands();
 #endif
 
     is_ok = true;

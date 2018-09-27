@@ -133,50 +133,6 @@ private:
 
 
 
-#if defined (USB_IN_DFU_MODE) || defined (DFU_ST_EXTENSION)
-    void InitStdDFUCommands();
-    void ParseDfuCmds(const cxxopts::ParseResult &result);
-    void DFUSetAltSetting(DFUClass *dfu, const cxxopts::ParseResult &result);
-    void DFUDisplayDescriptorSet(DFUClass *dfu, const cxxopts::ParseResult &result);
-    void DFUDeatch(DFUClass *dfu, const cxxopts::ParseResult &result);
-    void DFUGetStatus(DFUClass *dfu, const cxxopts::ParseResult &result);
-    void DFUClearStatus(DFUClass *dfu, const cxxopts::ParseResult &result);
-    void DFUGetState(DFUClass *dfu, const cxxopts::ParseResult &result);
-    void DFUAbort(DFUClass *dfu, const cxxopts::ParseResult &result);
-    void DFUDnloadZeroLength(DFUClass *dfu, const cxxopts::ParseResult &result);
-    void DFUDnload1Byte(DFUClass *dfu, const cxxopts::ParseResult &result);
-    void DFUDnload2Bytes(DFUClass *dfu, const cxxopts::ParseResult &result);
-    void DFUDnload4Bytes(DFUClass *dfu, const cxxopts::ParseResult &result);
-    void DFUDnload8Bytes(DFUClass *dfu, const cxxopts::ParseResult &result);
-    void DFUUploadDisplay1Byte(DFUClass *dfu, const cxxopts::ParseResult &result);
-    void DFUUploadDisplay2Bytes(DFUClass *dfu, const cxxopts::ParseResult &result);
-    void DFUUploadDisplay4Bytes(DFUClass *dfu, const cxxopts::ParseResult &result);
-    void DFUUploadDisplay8Bytes(DFUClass *dfu, const cxxopts::ParseResult &result);
-    void DFUDnloadFile(DFUClass *dfu, const cxxopts::ParseResult &result);
-    void DFUUploadFile(DFUClass *dfu, const cxxopts::ParseResult &result);
-#endif
-
-#if defined (DFU_ST_EXTENSION)
-    void InitDFUSeCommands();
-    void ParseDfuSeCmds(const cxxopts::ParseResult &result);
-    void DFUSeSetAddresspointer(DFUStExtension *se_dfu, const cxxopts::ParseResult &result);
-    void DFUSeDisplayInterfaces(DFUStExtension *se_dfu, const cxxopts::ParseResult &result);
-    void DFUSeGetCommand(DFUStExtension *se_dfu, const cxxopts::ParseResult &result);
-    void DFUSeMassErase(DFUStExtension *se_dfu, const cxxopts::ParseResult &result);
-    void DFUSeSectorErase(DFUStExtension *se_dfu, const cxxopts::ParseResult &result);
-    void DFUSeReadUnprotect(DFUStExtension *se_dfu, const cxxopts::ParseResult &result);
-    void DFUSeLeaveDfuMode(DFUStExtension *se_dfu, const cxxopts::ParseResult &result);
-    void DFUSeDnload1Byte(DFUStExtension *se_dfu, const cxxopts::ParseResult &result);
-    void DFUSeDnload2Bytes(DFUStExtension *se_dfu, const cxxopts::ParseResult &result);
-    void DFUSeDnload4Bytes(DFUStExtension *se_dfu, const cxxopts::ParseResult &result);
-    void DFUSeDnload8Bytes(DFUStExtension *se_dfu, const cxxopts::ParseResult &result);
-    void DFUSeUploadDisplay1Byte(DFUStExtension *se_dfu, const cxxopts::ParseResult &result);
-    void DFUSeUploadDisplay2Bytes(DFUStExtension *se_dfu, const cxxopts::ParseResult &result);
-    void DFUSeUploadDisplay4Bytes(DFUStExtension *se_dfu, const cxxopts::ParseResult &result);
-    void DFUSeUploadDisplay8Bytes(DFUStExtension *se_dfu, const cxxopts::ParseResult &result);
-    void DFUSeDnloadFile(DFUStExtension *se_dfu, const cxxopts::ParseResult &result);
-    void DFUSeUploadFile(DFUStExtension *se_dfu, const cxxopts::ParseResult &result);
-#endif
 
     /* ****************************************************************************************** */
     /* ***************************** Display CopyRights and Warraty ***************************** */
