@@ -282,7 +282,7 @@ public:
     /* ******************************* Class Constructor/Destructor ***************************** */
     /* ****************************************************************************************** */
     DFUClass(uint16_t vendor_id, uint16_t product_id);
-    virtual ~DFUClass(){}
+    virtual ~DFUClass();
 
     /* ****************************************************************************************** */
     /* ************************** Device Handling/Discovering Functions ************************* */
@@ -308,8 +308,8 @@ public:
     int DfuDownloadPacket(uint16_t wBlockNum, const uint8_t *data, uint16_t length);
     int DfuDownloadZero(uint16_t wBlockNum);
     int DfuUploadPacket(uint16_t wBlockNum, uint8_t *data, uint16_t length);
-    int DfuDownload(uint16_t wBlockNum, const uint8_t *data, uint32_t length);
-    int DfuUpload(uint16_t wBlockNum, uint8_t *data, uint32_t length);
+    int DfuDownload(uint16_t wBlockNum, const uint8_t *data, size_t length);
+    int DfuUpload(uint16_t wBlockNum, uint8_t *data, size_t length);
 
     /* ****************************************************************************************** */
     /* *********************************** Messaging Functions ********************************** */

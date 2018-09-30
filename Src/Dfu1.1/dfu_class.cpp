@@ -48,6 +48,15 @@ DFUClass::DFUClass(uint16_t vendor_id, uint16_t product_id)
 }
 
 
+/**
+ * @brief DFUClass::~DFUClass
+ */
+DFUClass::~DFUClass()
+{
+    this->CloseDevice();
+}
+
+
 /* ********************************************************************************************** */
 /* **************************** Device Handling/Discovering Functions *************************** */
 /* ********************************************************************************************** */
@@ -448,16 +457,16 @@ std::string DFUClass::GetStateStr(DFUClass::DFUState state)
 void DFUClass::DisplayDfuStatus()
 {
     std::cout << std::hex << std::setfill('0');
-    std::cout << "DFU 1.1 Status:"                                          << std::endl;
-    std::cout << "\tbStatus       : 0x" << std::setw(2)
+    std::cout << "Info: DFU 1.1 Status:"                                          << std::endl;
+    std::cout << "Info: \tbStatus       : 0x" << std::setw(2)
               << static_cast<uint32_t>(this->dfu_status.bStatus) << " ("
               << GetStatusStr(this->dfu_status.bStatus) << ")"              << std::endl;
-    std::cout << "\tbwPollTimeout : 0x" << std::setw(4)
+    std::cout << "Info: \tbwPollTimeout : 0x" << std::setw(4)
               << static_cast<uint32_t>(this->dfu_status.bwPollTimeOut)      << std::endl;
-    std::cout << "\tbState        : 0x" << std::setw(2)
+    std::cout << "Info: \tbState        : 0x" << std::setw(2)
               << static_cast<uint32_t>(this->dfu_status.bState)
               << " (" << GetStateStr(this->dfu_status.bState) << ")"        << std::endl;
-    std::cout << "\tiString       : 0x" << std::setw(2)
+    std::cout << "Info: \tiString       : 0x" << std::setw(2)
               << static_cast<uint32_t>(this->dfu_status.iString)            << std::endl;
 }
 
@@ -468,8 +477,8 @@ void DFUClass::DisplayDfuStatus()
 void DFUClass::DisplayDfuState()
 {
     std::cout << std::hex << std::setfill('0');
-    std::cout << "DFU 1.1 State:"                             << std::endl;
-    std::cout << "\tbState       : 0x" << std::setw(2) << static_cast<uint32_t>(this->dfu_state)
+    std::cout << "Info: DFU 1.1 State:"                             << std::endl;
+    std::cout << "Info: \tbState       : 0x" << std::setw(2) << static_cast<uint32_t>(this->dfu_state)
               << " (" << GetStateStr(this->dfu_state) << ")"  << std::endl;
 }
 

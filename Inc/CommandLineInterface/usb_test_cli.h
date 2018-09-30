@@ -40,6 +40,9 @@
 #if defined (STANDARD_USB)
 #include "standard_usb.h"
 #endif
+#if defined (USB_IN_DFU_MODE)
+#include "dfu_class.h"
+#endif
 
 
 class USBTestCli
@@ -129,6 +132,19 @@ private:
     void InterruptTransfer(const cxxopts::ParseResult &result);
     uint8_t *GetDataCli(const cxxopts::ParseResult &result, size_t &size);
     uint8_t *GetDataFile(const cxxopts::ParseResult &result, size_t &size);
+#endif
+#if defined (USB_IN_DFU_MODE)
+    void InitDFU11Commands();
+    void DisplayDFU11Help();
+    void ParseDFU11Cmds(const cxxopts::ParseResult &result);
+    void ConnectDFU11(uint16_t idVendor, uint16_t idProduct);
+    void DFU11GetStatus(const cxxopts::ParseResult &result, DFUClass *dfu_device);
+    void DFU11GetState(const cxxopts::ParseResult &result, DFUClass *dfu_device);
+    void DFU11ClearStatus(const cxxopts::ParseResult &result, DFUClass *dfu_device);
+    void DFU11Abort(const cxxopts::ParseResult &result, DFUClass *dfu_device);
+    void DFU11Detach(const cxxopts::ParseResult &result, DFUClass *dfu_device);
+    void DFU11Download(const cxxopts::ParseResult &result, DFUClass *dfu_device);
+    void DFU11Upload(const cxxopts::ParseResult &result, DFUClass *dfu_device);
 #endif
 
 

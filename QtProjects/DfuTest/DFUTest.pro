@@ -86,12 +86,15 @@ SOURCES += \
     ../../Src/StandardUSB/standard_usb.cpp \
     ../../Src/StandardUSB/usb_standard_requests.cpp \
     ../../Src/StandardUSB/usb_descriptors_requests.cpp \
+    ../../Src/Dfu1.1/dfu_class.cpp \
+    ../../Src/Dfu1.1/dfu_requests.cpp \
     ../../Src/CommandLineInterface/usb_test_cli_common.cpp \
     ../../Src/CommandLineInterface/usb_test_cli.cpp \
     ../../Src/CommandLineInterface/usb_test_cli_copyrights_warranty.cpp \
     ../../Src/CommandLineInterface/usb_test_cli_std_usb.cpp \
-    ../../Src/Dfu1.1/dfu_class.cpp \
-    ../../Src/Dfu1.1/dfu_requests.cpp
+    ../../Src/CommandLineInterface/usb_test_cli_dfu_11.cpp
+
+
 
 
 ############ INCLUDE FILES

@@ -22,7 +22,6 @@
 /*                                                                                 */
 /* ******************************************************************************* */
 
-#if defined (STANDARD_USB)
 
 /* C++ Includes */
 #include <iostream>
@@ -158,7 +157,7 @@ void USBTestCli::InitUSBCommands()
  */
 void USBTestCli::DisplayUSBHelp()
 {
-    std::cout << "USB Standard options" << std::endl;
+    std::cout << "USB Standard options\n";
     /* **** */
     std::cout << "\t    --list                  Display the currently attached devices\n";
     std::cout << "\t    --usb                   Connect as a USB device without taking in count \n";
@@ -1111,7 +1110,7 @@ uint8_t *USBTestCli::GetDataCli(const cxxopts::ParseResult &result, size_t &size
     uint8_t *data = new(std::nothrow) uint8_t[size];
     if(!data)
     {
-        std::cout << "Error: USB control transfer failed, Memory allocation error\n" ;
+        std::cout << "Error: USB transfer failed, Memory allocation error\n" ;
         return nullptr;
     }
 
@@ -1124,7 +1123,7 @@ uint8_t *USBTestCli::GetDataCli(const cxxopts::ParseResult &result, size_t &size
         size_t l_size = result["size"].as<size_t>();
         if (!l_size)
         {
-            std::cout << "Error: USB control transfer failed, --size can not be zero\n" ;
+            std::cout << "Error: USB transfer failed, --size can not be zero\n" ;
             delete[] data;
             return nullptr;
         }
@@ -1230,6 +1229,7 @@ void USBTestCli::ControlTransfer(const cxxopts::ParseResult &result)
     if (transfer_direction && !result.count("size"))
     {
         std::cout << "Error: Missing --size option\n";
+        return;
     }
 
     /* 1, 2, 4 or 8 bytes pointer data
@@ -1281,6 +1281,7 @@ void USBTestCli::ControlTransfer(const cxxopts::ParseResult &result)
     {
         std::cout << "Error: USB control transfer failed, "
                   << this->usb_device->GetStrError(result_l) << "\n";
+        delete[] data;
         return;
     }
 
@@ -1557,4 +1558,3 @@ void USBTestCli::InterruptTransfer(const cxxopts::ParseResult &result)
 }
 
 
-#endif

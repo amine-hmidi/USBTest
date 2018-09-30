@@ -302,7 +302,12 @@ int DFUClass::DfuDetach()
     /* Send USB reset Command */
     this->USBReset();
 
-    /* Reconnect the device in case of descriptor change */
+    /* Give the device some time to reconnect */
+#ifdef __linux__
+    usleep(1000 * 1000);
+#endif
+    /* Reconnect the device in case of descriptor change
+     * asuming that the device will keep the same idProduct */
     result = this->ReOpenDevice();
     if (result)
     {
@@ -312,16 +317,16 @@ int DFUClass::DfuDetach()
 
     /* check that the device is in dfuIDLE state */
     DfuGetStatus();
+    if ((this->dfu_status.bStatus == DFUClass::DFUStatus::statusUNKNOWN) ||
+         (this->dfu_status.bState == DFUClass::DFUState::stateUNKNOWN))
+    {
+        return -99;
+    }
+
     if(this->dfu_status.bStatus != DFUClass::DFUStatus::OK)
     {
         std::cout << "Error: DFU device did not switch to STATUS: OK, after DETACH Command, ("
                   << GetStatusStr(this->dfu_status.bStatus) << ")\n";
-        return -99;
-    }
-
-    if ((this->dfu_status.bStatus == DFUClass::DFUStatus::statusUNKNOWN) ||
-         (this->dfu_status.bState == DFUClass::DFUState::stateUNKNOWN))
-    {
         return -99;
     }
 
@@ -668,19 +673,18 @@ int DFUClass::DfuUploadPacket(uint16_t wBlockNum, uint8_t *data, uint16_t length
 /**
  * @brief DFUClass::DfuDownload
  * Send a serie of DFUClass::DfuDownloadPacket requests according to the length of the data buffer
- * and follows it with a download zero request
  * @param wBlockNum the initial Packet number to be downloaded
  * @param data the data buffer to be downloaded
  * @param length the data buffer length
  * @return 0 on success, negative integer otherwise
  */
-int DFUClass::DfuDownload(uint16_t wBlockNum, const uint8_t *data, uint32_t length)
+int DFUClass::DfuDownload(uint16_t wBlockNum, const uint8_t *data, size_t length)
 {
-    uint32_t nbr = length / this->wTransferSize;
+    size_t nbr = length / this->wTransferSize;
     uint16_t remain = length % this->wTransferSize;
     int result = 0x00;
 
-    for (uint32_t i = 0; i < nbr; i++)
+    for (size_t i = 0; i < nbr; i++)
     {
         result = DfuDownloadPacket(wBlockNum++, (data + (i * this->wTransferSize)),
                                    this->wTransferSize);
@@ -695,9 +699,6 @@ int DFUClass::DfuDownload(uint16_t wBlockNum, const uint8_t *data, uint32_t leng
             return -1;
     }
 
-    if (DfuDownloadZero(wBlockNum))
-        return -1;
-
     return 0;
 }
 
@@ -710,13 +711,13 @@ int DFUClass::DfuDownload(uint16_t wBlockNum, const uint8_t *data, uint32_t leng
  * @param length the data buffer length
  * @return 0 on success, negative integer otherwise
  */
-int DFUClass::DfuUpload(uint16_t wBlockNum, uint8_t *data, uint32_t length)
+int DFUClass::DfuUpload(uint16_t wBlockNum, uint8_t *data, size_t length)
 {
-    uint32_t nbr = length / this->wTransferSize;
+    size_t nbr = length / this->wTransferSize;
     uint16_t remain = length % this->wTransferSize;
     int result = 0x0;
 
-    for (uint32_t i = 0; i < nbr; i++)
+    for (size_t i = 0; i < nbr; i++)
     {
         result = DfuUploadPacket(wBlockNum++, (data + (i * this->wTransferSize)),
                                  this->wTransferSize);
