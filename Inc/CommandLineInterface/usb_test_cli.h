@@ -85,6 +85,8 @@ private:
     char **arguments = nullptr;
     /* options number */
     int argument_nbr = 0x00;
+    /* Display Manager */
+    static DisplayManager *cli_dm;
 #if defined (STANDARD_USB)
     /* USB Device */
     StandardUSB *usb_device = nullptr;

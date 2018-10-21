@@ -34,6 +34,7 @@
 /* C Includes */
 
 /* User Includes */
+#include "display_manager.h"
 
 
 /* Forward declarations of libusb types */
@@ -155,6 +156,8 @@ protected:
     static unsigned int bulk_time_out;
     /* interr transfer timeout in ms */
     static unsigned int interr_time_out;
+    /* Display manager */
+    static DisplayManager *usb_dm;
 
     /* ****************************************************************************************** */
     /* *********************************** Descriptors Requests ********************************* */

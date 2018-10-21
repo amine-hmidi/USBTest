@@ -26,6 +26,7 @@
 #include <iostream>
 #include <iomanip>
 #include <ios>
+#include <sstream>
 
 /* C Includes */
 
@@ -33,20 +34,21 @@
 #include "usb_test_cli.h"
 
 
-
-
-
 int main(int argc, char **argv)
 {
-    std::ios_base::sync_with_stdio(false);
+    DisplayManager *display_manager = DisplayManager::Instance();
+    if (!display_manager)
+        return -1;
 
-    std::cout << "\n";
-    std::cout << "USBTest Suite version " << USBTestCli::Version();
-    std::cout << ", Copyright (C) 2018 Amine Hmidi\n";
-    std::cout << "(amine.hmidi0.1@gmail.com). USBTest Suite comes with ABSOLUTELY NO WARRANTY;\n";
-    std::cout << "for details type `--show_w'. This is free software, and you are welcome\n";
-    std::cout << "to redistribute it under certain conditions; type `--show_c'for details.\n";
-    std::cout << "\n";
+    std::stringstream stream;
+
+    stream << "USBTest Suite version " << USBTestCli::Version();
+    stream << ", Copyright (C) 2018 Amine Hmidi\n";
+    stream << "(amine.hmidi0.1@gmail.com). USBTest Suite comes with ABSOLUTELY NO WARRANTY;\n";
+    stream << "for details type `--show_w'. This is free software, and you are welcome\n";
+    stream << "to redistribute it under certain conditions; type `--show_c'for details.";
+
+    display_manager->PrintMessage(DisplayManager::MessageType::BASIC_MESSAGE, stream.str());
 
     USBTestCli cli(argc, argv);
     if(!cli.IsOk())

@@ -27,6 +27,7 @@
 /* C++ Includes */
 #include <iostream>
 #include <iomanip>
+#include <sstream>
 
 /* C Includes */
 
@@ -52,25 +53,29 @@ int StandardUSB::DeviceGetStatus(uint16_t &status)
     uint8_t data[2] = {0x00};
 
     int result = libusb_control_transfer(this->usb_handle,\
-                 /* bmRequestType */     req_type,
-                 /* bRequest      */     LIBUSB_REQUEST_GET_STATUS,
-                 /* wValue        */     0x00,
-                 /* wIndex        */     0x00,
-                 /* data          */     data,
-                 /* length        */     0x02,
-                 /* timeout       */     StandardUSB::ctr_time_out);
+                                         /* bmRequestType */     req_type,
+                                         /* bRequest      */     LIBUSB_REQUEST_GET_STATUS,
+                                         /* wValue        */     0x00,
+                                         /* wIndex        */     0x00,
+                                         /* data          */     data,
+                                         /* length        */     0x02,
+                                         /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to request USB device status, " << GetStrError(result) << "\n";
+        std::stringstream stream;
+        stream << "Error:  Unable to request USB device status, " << GetStrError(result);
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return result;
     }
 
     if(result != 2)
     {
-        std::cout << "Error:  USB get device status error, Unexpected nbr of byte transfered"
-                  << " (0x" << std::hex << std::setw(4) << std::setfill('0')
-                  << static_cast<uint32_t>(result) << " , expected 0x02)\n";
+        std::stringstream stream;
+        stream << "Error:  USB get device status error, Unexpected nbr of byte transfered"
+               << " (0x" << std::hex << std::setw(4) << std::setfill('0')
+               << static_cast<uint32_t>(result) << " , expected 0x02)";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return -99;
     }
 
@@ -92,28 +97,32 @@ int StandardUSB::DeviceClearFeature(uint16_t feature)
     uint8_t req_type = (LIBUSB_ENDPOINT_OUT|LIBUSB_REQUEST_TYPE_STANDARD|LIBUSB_RECIPIENT_DEVICE);
 
     int result = libusb_control_transfer(this->usb_handle,\
-                 /* bmRequestType */     req_type,
-                 /* bRequest      */     LIBUSB_REQUEST_CLEAR_FEATURE,
-                 /* wValue        */     feature,
-                 /* wIndex        */     0x00,
-                 /* data          */     nullptr,
-                 /* length        */     0x00,
-                 /* timeout       */     StandardUSB::ctr_time_out);
+                                         /* bmRequestType */     req_type,
+                                         /* bRequest      */     LIBUSB_REQUEST_CLEAR_FEATURE,
+                                         /* wValue        */     feature,
+                                         /* wIndex        */     0x00,
+                                         /* data          */     nullptr,
+                                         /* length        */     0x00,
+                                         /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to Clear USB device Feature: 0x" << std::hex
-                  << std::setw(4) << std::setfill('0') <<  static_cast<uint32_t>(feature)
-                  << " ," << GetStrError(result) << "\n";
+        std::stringstream stream;
+        stream << "Error:  Unable to Clear USB device Feature: 0x" << std::hex
+               << std::setw(4) << std::setfill('0') <<  static_cast<uint32_t>(feature)
+               << " ," << GetStrError(result) << "\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
 
         return result;
     }
 
     if(result)
     {
-        std::cout << "Error:  USB clear device feature error, Unexpected nbr of byte transfered"
-                  << " (0x" << std::hex << std::setw(4) << std::setfill('0')
-                  << static_cast<uint32_t>(result) << " , expected 0x00)\n";
+        std::stringstream stream;
+        stream << "Error:  USB clear device feature error, Unexpected nbr of byte transfered"
+               << " (0x" << std::hex << std::setw(4) << std::setfill('0')
+               << static_cast<uint32_t>(result) << " , expected 0x00)";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return -99;
     }
 
@@ -132,28 +141,32 @@ int StandardUSB::DeviceSetFeature(uint16_t feature)
     uint8_t req_type = (LIBUSB_ENDPOINT_OUT|LIBUSB_REQUEST_TYPE_STANDARD|LIBUSB_RECIPIENT_DEVICE);
 
     int result = libusb_control_transfer(this->usb_handle,\
-                 /* bmRequestType */     req_type,
-                 /* bRequest      */     LIBUSB_REQUEST_SET_FEATURE,
-                 /* wValue        */     feature,
-                 /* wIndex        */     0x00,
-                 /* data          */     nullptr,
-                 /* length        */     0x00,
-                 /* timeout       */     StandardUSB::ctr_time_out);
+                                         /* bmRequestType */     req_type,
+                                         /* bRequest      */     LIBUSB_REQUEST_SET_FEATURE,
+                                         /* wValue        */     feature,
+                                         /* wIndex        */     0x00,
+                                         /* data          */     nullptr,
+                                         /* length        */     0x00,
+                                         /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to Set USB device Feature: 0x" << std::hex
-                  <<  std::setw(4) << std::setfill('0') << static_cast<uint32_t>(feature)
-                  << " ," << GetStrError(result) << "\n";
+        std::stringstream stream;
+        stream << "Error:  Unable to Set USB device Feature: 0x" << std::hex
+               <<  std::setw(4) << std::setfill('0') << static_cast<uint32_t>(feature)
+                << " ," << GetStrError(result);
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
 
         return result;
     }
 
     if(result)
     {
-        std::cout << "Error:  USB set device feature error, Unexpected nbr of byte transfered"
-                  << " (0x" << std::hex << std::setw(4) << std::setfill('0')
-                  << static_cast<uint32_t>(result) << " , expected 0x00)\n";
+        std::stringstream stream;
+        stream << "Error:  USB set device feature error, Unexpected nbr of byte transfered"
+               << " (0x" << std::hex << std::setw(4) << std::setfill('0')
+               << static_cast<uint32_t>(result) << " , expected 0x00)";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return -99;
     }
 
@@ -172,28 +185,31 @@ int StandardUSB::DeviceSetAddress(uint16_t address)
     uint8_t req_type = (LIBUSB_ENDPOINT_OUT|LIBUSB_REQUEST_TYPE_STANDARD|LIBUSB_RECIPIENT_DEVICE);
 
     int result = libusb_control_transfer(this->usb_handle,\
-                 /* bmRequestType */     req_type,
-                 /* bRequest      */     LIBUSB_REQUEST_SET_ADDRESS,
-                 /* wValue        */     address,
-                 /* wIndex        */     0x00,
-                 /* data          */     nullptr,
-                 /* length        */     0x00,
-                 /* timeout       */     StandardUSB::ctr_time_out);
+                                         /* bmRequestType */     req_type,
+                                         /* bRequest      */     LIBUSB_REQUEST_SET_ADDRESS,
+                                         /* wValue        */     address,
+                                         /* wIndex        */     0x00,
+                                         /* data          */     nullptr,
+                                         /* length        */     0x00,
+                                         /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to Set USB device Address: 0x"  << std::hex
+        std::stringstream stream;
+        stream << "Error:  Unable to Set USB device Address: 0x"  << std::hex
                   << std::setw(4) << std::setfill('0') << static_cast<uint32_t>(address)
-                  << " ," << GetStrError(result) << "\n";
-
+                  << " ," << GetStrError(result);
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return result;
     }
 
     if(result)
     {
-        std::cout << "Error:  USB set device address error, Unexpected nbr of byte transfered"
+        std::stringstream stream;
+        stream << "Error:  USB set device address error, Unexpected nbr of byte transfered"
                   << " (0x" << std::hex << std::setw(4) << std::setfill('0')
-                  << static_cast<uint32_t>(result) << " , expected 0x00)\n";
+                  << static_cast<uint32_t>(result) << " , expected 0x00)";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return -99;
     }
 
@@ -217,20 +233,25 @@ int StandardUSB::DeviceGetDescriptor(uint8_t type, uint8_t index, uint16_t langu
     uint8_t req_type = (LIBUSB_ENDPOINT_IN|LIBUSB_REQUEST_TYPE_STANDARD|LIBUSB_RECIPIENT_DEVICE);
 
     int result = libusb_control_transfer(this->usb_handle,\
-                 /* bmRequestType */     req_type,
-                 /* bRequest      */     LIBUSB_REQUEST_GET_DESCRIPTOR,
-                 /* wValue        */     static_cast<uint16_t>((static_cast<uint32_t>(type) << 8)\
-                                                               | (static_cast<uint32_t>(index))),
-                 /* wIndex        */     language,
-                 /* data          */     data,
-                 /* length        */     length,
-                 /* timeout       */     StandardUSB::ctr_time_out);
+                                         /* bmRequestType */     req_type,
+                                         /* bRequest      */     LIBUSB_REQUEST_GET_DESCRIPTOR,
+                                         /* wValue        */     static_cast<uint16_t>((static_cast<uint32_t>(type) << 8)\
+                                                                                       | (static_cast<uint32_t>(index))),
+                                         /* wIndex        */     language,
+                                         /* data          */     data,
+                                         /* length        */     length,
+                                         /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
-        std::cout << "Error:  Unable to Get USB Descriptor with type: 0x"  << std::hex
-                  << std::setw(4) << std::setfill('0') << static_cast<uint32_t>(type)
-                  << " ,index: 0x" << static_cast<uint32_t>(index) <<" ,language: 0x"
-                  << static_cast<uint32_t>(language) <<  " ," << GetStrError(result) << "\n";
+    {
+        std::stringstream stream;
+        stream << "Error:  Unable to Get USB Descriptor with type: 0x"  << std::hex
+               << std::setw(4) << std::setfill('0') << static_cast<uint32_t>(type)
+               << " ,index: 0x" << static_cast<uint32_t>(index) <<" ,language: 0x"
+               << static_cast<uint32_t>(language) <<  " ," << GetStrError(result);
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
+    }
+
 
     return result;
 }
@@ -252,20 +273,24 @@ int StandardUSB::DeviceSetDescriptor(uint8_t type, uint8_t index, uint16_t langu
     uint8_t req_type = (LIBUSB_ENDPOINT_OUT|LIBUSB_REQUEST_TYPE_STANDARD|LIBUSB_RECIPIENT_DEVICE);
 
     int result = libusb_control_transfer(this->usb_handle,\
-                 /* bmRequestType */     req_type,
-                 /* bRequest      */     LIBUSB_REQUEST_SET_DESCRIPTOR,
-                 /* wValue        */     static_cast<uint16_t>((static_cast<uint32_t>(type) << 8) \
-                                                               | (static_cast<uint32_t>(index))),
-                 /* wIndex        */     language,
-                 /* data          */     data,
-                 /* length        */     length,
-                 /* timeout       */     StandardUSB::ctr_time_out);
+                                         /* bmRequestType */     req_type,
+                                         /* bRequest      */     LIBUSB_REQUEST_SET_DESCRIPTOR,
+                                         /* wValue        */     static_cast<uint16_t>((static_cast<uint32_t>(type) << 8) \
+                                                                                       | (static_cast<uint32_t>(index))),
+                                         /* wIndex        */     language,
+                                         /* data          */     data,
+                                         /* length        */     length,
+                                         /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
-        std::cout << "Error:  Unable to Set USB Descriptor with type: 0x"  << std::hex
-                  << std::setw(4) << std::setfill('0') << static_cast<uint32_t>(type)
-                  << " ,index: 0x" << static_cast<uint32_t>(index) <<" ,language: 0x"
-                  << static_cast<uint32_t>(language) << " ," << GetStrError(result) << "\n";
+    {
+        std::stringstream stream;
+        stream << "Error:  Unable to Set USB Descriptor with type: 0x"  << std::hex
+               << std::setw(4) << std::setfill('0') << static_cast<uint32_t>(type)
+               << " ,index: 0x" << static_cast<uint32_t>(index) <<" ,language: 0x"
+               << static_cast<uint32_t>(language) << " ," << GetStrError(result);
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
+    }
 
     return result;
 }
@@ -285,26 +310,30 @@ int StandardUSB::DeviceGetCongiguration(uint8_t &data)
     uint8_t l_data[1] = {0x00};
 
     int result = libusb_control_transfer(this->usb_handle,\
-                 /* bmRequestType */     req_type,
-                 /* bRequest      */     LIBUSB_REQUEST_GET_CONFIGURATION,
-                 /* wValue        */     0x00,
-                 /* wIndex        */     0x00,
-                 /* data          */     l_data,
-                 /* length        */     1,
-                 /* timeout       */     StandardUSB::ctr_time_out);
+                                         /* bmRequestType */     req_type,
+                                         /* bRequest      */     LIBUSB_REQUEST_GET_CONFIGURATION,
+                                         /* wValue        */     0x00,
+                                         /* wIndex        */     0x00,
+                                         /* data          */     l_data,
+                                         /* length        */     1,
+                                         /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to Get USB Configuration ,"  << std::hex << std::setw(4)
-                  << std::setfill('0') << GetStrError(result) << "\n";
+        std::stringstream stream;
+        stream << "Error:  Unable to Get USB Configuration ,"  << std::hex << std::setw(4)
+               << std::setfill('0') << GetStrError(result);
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return  result;
     }
 
     if(result != 1)
     {
-        std::cout << "Error:  USB get device configuration error, Unexpected nbr of byte "
-                  << " transfered (0x" << std::hex << std::setw(4) << std::setfill('0')
-                  << static_cast<uint32_t>(result) << " , expected 0x01)\n";
+        std::stringstream stream;
+        stream << "Error:  USB get device configuration error, Unexpected nbr of byte "
+               << " transfered (0x" << std::hex << std::setw(4) << std::setfill('0')
+               << static_cast<uint32_t>(result) << " , expected 0x01)";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return -99;
     }
 
@@ -325,28 +354,31 @@ int StandardUSB::DeviceSetCongiguration(uint16_t configuration)
     uint8_t req_type = (LIBUSB_ENDPOINT_OUT|LIBUSB_REQUEST_TYPE_STANDARD|LIBUSB_RECIPIENT_DEVICE);
 
     int result = libusb_control_transfer(this->usb_handle,\
-                 /* bmRequestType */     req_type,
-                 /* bRequest      */     LIBUSB_REQUEST_SET_CONFIGURATION,
-                 /* wValue        */     configuration,
-                 /* wIndex        */     0x00,
-                 /* data          */     nullptr,
-                 /* length        */     0,
-                 /* timeout       */     StandardUSB::ctr_time_out);
+                                         /* bmRequestType */     req_type,
+                                         /* bRequest      */     LIBUSB_REQUEST_SET_CONFIGURATION,
+                                         /* wValue        */     configuration,
+                                         /* wIndex        */     0x00,
+                                         /* data          */     nullptr,
+                                         /* length        */     0,
+                                         /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to Set USB Configuration 0x"  << std::hex << std::setw(4)
-                  << std::setfill('0') << static_cast<uint32_t>(configuration) << " ,"
-                  << GetStrError(result) << "\n";
-
+        std::stringstream stream;
+        stream << "Error:  Unable to Set USB Configuration 0x"  << std::hex << std::setw(4)
+               << std::setfill('0') << static_cast<uint32_t>(configuration) << " ,"
+               << GetStrError(result);
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return result;
     }
 
     if(result)
     {
-        std::cout << "Error:  USB set device configuration error, Unexpected nbr of byte "
-                  << " transfered (0x" << std::hex << std::setw(4) << std::setfill('0')
-                  << static_cast<uint32_t>(result) << " , expected 0x00)\n";
+        std::stringstream stream;
+        stream << "Error:  USB set device configuration error, Unexpected nbr of byte "
+               << " transfered (0x" << std::hex << std::setw(4) << std::setfill('0')
+               << static_cast<uint32_t>(result) << " , expected 0x00)";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return -99;
     }
 
@@ -371,27 +403,31 @@ int StandardUSB::InterfaceGetStatus(uint16_t interface, uint16_t &status)
     uint8_t data[2] = {0x00};
 
     int result = libusb_control_transfer(this->usb_handle,\
-                 /* bmRequestType */     req_type,
-                 /* bRequest      */     LIBUSB_REQUEST_GET_STATUS,
-                 /* wValue        */     0x00,
-                 /* wIndex        */     interface,
-                 /* data          */     data,
-                 /* length        */     0x02,
-                 /* timeout       */     StandardUSB::ctr_time_out);
+                                         /* bmRequestType */     req_type,
+                                         /* bRequest      */     LIBUSB_REQUEST_GET_STATUS,
+                                         /* wValue        */     0x00,
+                                         /* wIndex        */     interface,
+                                         /* data          */     data,
+                                         /* length        */     0x02,
+                                         /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to request USB Interface :0x"  << std::hex << std::setw(4)
-                  << std::setfill('0') << static_cast<uint32_t>(interface) << " status, "
-                  << GetStrError(result) << "\n";
+        std::stringstream stream;
+        stream << "Error:  Unable to request USB Interface :0x"  << std::hex << std::setw(4)
+               << std::setfill('0') << static_cast<uint32_t>(interface) << " status, "
+               << GetStrError(result);
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return result;
     }
 
     if(result != 2)
     {
-        std::cout << "Error:  USB get interface status error, Unexpected nbr of byte transfered"
-                  << " (0x" << std::hex << std::setw(4) << std::setfill('0')
-                  << static_cast<uint32_t>(result) << " , expected 0x02)\n";
+        std::stringstream stream;
+        stream << "Error:  USB get interface status error, Unexpected nbr of byte transfered"
+               << " (0x" << std::hex << std::setw(4) << std::setfill('0')
+               << static_cast<uint32_t>(result) << " , expected 0x02)";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return -99;
     }
 
@@ -414,29 +450,32 @@ int StandardUSB::InterfaceClearFeature(uint16_t interface, uint16_t feature)
     uint8_t req_t = (LIBUSB_ENDPOINT_OUT|LIBUSB_REQUEST_TYPE_STANDARD|LIBUSB_RECIPIENT_INTERFACE);
 
     int result = libusb_control_transfer(this->usb_handle,\
-                 /* bmRequestType */     req_t,
-                 /* bRequest      */     LIBUSB_REQUEST_CLEAR_FEATURE,
-                 /* wValue        */     feature,
-                 /* wIndex        */     interface,
-                 /* data          */     nullptr,
-                 /* length        */     0x00,
-                 /* timeout       */     StandardUSB::ctr_time_out);
+                                         /* bmRequestType */     req_t,
+                                         /* bRequest      */     LIBUSB_REQUEST_CLEAR_FEATURE,
+                                         /* wValue        */     feature,
+                                         /* wIndex        */     interface,
+                                         /* data          */     nullptr,
+                                         /* length        */     0x00,
+                                         /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to Clear USB Interface :0x"  << std::hex << std::setw(2)
-                  << std::setfill('0') << static_cast<uint32_t>(interface) << ", feature: 0x"
-                  << std::hex << std::setw(4) << std::setfill('0')
-                  << static_cast<uint32_t>(feature) << ", "<< GetStrError(result) << "\n";
-
+        std::stringstream stream;
+        stream << "Error:  Unable to Clear USB Interface :0x"  << std::hex << std::setw(2)
+               << std::setfill('0') << static_cast<uint32_t>(interface) << ", feature: 0x"
+               << std::hex << std::setw(4) << std::setfill('0')
+               << static_cast<uint32_t>(feature) << ", "<< GetStrError(result);
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return result;
     }
 
     if(result)
     {
-        std::cout << "Error:  USB clear interface feature error, Unexpected nbr of byte transfered"
-                  << " (0x" << std::hex << std::setw(4) << std::setfill('0')
-                  << static_cast<uint32_t>(result) << " , expected 0x00)\n";
+        std::stringstream stream;
+        stream << "Error:  USB clear interface feature error, Unexpected nbr of byte transfered"
+               << " (0x" << std::hex << std::setw(4) << std::setfill('0')
+               << static_cast<uint32_t>(result) << " , expected 0x00)";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return -99;
     }
 
@@ -456,29 +495,32 @@ int StandardUSB::InterfaceSetFeature(uint16_t interface, uint16_t feature)
     uint8_t req_t = (LIBUSB_ENDPOINT_OUT|LIBUSB_REQUEST_TYPE_STANDARD|LIBUSB_RECIPIENT_INTERFACE);
 
     int result = libusb_control_transfer(this->usb_handle,\
-                  /* bmRequestType */     req_t,
-                  /* bRequest      */     LIBUSB_REQUEST_SET_FEATURE,
-                  /* wValue        */     feature,
-                  /* wIndex        */     interface,
-                  /* data          */     nullptr,
-                  /* length        */     0x00,
-                  /* timeout       */     StandardUSB::ctr_time_out);
+                                         /* bmRequestType */     req_t,
+                                         /* bRequest      */     LIBUSB_REQUEST_SET_FEATURE,
+                                         /* wValue        */     feature,
+                                         /* wIndex        */     interface,
+                                         /* data          */     nullptr,
+                                         /* length        */     0x00,
+                                         /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to Set USB Interface :0x"  << std::hex << std::setw(4)
-                  << std::setfill('0') << static_cast<uint32_t>(interface) << " , feature: 0x"
-                  << std::hex << std::setw(4) << std::setfill('0')
-                  << static_cast<uint32_t>(feature) << ", " << GetStrError(result) << "\n";
-
+        std::stringstream stream;
+        stream << "Error:  Unable to Set USB Interface :0x"  << std::hex << std::setw(4)
+               << std::setfill('0') << static_cast<uint32_t>(interface) << " , feature: 0x"
+               << std::hex << std::setw(4) << std::setfill('0')
+               << static_cast<uint32_t>(feature) << ", " << GetStrError(result);
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return result;
     }
 
     if(result != 1)
     {
-        std::cout << "Error:  USB set interface feature error, Unexpected nbr of byte transfered"
-                  << " (0x" << std::hex << std::setw(4) << std::setfill('0')
-                  << static_cast<uint32_t>(result) << " , expected 0x00)\n";
+        std::stringstream stream;
+        stream << "Error:  USB set interface feature error, Unexpected nbr of byte transfered"
+               << " (0x" << std::hex << std::setw(4) << std::setfill('0')
+               << static_cast<uint32_t>(result) << " , expected 0x00)";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return -99;
     }
 
@@ -500,28 +542,31 @@ int StandardUSB::InterfaceGetAltSetting(uint16_t interface, uint8_t &alt_setting
     uint8_t l_data[1] = {0x00};
 
     int result = libusb_control_transfer(this->usb_handle,\
-                 /* bmRequestType */     req_t,
-                 /* bRequest      */     LIBUSB_REQUEST_GET_INTERFACE,
-                 /* wValue        */     0x00,
-                 /* wIndex        */     interface,
-                 /* data          */     l_data,
-                 /* length        */     0x01,
-                 /* timeout       */     StandardUSB::ctr_time_out);
+                                         /* bmRequestType */     req_t,
+                                         /* bRequest      */     LIBUSB_REQUEST_GET_INTERFACE,
+                                         /* wValue        */     0x00,
+                                         /* wIndex        */     interface,
+                                         /* data          */     l_data,
+                                         /* length        */     0x01,
+                                         /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to Get USB Interface :0x"  << std::hex << std::setw(4)
-                  << std::setfill('0') <<    static_cast<uint32_t>(interface)
-                  << " alternate setting nbr, " << GetStrError(result) << "\n";
-
+        std::stringstream stream;
+        stream << "Error:  Unable to Get USB Interface :0x"  << std::hex << std::setw(4)
+               << std::setfill('0') <<    static_cast<uint32_t>(interface)
+               << " alternate setting nbr, " << GetStrError(result);
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return result;
     }
 
     if(result != 1)
     {
-        std::cout << "Error:  USB get interface alt setting error, Unexpected nbr of byte "
-                  << " transfered (0x" << std::hex << std::setw(4) << std::setfill('0')
-                  << static_cast<uint32_t>(result) << " , expected 0x01)\n";
+        std::stringstream stream;
+        stream << "Error:  USB get interface alt setting error, Unexpected nbr of byte "
+               << " transfered (0x" << std::hex << std::setw(4) << std::setfill('0')
+               << static_cast<uint32_t>(result) << " , expected 0x01)";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return -99;
     }
 
@@ -546,10 +591,14 @@ int StandardUSB::InterfaceSetAltSetting(uint16_t interface, uint8_t alt_setting)
      */
     int result = libusb_set_interface_alt_setting(this->usb_handle, interface, alt_setting);
     if(result < 0)
-        std::cout << "Error:  Unable to Set USB Interface :0x"  << std::hex << std::setw(4)
-                  << std::setfill('0') << static_cast<uint32_t>(interface)
-                  << " alternate setting nbr :0x" << std::hex << std::setw(4)
-                  << static_cast<uint32_t>(alt_setting) <<  " ," << GetStrError(result) << "\n";
+    {
+        std::stringstream stream;
+        stream << "Error:  Unable to Set USB Interface :0x"  << std::hex << std::setw(4)
+               << std::setfill('0') << static_cast<uint32_t>(interface)
+               << " alternate setting nbr :0x" << std::hex << std::setw(4)
+               << static_cast<uint32_t>(alt_setting) <<  " ," << GetStrError(result);
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
+    }
 
     return result;
 }
@@ -572,28 +621,30 @@ int StandardUSB::EndpointGetStatus(uint16_t endpoint, uint16_t &status)
     uint8_t data[2] = {0x00};
 
     int result = libusb_control_transfer(this->usb_handle,\
-                 /* bmRequestType */     req_t,
-                 /* bRequest      */     LIBUSB_REQUEST_GET_STATUS,
-                 /* wValue        */     0x00,
-                 /* wIndex        */     endpoint,
-                 /* data          */     data,
-                 /* length        */     0x02,
-                 /* timeout       */     StandardUSB::ctr_time_out);
+                                         /* bmRequestType */     req_t,
+                                         /* bRequest      */     LIBUSB_REQUEST_GET_STATUS,
+                                         /* wValue        */     0x00,
+                                         /* wIndex        */     endpoint,
+                                         /* data          */     data,
+                                         /* length        */     0x02,
+                                         /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to request USB endpoint status :0x"  << std::hex
-                  << std::setw(4) << std::setfill('0') <<  static_cast<uint32_t>(endpoint)
-                  << " status, " << GetStrError(result) << "\n";
-
+        std::stringstream stream;
+        stream << std::setw(4) << std::setfill('0') <<  static_cast<uint32_t>(endpoint)
+               << " status, " << GetStrError(result);
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return result;
     }
 
     if(result != 2)
     {
-        std::cout << "Error:  USB get endpoint status error, Unexpected nbr of byte transfered"
-                  << " (0x" << std::hex << std::setw(4) << std::setfill('0')
-                  << static_cast<uint32_t>(result) << " , expected 0x02)\n";
+        std::stringstream stream;
+        stream << "Error:  USB get endpoint status error, Unexpected nbr of byte transfered"
+               << " (0x" << std::hex << std::setw(4) << std::setfill('0')
+               << static_cast<uint32_t>(result) << " , expected 0x02)";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return -99;
     }
 
@@ -615,27 +666,32 @@ int StandardUSB::EndpointClearFeature(uint16_t endpoint, uint16_t feature)
     uint8_t req_t = (LIBUSB_ENDPOINT_OUT|LIBUSB_REQUEST_TYPE_STANDARD|LIBUSB_RECIPIENT_ENDPOINT);
 
     int result = libusb_control_transfer(this->usb_handle,\
-                 /* bmRequestType */     req_t,
-                 /* bRequest      */     LIBUSB_REQUEST_CLEAR_FEATURE,
-                 /* wValue        */     feature,
-                 /* wIndex        */     endpoint,
-                 /* data          */     nullptr,
-                 /* length        */     0x00,
-                 /* timeout       */     StandardUSB::ctr_time_out);
+                                         /* bmRequestType */     req_t,
+                                         /* bRequest      */     LIBUSB_REQUEST_CLEAR_FEATURE,
+                                         /* wValue        */     feature,
+                                         /* wIndex        */     endpoint,
+                                         /* data          */     nullptr,
+                                         /* length        */     0x00,
+                                         /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to clear USB endpoint feature:0x"  << std::hex << std::setw(4)
-                  << std::setfill('0') << static_cast<uint32_t>(endpoint) << std::hex
-                  << std::setw(4) << std::setfill('0') << " , feature: 0x"
-                  << static_cast<uint32_t>(feature) << ", " << GetStrError(result) << "\n";
+        std::stringstream stream;
+        stream << "Error:  Unable to clear USB endpoint feature:0x"  << std::hex << std::setw(4)
+               << std::setfill('0') << static_cast<uint32_t>(endpoint) << std::hex
+               << std::setw(4) << std::setfill('0') << " , feature: 0x"
+               << static_cast<uint32_t>(feature) << ", " << GetStrError(result);
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
+        return result;
     }
 
     if(result)
     {
-        std::cout << "Error:  USB clear endpoint feature error, Unexpected nbr of byte transfered"
-                  << " (0x" << std::hex << std::setw(4) << std::setfill('0')
-                  << static_cast<uint32_t>(result) << " , expected 0x00)\n";
+        std::stringstream stream;
+        stream << "Error:  USB clear endpoint feature error, Unexpected nbr of byte transfered"
+               << " (0x" << std::hex << std::setw(4) << std::setfill('0')
+               << static_cast<uint32_t>(result) << " , expected 0x00)";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return -99;
     }
 
@@ -656,29 +712,32 @@ int StandardUSB::EndpointSetFeature(uint16_t endpoint, uint16_t feature)
     uint8_t req_t = (LIBUSB_ENDPOINT_OUT|LIBUSB_REQUEST_TYPE_STANDARD|LIBUSB_RECIPIENT_ENDPOINT);
 
     int result = libusb_control_transfer(this->usb_handle,\
-                 /* bmRequestType */     req_t,
-                 /* bRequest      */     LIBUSB_REQUEST_SET_FEATURE,
-                 /* wValue        */     feature,
-                 /* wIndex        */     endpoint,
-                 /* data          */     nullptr,
-                 /* length        */     0x00,
-                 /* timeout       */     StandardUSB::ctr_time_out);
+                                         /* bmRequestType */     req_t,
+                                         /* bRequest      */     LIBUSB_REQUEST_SET_FEATURE,
+                                         /* wValue        */     feature,
+                                         /* wIndex        */     endpoint,
+                                         /* data          */     nullptr,
+                                         /* length        */     0x00,
+                                         /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to set USB endpoint feature:0x"  << std::hex << std::setw(4)
-                  << std::setfill('0') << static_cast<uint32_t>(endpoint) << std::hex
-                  << std::setw(4) << std::setfill('0') << " , feature: 0x"
-                  << static_cast<uint32_t>(feature) << ", " << GetStrError(result) << "\n";
-
+        std::stringstream stream;
+        stream << "Error:  Unable to set USB endpoint feature:0x"  << std::hex << std::setw(4)
+               << std::setfill('0') << static_cast<uint32_t>(endpoint) << std::hex
+               << std::setw(4) << std::setfill('0') << " , feature: 0x"
+               << static_cast<uint32_t>(feature) << ", " << GetStrError(result);
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return result;
     }
 
     if(result)
     {
-        std::cout << "Error:  USB set endpoint feature error, Unexpected nbr of byte transfered"
-                  << " (0x" << std::hex << std::setw(4) << std::setfill('0')
-                  << static_cast<uint32_t>(result) << " , expected 0x00)\n";
+        std::stringstream stream;
+        stream << "Error:  USB set endpoint feature error, Unexpected nbr of byte transfered"
+               << " (0x" << std::hex << std::setw(4) << std::setfill('0')
+               << static_cast<uint32_t>(result) << " , expected 0x00)";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return -99;
     }
 
@@ -699,28 +758,31 @@ int StandardUSB::EndpointSynchFrame(uint16_t endpoint, uint16_t &frame)
     uint8_t data[2] = {0x00};
 
     int result = libusb_control_transfer(this->usb_handle,\
-                 /* bmRequestType */     req_t,
-                 /* bRequest      */     LIBUSB_REQUEST_SYNCH_FRAME,
-                 /* wValue        */     0x00,
-                 /* wIndex        */     endpoint,
-                 /* data          */     data,
-                 /* length        */     0x02,
-                 /* timeout       */     StandardUSB::ctr_time_out);
+                                         /* bmRequestType */     req_t,
+                                         /* bRequest      */     LIBUSB_REQUEST_SYNCH_FRAME,
+                                         /* wValue        */     0x00,
+                                         /* wIndex        */     endpoint,
+                                         /* data          */     data,
+                                         /* length        */     0x02,
+                                         /* timeout       */     StandardUSB::ctr_time_out);
 
     if(result < 0)
     {
-        std::cout << "Error:  Unable to Synchronize Frame Endpoint :0x"  << std::hex
-                  << std::setw(4) << std::setfill('0') << static_cast<uint32_t>(endpoint) << ", "
-                  << GetStrError(result) << "\n";
-
+        std::stringstream stream;
+        stream << "Error:  Unable to Synchronize Frame Endpoint :0x"  << std::hex
+               << std::setw(4) << std::setfill('0') << static_cast<uint32_t>(endpoint) << ", "
+               << GetStrError(result);
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return result;
     }
 
     if(result != 2)
     {
-        std::cout << "Error:  USB endpoint synchronize frame error, Unexpected nbr of byte "
-                  << "transfered (0x" << std::hex << std::setw(4) << std::setfill('0')
-                  << static_cast<uint32_t>(result) << " , expected 0x02)\n";
+        std::stringstream stream;
+        stream << "Error:  USB endpoint synchronize frame error, Unexpected nbr of byte "
+               << "transfered (0x" << std::hex << std::setw(4) << std::setfill('0')
+               << static_cast<uint32_t>(result) << " , expected 0x02)";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return -99;
     }
 

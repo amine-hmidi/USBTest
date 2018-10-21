@@ -76,8 +76,8 @@ void USBTestCli::ParseCommonCmds(const cxxopts::ParseResult &result)
 
     if (result.count("version"))
     {
-        std::cout << "\n";
-        std::cout << "Info: USBTest Suite version " << version << "\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE,
+                             "USBTest Suite version " + version);
     }
 }
 
@@ -88,13 +88,14 @@ void USBTestCli::ParseCommonCmds(const cxxopts::ParseResult &result)
  */
 void USBTestCli::DisplayGenralHelp()
 {
-    std::cout << "Common options" << std::endl;
-    std::cout << "\t-h, --help                  Print help Menu\n";
-    std::cout << "\t    --show_w                Display CopyRights Warranty\n";
-    std::cout << "\t    --show_c                Display CopyRights\n";
-    std::cout << "\t    --version               Display USBTest Suite version\n";
-    std::cout << "\t    --exit                  Exit application\n";
-    std::cout << "\n";
+    std::stringstream stream;
+    stream << "Common options\n";
+    stream << "\t-h, --help                  Print help Menu\n";
+    stream << "\t    --show_w                Display CopyRights Warranty\n";
+    stream << "\t    --show_c                Display CopyRights\n";
+    stream << "\t    --version               Display USBTest Suite version\n";
+    stream << "\t    --exit                  Exit application\n";
+    cli_dm->PrintMessage(DisplayManager::MessageType::BASIC_MESSAGE, stream.str());
 }
 
 
@@ -111,20 +112,23 @@ int8_t USBTestCli::WriteBinFile(std::string file, uint8_t *data, size_t size)
     FILE *f_des = std::fopen(file.c_str(), "wb");
     if (!f_des)
     {
-        std::cout << "Error: Unable to open target file: " << file << "\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Unable to open target file: " + file);
         return -1;
     }
 
     size_t len = std::fwrite(data, 1, size, f_des);
     if (len != size)
     {
-        std::cout << "Error: Unable to write in target file: " << file << "\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Unable to write in target file: " + file);
         std::fclose(f_des);
         return -1;
     }
 
     std::fclose(f_des);
-    std::cout << "Info: Writing in target file: " << file << " Done\n";
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE,
+                         "Writing in target file: " + file + "Done");
     return 0;
 }
 
@@ -142,20 +146,23 @@ uint8_t *USBTestCli::ReadBinFile(std::string file, size_t &size)
     FILE *f_des = std::fopen(file.c_str(), "rb");
     if (!f_des)
     {
-        std::cout << "Error: Unable to open target file: " << file << "\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Unable to open target file: " + file);
         return nullptr;
     }
 
     if (std::fseek (f_des, 0, SEEK_END))
     {
-        std::cout << "Error: Unable to determin target file: "<< file << " size\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Unable to determin target file: " + file + " size");
         std::fclose(f_des);
         return nullptr;
     }
     long l_size = std::ftell(f_des);
     if (l_size == -1L)
     {
-        std::cout << "Error: Unable to determin target file: "<< file << " size\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Unable to determin target file: " + file + " size");
         std::fclose(f_des);
         return nullptr;
     }
@@ -165,7 +172,8 @@ uint8_t *USBTestCli::ReadBinFile(std::string file, size_t &size)
     uint8_t *data = new(std::nothrow) uint8_t[size];
     if (!data)
     {
-        std::cout << "Error: Unable to read target file: "<< file << ", memory allocation error\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Unable to read target file: " + file + ", memory allocation error");
         std::fclose(f_des);
         return nullptr;
     }
@@ -174,7 +182,8 @@ uint8_t *USBTestCli::ReadBinFile(std::string file, size_t &size)
     size_t len = std::fread(data, 1, size, f_des);
     if (len != size)
     {
-        std::cout << "Error: Unable to read target file: "<< file << "\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Unable to read target file: " + file);
         delete[] data;
         std::fclose(f_des);
         return nullptr;
@@ -192,7 +201,6 @@ uint8_t *USBTestCli::ReadBinFile(std::string file, size_t &size)
  */
 void USBTestCli::DisplayHelp()
 {
-    std::cout << "\n";
     std::cout << "Usage:\n";
     std::cout << "\t[[OPTION <ARGUMENT>] [OPTION <ARGUMENT>] [OPTION <ARGUMENT>] ...]\n\n";
 

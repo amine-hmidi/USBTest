@@ -26,6 +26,7 @@
 /* C++ Includes */
 #include <iostream>
 #include <iomanip>
+#include <sstream>
 #include <cstring>
 
 /* C Includes */
@@ -169,7 +170,7 @@ int DFUClass::GetDFUInterface()
         }
     }
 
-    std::cout << "Error: Device is not DFU capable\n";
+    usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, "Device is not DFU capable");
     return 0xFFF;
 }
 
@@ -207,7 +208,8 @@ const DFUClass::DFUFunctionalDescriptor *DFUClass::GetDFUFunctionalDescriptor()
         return &dfu_func_desc;
     }
 
-    std::cout << "Error: Device is missing DFU functional descriptor\n";
+    usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                         "Device is missing DFU functional descriptor");
     return nullptr;
 }
 
@@ -236,20 +238,35 @@ void DFUClass::DisplayDescriptorsSet()
  */
 void DFUClass::DisplayDFUFunctionalDescriptor()
 {
-    std::cout << std::hex << std::setfill ('0');
-    std::cout << "\tDFU Functional Descriptor:"                       << std::endl;
-    std::cout << "\t\tbLength            : 0x" << std::setw(2)
-              << static_cast<uint32_t>(dfu_func_desc.bLength)         << std::endl;
-    std::cout << "\t\tbDescriptorType    : 0x" << std::setw(2)
-              << static_cast<uint32_t>(dfu_func_desc.bDescriptorType) << std::endl;
-    std::cout << "\t\tbmAttributes       : 0x" << std::setw(2)
-              << static_cast<uint32_t>(dfu_func_desc.bmAttributes)    << std::endl;
-    std::cout << "\t\twDetachTimeOut     : 0x" << std::setw(4)
-              << static_cast<uint32_t>(dfu_func_desc.wDetachTimeOut)  << std::endl;
-    std::cout << "\t\twTransferSize      : 0x" << std::setw(4)
-              << static_cast<uint32_t>(dfu_func_desc.wTransferSize)   << std::endl;
-    std::cout << "\t\tbcdDFUVersion      : 0x" << std::setw(4)
-              << static_cast<uint32_t>(dfu_func_desc.bcdDFUVersion)   << std::endl;
+    std::stringstream stream;
+    stream << std::hex << std::setfill ('0');
+
+    stream << "\tDFU Functional Descriptor:";
+    usb_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
+    stream.str(std::string());
+    stream << "\t\tbLength            : 0x" << std::setw(2)
+              << static_cast<uint32_t>(dfu_func_desc.bLength);
+    usb_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
+    stream.str(std::string());
+    stream << "\t\tbDescriptorType    : 0x" << std::setw(2)
+              << static_cast<uint32_t>(dfu_func_desc.bDescriptorType);
+    usb_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
+    stream.str(std::string());
+    stream << "\t\tbmAttributes       : 0x" << std::setw(2)
+              << static_cast<uint32_t>(dfu_func_desc.bmAttributes);
+    usb_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
+    stream.str(std::string());
+    stream << "\t\twDetachTimeOut     : 0x" << std::setw(4)
+              << static_cast<uint32_t>(dfu_func_desc.wDetachTimeOut);
+    usb_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
+    stream.str(std::string());
+    stream << "\t\twTransferSize      : 0x" << std::setw(4)
+              << static_cast<uint32_t>(dfu_func_desc.wTransferSize);
+    usb_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
+    stream.str(std::string());
+    stream << "\t\tbcdDFUVersion      : 0x" << std::setw(4)
+              << static_cast<uint32_t>(dfu_func_desc.bcdDFUVersion);
+    usb_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
 }
 
 
@@ -456,18 +473,33 @@ std::string DFUClass::GetStateStr(DFUClass::DFUState state)
  */
 void DFUClass::DisplayDfuStatus()
 {
+    std::stringstream stream;
     std::cout << std::hex << std::setfill('0');
-    std::cout << "Info: DFU 1.1 Status:"                                          << std::endl;
-    std::cout << "Info: \tbStatus       : 0x" << std::setw(2)
+
+    stream << "DFU 1.1 Status:";
+    usb_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
+    stream.str(std::string());
+
+    stream << "\tbStatus       : 0x" << std::setw(2)
               << static_cast<uint32_t>(this->dfu_status.bStatus) << " ("
-              << GetStatusStr(this->dfu_status.bStatus) << ")"              << std::endl;
-    std::cout << "Info: \tbwPollTimeout : 0x" << std::setw(4)
-              << static_cast<uint32_t>(this->dfu_status.bwPollTimeOut)      << std::endl;
-    std::cout << "Info: \tbState        : 0x" << std::setw(2)
+              << GetStatusStr(this->dfu_status.bStatus) << ")";
+    usb_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
+    stream.str(std::string());
+
+    stream << "\tbwPollTimeout : 0x" << std::setw(4)
+              << static_cast<uint32_t>(this->dfu_status.bwPollTimeOut);
+    usb_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
+    stream.str(std::string());
+
+    stream << "\tbState        : 0x" << std::setw(2)
               << static_cast<uint32_t>(this->dfu_status.bState)
-              << " (" << GetStateStr(this->dfu_status.bState) << ")"        << std::endl;
-    std::cout << "Info: \tiString       : 0x" << std::setw(2)
-              << static_cast<uint32_t>(this->dfu_status.iString)            << std::endl;
+              << " (" << GetStateStr(this->dfu_status.bState) << ")";
+    usb_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
+    stream.str(std::string());
+
+    stream << "\tiString       : 0x" << std::setw(2)
+              << static_cast<uint32_t>(this->dfu_status.iString);
+    usb_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
 }
 
 
@@ -476,10 +508,16 @@ void DFUClass::DisplayDfuStatus()
  */
 void DFUClass::DisplayDfuState()
 {
-    std::cout << std::hex << std::setfill('0');
-    std::cout << "Info: DFU 1.1 State:"                             << std::endl;
-    std::cout << "Info: \tbState       : 0x" << std::setw(2) << static_cast<uint32_t>(this->dfu_state)
-              << " (" << GetStateStr(this->dfu_state) << ")"  << std::endl;
+    std::stringstream stream;
+    stream << std::hex << std::setfill('0');
+
+    stream << "DFU 1.1 State:";
+    usb_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
+    stream.str(std::string());
+
+    stream << "\tbState       : 0x" << std::setw(2) << static_cast<uint32_t>(this->dfu_state)
+              << " (" << GetStateStr(this->dfu_state) << ")";
+    usb_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
 }
 
 

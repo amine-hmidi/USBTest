@@ -38,9 +38,11 @@
 /* User Includes */
 #include "cxxopts.hpp"
 #include "usb_test_cli.h"
+#include "display_manager.h"
 
 
 std::string USBTestCli::version = "0.1.0";
+DisplayManager *USBTestCli::cli_dm = DisplayManager::Instance();
 
 
 /* ********************************************************************************************** */
@@ -56,7 +58,8 @@ USBTestCli::USBTestCli(int &, char **&argv)
     this->app_path = new(std::nothrow) char[strlen(argv[0]) + 1];
     if (!this->app_path)
     {
-        std::cout << "Error: Unable to initialize USBTest CLI" << std::endl;
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Unable to initialize USBTest CLI");
         this->app_path = nullptr;
         is_ok = false;
         return;
@@ -68,7 +71,8 @@ USBTestCli::USBTestCli(int &, char **&argv)
     options = new(std::nothrow) cxxopts::Options(this->app_path, " - example command line options");
     if (!options)
     {
-        std::cout << "Error: Unable to initialize USBTest CLI" << std::endl;
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Unable to initialize USBTest CLI");
         this->options = nullptr;
         is_ok = false;
         return;
@@ -147,8 +151,7 @@ int USBTestCli::execute()
 
         /* Get the user's input */
         std::string input;
-        std::cout << "\n";
-        std::cout << ">> ";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, ">>>  ");
         std::getline(std::cin, input);
 
         std::istringstream iss(input);
@@ -158,7 +161,8 @@ int USBTestCli::execute()
         /* check the nbr of arguments */
         if (cli_options.size() > 256)
         {
-            std::cout << "Error: Unable to Parse CLI, too many arguments\n";
+            cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                                 "Unable to Parse CLI, too many arguments");
             continue;
         }
 
@@ -171,7 +175,8 @@ int USBTestCli::execute()
         arguments = new(std::nothrow) char*[argument_nbr];
         if(!arguments)
         {
-            std::cout << "Error: Unable to Parse CLI, Memory allocation error\n";
+            cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                                 "Unable to Parse CLI, Memory allocation error");
             argument_nbr = 0x00;
             continue;
         }
@@ -186,7 +191,8 @@ int USBTestCli::execute()
             arguments[i] = new(std::nothrow) char[string_size];
             if (!arguments[i])
             {
-                std::cout << "Error: Unable to Parse CLI, Memory allocation error\n";
+                cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                                     "Unable to Parse CLI, Memory allocation error");
                 for(int j = 1; j < i; j++)
                     delete[] arguments[j];
 
@@ -218,7 +224,7 @@ int USBTestCli::execute()
             ParseDFU11Cmds(result);
 #endif
         } catch (std::exception &e) {
-            std::cout << "Error: " << e.what() << "\n";;
+            cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,e.what());
         }
     }
 

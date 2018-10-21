@@ -182,7 +182,6 @@ Example:
     --bRequest=0
     --wValue=0
     --wIndex=0
-    --ep_in
     --size=0x2
     --display8(16/32/64)
 

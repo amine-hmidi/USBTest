@@ -33,6 +33,7 @@
 
 /* User Includes */
 #include "usb_test_cli.h"
+#include "display_manager.h"
 
 
 /* ********************************************************************************************** */
@@ -157,75 +158,76 @@ void USBTestCli::InitUSBCommands()
  */
 void USBTestCli::DisplayUSBHelp()
 {
-    std::cout << "USB Standard options\n";
+    std::stringstream stream;
+    stream << "USB Standard options\n";
     /* **** */
-    std::cout << "\t    --list                  Display the currently attached devices\n";
-    std::cout << "\t    --usb                   Connect as a USB device without taking in count \n";
-    std::cout << "\t                            the USB Class\n";
-    std::cout << "\t    --idvendor              The vendor id of the usb device\n";
-    std::cout << "\t    --idproduct             The product id of the usb device\n";
-    std::cout << "\t    --timeout_c             USB control transfer timeout in ms\n";
-    std::cout << "\t    --timeout_b             USB bulk transfer timeout in ms\n";
-    std::cout << "\t    --timeout_i             USB interrupt transfer timeout in ms\n";
-    std::cout << "\t    --display_desc          Display device & configuration descriptors\n";
+    stream << "\t    --list                  Display the currently attached devices\n";
+    stream << "\t    --usb                   Connect as a USB device without taking in count \n";
+    stream << "\t                            the USB Class\n";
+    stream << "\t    --idvendor              The vendor id of the usb device\n";
+    stream << "\t    --idproduct             The product id of the usb device\n";
+    stream << "\t    --timeout_c             USB control transfer timeout in ms\n";
+    stream << "\t    --timeout_b             USB bulk transfer timeout in ms\n";
+    stream << "\t    --timeout_i             USB interrupt transfer timeout in ms\n";
+    stream << "\t    --display_desc          Display device & configuration descriptors\n";
     /* **** */
-    std::cout << "\t    --dev_getstatus         Send a usb device get status request\n";
-    std::cout << "\t    --dev_clearfeat         Send a usb device clear featute request\n";
-    std::cout << "\t    --dev_setfeat           Send a usb device set featute request\n";
-    std::cout << "\t    --dev_setadd            Send a usb device set address request\n";
-    std::cout << "\t    --dev_getdesc           Send a usb device get descriptor request\n";
-    std::cout << "\t    --dev_setdesc           Send a usb device set descriptor request\n";
-    std::cout << "\t    --dev_getconfig         Send a usb device get configuration request\n";
-    std::cout << "\t    --dev_setconfig         Send a usb device set configuration request\n";
-    std::cout << "\t    --dev_getstrdesc        Send a standard usb device get string descriptor\n";
+    stream << "\t    --dev_getstatus         Send a usb device get status request\n";
+    stream << "\t    --dev_clearfeat         Send a usb device clear featute request\n";
+    stream << "\t    --dev_setfeat           Send a usb device set featute request\n";
+    stream << "\t    --dev_setadd            Send a usb device set address request\n";
+    stream << "\t    --dev_getdesc           Send a usb device get descriptor request\n";
+    stream << "\t    --dev_setdesc           Send a usb device set descriptor request\n";
+    stream << "\t    --dev_getconfig         Send a usb device get configuration request\n";
+    stream << "\t    --dev_setconfig         Send a usb device set configuration request\n";
+    stream << "\t    --dev_getstrdesc        Send a standard usb device get string descriptor\n";
     /* **** */
-    std::cout << "\t    --inter_getstatus       Send a usb interface get status request\n";
-    std::cout << "\t    --inter_clearfeat       Send a usb interface clear featute request\n";
-    std::cout << "\t    --inter_setfeat         Send a usb interface set featute request\n";
-    std::cout << "\t    --inter_setalt          Send a usb interface set alternate setting req\n";
-    std::cout << "\t    --inter_getalt          Send a usb interface get alternate setting req\n";
+    stream << "\t    --inter_getstatus       Send a usb interface get status request\n";
+    stream << "\t    --inter_clearfeat       Send a usb interface clear featute request\n";
+    stream << "\t    --inter_setfeat         Send a usb interface set featute request\n";
+    stream << "\t    --inter_setalt          Send a usb interface set alternate setting req\n";
+    stream << "\t    --inter_getalt          Send a usb interface get alternate setting req\n";
     /* **** */
-    std::cout << "\t    --ep_getstatus          Send a usb end point get status request\n";
-    std::cout << "\t    --ep_clearfeat          Send a usb end point clear featute request\n";
-    std::cout << "\t    --ep_setfeat            Send a usb end point set featute request\n";
-    std::cout << "\t    --ep_syncframe          Send a usb end point sync frame request\n";
+    stream << "\t    --ep_getstatus          Send a usb end point get status request\n";
+    stream << "\t    --ep_clearfeat          Send a usb end point clear featute request\n";
+    stream << "\t    --ep_setfeat            Send a usb end point set featute request\n";
+    stream << "\t    --ep_syncframe          Send a usb end point sync frame request\n";
     /* **** */
-    std::cout << "\t    --address               The usb address\n";
-    std::cout << "\t    --type                  The usb descriptor type\n";
-    std::cout << "\t    --index                 The usb descriptor index\n";
-    std::cout << "\t    --language              The usb descriptor language\n";
-    std::cout << "\t    --config                The usb configuration\n";
-    std::cout << "\t    --interface             The interface index\n";
-    std::cout << "\t    --altsetting            The interface's alternate setting index\n";
-    std::cout << "\t    --endpoint              The endpoint index\n";
-    std::cout << "\t    --feature               The feature index\n";
+    stream << "\t    --address               The usb address\n";
+    stream << "\t    --type                  The usb descriptor type\n";
+    stream << "\t    --index                 The usb descriptor index\n";
+    stream << "\t    --language              The usb descriptor language\n";
+    stream << "\t    --config                The usb configuration\n";
+    stream << "\t    --interface             The interface index\n";
+    stream << "\t    --altsetting            The interface's alternate setting index\n";
+    stream << "\t    --endpoint              The endpoint index\n";
+    stream << "\t    --feature               The feature index\n";
     /* **** */
-    std::cout << "\t    --claim_interface       Request the ownership of the given interface\n";
-    std::cout << "\t    --release_interface     Release the previously claimed interface\n";
-    std::cout << "\t    --reset                 Perform a usb port reset\n";
+    stream << "\t    --claim_interface       Request the ownership of the given interface\n";
+    stream << "\t    --release_interface     Release the previously claimed interface\n";
+    stream << "\t    --reset                 Perform a usb port reset\n";
     /* **** */
-    std::cout << "\t    --control               Send/receive data via control end point(0x00)\n";
-    std::cout << "\t    --bmRequestType         The request type field for the control packet\n";
-    std::cout << "\t    --bRequest              The request field for the control packet\n";
-    std::cout << "\t    --wValue                The value field for the control packet\n";
-    std::cout << "\t    --wIndex                The index field for the control packet\n";
+    stream << "\t    --control               Send/receive data via control end point(0x00)\n";
+    stream << "\t    --bmRequestType         The request type field for the control packet\n";
+    stream << "\t    --bRequest              The request field for the control packet\n";
+    stream << "\t    --wValue                The value field for the control packet\n";
+    stream << "\t    --wIndex                The index field for the control packet\n";
     /* **** */
-    std::cout << "\t    --bulk                  Exchange data via bulk transfer packet\n";
-    std::cout << "\t    --interrupt             Exchange data via interrupt transfer\n";
+    stream << "\t    --bulk                  Exchange data via bulk transfer packet\n";
+    stream << "\t    --interrupt             Exchange data via interrupt transfer\n";
     /* **** */
-    std::cout << "\t    --file                  File from/to which to data will be transfered\n";
-    std::cout << "\t    --size                  The data buffer length\n";
-    std::cout << "\t    --data0                 Data to be transfer is NULL, size = 0\n";
-    std::cout << "\t    --data8                 Data to be transfer is a byte, size = 1\n";
-    std::cout << "\t    --data16                Data to be transfer is a half word, size = 2\n";
-    std::cout << "\t    --data32                Data to be transfer is a word, size = 4\n";
-    std::cout << "\t    --data64                Data to be transfer is a double word, size = 8\n";
+    stream << "\t    --file                  File from/to which to data will be transfered\n";
+    stream << "\t    --size                  The data buffer length\n";
+    stream << "\t    --data0                 Data to be transfer is NULL, size = 0\n";
+    stream << "\t    --data8                 Data to be transfer is a byte, size = 1\n";
+    stream << "\t    --data16                Data to be transfer is a half word, size = 2\n";
+    stream << "\t    --data32                Data to be transfer is a word, size = 4\n";
+    stream << "\t    --data64                Data to be transfer is a double word, size = 8\n";
     /* **** */
-    std::cout << "\t    --dislpay8              Upon data transfer success diplay data as 8bits\n";
-    std::cout << "\t    --dislpay16             Upon data transfer success diplay data as 16bits\n";
-    std::cout << "\t    --dislpay32             Upon data transfer success diplay data as 32bits\n";
-    std::cout << "\t    --dislpay64             Upon data transfer success diplay data as 64bits\n";
-    std::cout << "\n";
+    stream << "\t    --dislpay8              Upon data transfer success diplay data as 8bits\n";
+    stream << "\t    --dislpay16             Upon data transfer success diplay data as 16bits\n";
+    stream << "\t    --dislpay32             Upon data transfer success diplay data as 32bits\n";
+    stream << "\t    --dislpay64             Upon data transfer success diplay data as 64bits\n";
+    cli_dm->PrintMessage(DisplayManager::MessageType::BASIC_MESSAGE, stream.str());
 }
 
 
@@ -244,34 +246,43 @@ void USBTestCli::ParseUSBCmds(const cxxopts::ParseResult &result)
     {
         unsigned int timeout = result["timeout_c"].as<unsigned int>();
         StandardUSB::CtrTimeOut(timeout);
+        cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE,
+                             "USB control transfer timeout set to: " + std::to_string(timeout) +
+                             " ms");
     }
 
     if(result.count("timeout_i"))
     {
         unsigned int timeout = result["timeout_i"].as<unsigned int>();
         StandardUSB::IntTimeOut(timeout);
+        cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE,
+                             "USB interrupt transfer timeout set to: " + std::to_string(timeout) +
+                             " ms");
     }
 
     if(result.count("timeout_b"))
     {
         unsigned int timeout = result["timeout_b"].as<unsigned int>();
         StandardUSB::BulkTimeOut(timeout);
+        cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE,
+                             "USB bulk transfer timeout set to: " + std::to_string(timeout) +
+                             " ms");
     }
 
     if(result.count("usb"))
     {
-        std::cout << "\n";
-        std::cout << "Info: Establishing connection with target device:\n";
         /* Check if both idvendor and idproduct are present */
         if(!result.count("idvendor"))
         {
-            std::cout << "Error: Missing --idvendor option\n";
+            cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                                 "Missing --idvendor option");
             return;
         }
 
         if(!result.count("idproduct"))
         {
-            std::cout << "Error: Missing --idproduct option\n";
+            cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                                 "Missing --idproduct option");
             return;
         }
 
@@ -335,7 +346,8 @@ void USBTestCli::ConnectUSB(uint16_t idVendor, uint16_t idProduct)
     usb_device = new(std::nothrow) StandardUSB(idVendor, idProduct);
     if (!usb_device)
     {
-        std::cout << "Error: Unable to initialize the usb device, Mmeory allocation error\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Unable to initialize the usb device, Mmeory allocation error");
         return;
     }
 
@@ -347,7 +359,7 @@ void USBTestCli::ConnectUSB(uint16_t idVendor, uint16_t idProduct)
         return;
     }
 
-    std::cout << "Info: Connection established\n";
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, "Connection established");
 }
 
 
@@ -363,8 +375,6 @@ void USBTestCli::DisplayDescriptors(const cxxopts::ParseResult &result)
     if (!result.count("display_desc"))
         return;
 
-    std::cout << "\n";
-    std::cout << "Info: USB Descriptors Set:\n";
     this->usb_device->DisplayDescriptorsSet();
 }
 
@@ -378,15 +388,14 @@ void USBTestCli::GetDeviceStatus(const cxxopts::ParseResult &result)
 {
     if (!result.count("dev_getstatus"))
         return;
-    std::cout << "\n";
-    std::cout << "Info: USB get device status:\n";
 
     uint16_t status;
     if (this->usb_device->DeviceGetStatus(status))
         return;
 
-    std::cout << "Info: USB device status: 0x" << std::hex << std::setw(4) << std::setfill('0') <<\
-                 status << "\n";
+    std::stringstream stream;
+    stream << "USB device status: 0x" << std::hex << std::setw(4) << std::setfill('0') << status;
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
 }
 
 
@@ -399,12 +408,11 @@ void USBTestCli::ClearDeviceFeature(const cxxopts::ParseResult &result)
 {
     if (!result.count("dev_clearfeat"))
         return;
-    std::cout << "\n";
-    std::cout << "Info: USB clear device feature:\n";
 
     if (!result.count("feature"))
     {
-        std::cout << "Error: Missing --feature option:\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --feature option:");
         return;
     }
 
@@ -412,7 +420,8 @@ void USBTestCli::ClearDeviceFeature(const cxxopts::ParseResult &result)
     if (this->usb_device->DeviceClearFeature(feature))
         return;
 
-    std::cout << "Info: USB clear device feature Done\n";
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE,
+                         "USB clear device feature Done");
 }
 
 
@@ -425,12 +434,11 @@ void USBTestCli::SetDeviceFeature(const cxxopts::ParseResult &result)
 {
     if (!result.count("dev_setfeat"))
         return;
-    std::cout << "\n";
-    std::cout << "Info: USB set device feature:\n";
 
     if (!result.count("feature"))
     {
-        std::cout << "Error: Missing --feature option:\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --feature option:");
         return;
     }
 
@@ -438,7 +446,8 @@ void USBTestCli::SetDeviceFeature(const cxxopts::ParseResult &result)
     if (this->usb_device->DeviceSetFeature(feature))
         return;
 
-    std::cout << "Info: USB set device feature Done\n";
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE,
+                         "USB set device feature Done");
 }
 
 
@@ -451,12 +460,11 @@ void USBTestCli::SetDeviceAddress(const cxxopts::ParseResult &result)
 {
     if (!result.count("dev_setadd"))
         return;
-    std::cout << "\n";
-    std::cout << "Info: USB set device address:\n";
 
     if (!result.count("address"))
     {
-        std::cout << "Error: Missing --address option:\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --address option:");
         return;
     }
 
@@ -464,7 +472,7 @@ void USBTestCli::SetDeviceAddress(const cxxopts::ParseResult &result)
     if (this->usb_device->DeviceSetAddress(address))
         return;
 
-    std::cout << "Info: USB set device address Done\n";
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, "USB set device address Done");
 }
 
 
@@ -478,13 +486,10 @@ void USBTestCli::GetDeviceDesriptor(const cxxopts::ParseResult &result)
     if (!result.count("dev_getdesc"))
         return;
 
-    std::cout << "\n";
-    std::cout << "Info: USB device get descriptor:\n";
-
     /* get descriptor type */
     if (!result.count("type"))
     {
-        std::cout << "Error: Missing descriptor type option --type\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, "Missing --type option");
         return;
     }
     uint8_t type = result["type"].as<uint8_t>();
@@ -492,22 +497,22 @@ void USBTestCli::GetDeviceDesriptor(const cxxopts::ParseResult &result)
     /* get descriptor index */
     if (!result.count("index"))
     {
-        std::cout << "Error: Missing descriptor index option --index\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, "Missing --index option");
         return;
     }
     uint8_t index = result["index"].as<uint8_t>();
 
     uint16_t language = 0x409;
     if (!result.count("language"))
-        std::cout << "Warning: Missing descriptor language option --language, proceeding with"
-                     "value 0x409\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::WARNING_MESSAGE,
+                             "Missing --language option, proceeding with value 0x409");
     else
         language = result["language"].as<uint16_t>();
 
     /* get descriptor max length */
     if (!result.count("size"))
     {
-        std::cout << "Error: Missing descriptor length option --size\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, "Missing --size option");
         return;
     }
     size_t size = result["size"].as<size_t>();
@@ -516,7 +521,8 @@ void USBTestCli::GetDeviceDesriptor(const cxxopts::ParseResult &result)
     uint8_t *data = new(std::nothrow) uint8_t[size];
     if (!data)
     {
-        std::cout << "Error: USB device get descriptor failed, memory allocation error\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "USB device get descriptor failed, memory allocation error");
         return;
     }
     std::memset(data, 0x00, size);
@@ -532,9 +538,10 @@ void USBTestCli::GetDeviceDesriptor(const cxxopts::ParseResult &result)
 
     if (static_cast<size_t>(result_l) != size)
     {
-        std::cout << "Warning: The actual transfered data length is :0x" << std::hex << std::setw(4)\
-                  << std::setfill('0') << result_l << "\n";
-
+        std::stringstream stream;
+        stream << "The actual transfered data length is :0x" << std::hex << std::setw(4)
+               << std::setfill('0') << result_l;
+        cli_dm->PrintMessage(DisplayManager::MessageType::WARNING_MESSAGE, stream.str());
         size = static_cast<size_t>(result_l);
     }
 
@@ -548,13 +555,13 @@ void USBTestCli::GetDeviceDesriptor(const cxxopts::ParseResult &result)
 
     /* display data */
     if (result.count("display16"))
-        this->usb_device->DisplayData16(data, size);
+        cli_dm->DisplayData16(data, size);
     else if (result.count("display32"))
-        this->usb_device->DisplayData32(data, size);
+        cli_dm->DisplayData32(data, size);
     else if (result.count("display64"))
-        this->usb_device->DisplayData64(data, size);
+        cli_dm->DisplayData64(data, size);
     else
-        this->usb_device->DisplayData8(data, size);
+        cli_dm->DisplayData8(data, size);
 
     delete[] data;
 }
@@ -570,13 +577,10 @@ void USBTestCli::SetDeviceDesriptor(const cxxopts::ParseResult &result)
     if (!result.count("dev_setdesc"))
         return;
 
-    std::cout << "\n";
-    std::cout << "Info: USB device set descriptor:\n";
-
     /* get descriptor type */
     if (!result.count("type"))
     {
-        std::cout << "Error: Missing descriptor type option --type\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, "Missing --type option");
         return;
     }
     uint8_t type = result["type"].as<uint8_t>();
@@ -584,29 +588,31 @@ void USBTestCli::SetDeviceDesriptor(const cxxopts::ParseResult &result)
     /* get descriptor index */
     if (!result.count("index"))
     {
-        std::cout << "Error: Missing descriptor index option --index\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, "Missing --index option");
         return;
     }
     uint8_t index = result["index"].as<uint8_t>();
 
     uint16_t language = 0x409;
     if (!result.count("language"))
-        std::cout << "Warning: Missing descriptor language option --language, proceeding with"
-                     "value 0x409\n";
+    {
+        cli_dm->PrintMessage(DisplayManager::MessageType::WARNING_MESSAGE,
+                             "Missing --language option, proceeding with value 0x409");
+    }
     else
         language = result["language"].as<uint16_t>();
 
     /* get descriptor max length */
     if (!result.count("size"))
     {
-        std::cout << "Error: Missing descriptor length option --size\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, "Missing --size option");
         return;
     }
     size_t size = result["size"].as<size_t>();
 
     if (!result.count("file"))
     {
-        std::cout << "Error: Missing target file option --file\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, "Missing --file option");
         return;
     }
 
@@ -628,7 +634,8 @@ void USBTestCli::SetDeviceDesriptor(const cxxopts::ParseResult &result)
         return;
     }
 
-    std::cout << "Info: USB device set descriptor Done\n";
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE,
+                         "USB device set descriptor Done");
     delete[] data;
 }
 
@@ -642,15 +649,15 @@ void USBTestCli::GetDeviceConfig(const cxxopts::ParseResult &result)
 {
     if (!result.count("dev_getconfig"))
         return;
-    std::cout << "\n";
-    std::cout << "Info: USB get device configuration:\n";
 
     uint8_t config = 0x00;
     if (this->usb_device->DeviceGetCongiguration(config))
         return;
 
-    std::cout << "Info: USB current device configuration: 0x"<< std::hex << std::setw(2)
-              << std::setfill('0') << static_cast<uint32_t>(config) << "\n";
+    std::stringstream stream;
+    stream << "USB current device configuration: 0x"<< std::hex << std::setw(2) << std::setfill('0')
+           << static_cast<uint32_t>(config);
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
 }
 
 
@@ -664,12 +671,9 @@ void USBTestCli::SetDeviceConfig(const cxxopts::ParseResult &result)
     if (!result.count("dev_setconfig"))
         return;
 
-    std::cout << "\n";
-    std::cout << "Info: USB set device configuration:\n";
-
     if (!result.count("config"))
     {
-        std::cout << "Error: Missing --config option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, "Missing --config option");
         return;
     }
 
@@ -677,7 +681,8 @@ void USBTestCli::SetDeviceConfig(const cxxopts::ParseResult &result)
     if (this->usb_device->DeviceSetCongiguration(config))
         return;
 
-    std::cout << "Info: USB set device configuration Done\n";
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE,
+                         "USB set device configuration Done");
 }
 
 
@@ -691,25 +696,27 @@ void USBTestCli::GetStringDescriptor(const cxxopts::ParseResult &result)
     if (!result.count("dev_getstrdesc"))
         return;
 
-    std::cout << "\n";
-    std::cout << "Info: USB get string descriptor:\n";
     if (!result.count("index"))
     {
-        std::cout << "Error: Missing --index option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, "Missing --index option");
         return;
     }
     uint8_t index = result["index"].as<uint8_t>();
 
     if (!result.count("language"))
     {
-        std::cout << "Error: Missing --language option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --language option");
         return;
     }
     uint16_t language = result["language"].as<uint16_t>();
 
     std::string str = this->usb_device->GetStringDescriptor(index, language);
     if (str.size())
-        std::cout << "Info: String descriptor: " << str << "\n";
+    {
+        cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE,
+                             "String descriptor: " + str);
+    }
 }
 
 
@@ -722,12 +729,11 @@ void USBTestCli::GetInterfaceStatus(const cxxopts::ParseResult &result)
 {
     if (!result.count("inter_getstatus"))
         return;
-    std::cout << "\n";
-    std::cout << "Info: USB get interface status:\n";
 
     if (!result.count("interface"))
     {
-        std::cout << "Error: Missing --interface option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --interface option");
         return;
     }
 
@@ -736,9 +742,10 @@ void USBTestCli::GetInterfaceStatus(const cxxopts::ParseResult &result)
     if (this->usb_device->InterfaceGetStatus(interface, status))
         return;
 
-    std::cout << "Info: USB interface: 0x" << std::hex << std::setw(2) << std::setfill('0')
-              << interface << " status: 0x" << std::hex << std::setw(4) << std::setfill('0')
-              << status << "\n";
+    std::stringstream stream;
+    stream << "USB interface: 0x" << std::hex << std::setw(2) << std::setfill('0') << interface
+           << " status: 0x" << std::hex << std::setw(4) << std::setfill('0') << status;
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
 }
 
 
@@ -751,19 +758,19 @@ void USBTestCli::ClearInterfaceFeature(const cxxopts::ParseResult &result)
 {
     if (!result.count("inter_clearfeat"))
         return;
-    std::cout << "\n";
-    std::cout << "Info: USB clear interface feature:\n";
 
     if (!result.count("interface"))
     {
-        std::cout << "Error: Missing --interface option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --interface option");
         return;
     }
     uint16_t interface = result["interface"].as<uint16_t>();
 
     if (!result.count("feature"))
     {
-        std::cout << "Error: Missing --feature option:\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --feature option:");
         return;
     }
     uint16_t feature = result["feature"].as<uint16_t>();
@@ -771,9 +778,10 @@ void USBTestCli::ClearInterfaceFeature(const cxxopts::ParseResult &result)
     if (this->usb_device->InterfaceClearFeature(interface, feature))
         return;
 
-    std::cout << "Info: USB clear interface: 0x"<< std::hex << std::setw(2) << std::setfill('0')
-              << interface << " feature: 0x" << std::hex << std::setw(4) << std::setfill('0')
-              << feature << " Done\n";
+    std::stringstream stream;
+    stream << "USB clear interface: 0x"<< std::hex << std::setw(2) << std::setfill('0') << interface
+           << " feature: 0x" << std::hex << std::setw(4) << std::setfill('0') << feature << " Done";
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
 }
 
 
@@ -786,19 +794,19 @@ void USBTestCli::SetInterfaceFeature(const cxxopts::ParseResult &result)
 {
     if (!result.count("inter_setfeat"))
         return;
-    std::cout << "\n";
-    std::cout << "Info: USB set interface feature:\n";
 
     if (!result.count("interface"))
     {
-        std::cout << "Error: Missing --interface option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --interface option");
         return;
     }
     uint16_t interface = result["interface"].as<uint16_t>();
 
     if (!result.count("feature"))
     {
-        std::cout << "Error: Missing --feature option:\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --feature option:");
         return;
     }
     uint16_t feature = result["feature"].as<uint16_t>();
@@ -806,9 +814,10 @@ void USBTestCli::SetInterfaceFeature(const cxxopts::ParseResult &result)
     if (this->usb_device->InterfaceSetFeature(interface, feature))
         return;
 
-    std::cout << "Info: USB set interface: 0x"<< std::hex << std::setw(2) << std::setfill('0')
-              << interface << " feature: 0x" << std::hex << std::setw(4) << std::setfill('0')
-              << feature << " Done\n";
+    std::stringstream stream;
+    stream << "USB set interface: 0x"<< std::hex << std::setw(2) << std::setfill('0') << interface
+           << " feature: 0x" << std::hex << std::setw(4) << std::setfill('0') << feature << " Done";
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
 }
 
 
@@ -821,19 +830,19 @@ void USBTestCli::SetInterfaceAltSetting(const cxxopts::ParseResult &result)
 {
     if (!result.count("inter_setalt"))
         return;
-    std::cout << "\n";
-    std::cout << "Info: USB set interface alternate setting:\n";
 
     if (!result.count("interface"))
     {
-        std::cout << "Error: Missing --interface option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --interface option");
         return;
     }
     uint16_t interface = result["interface"].as<uint16_t>();
 
     if (!result.count("altsetting"))
     {
-        std::cout << "Error: Missing --altsetting option:\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --altsetting option:");
         return;
     }
     uint8_t altsetting = result["altsetting"].as<uint8_t>();
@@ -841,9 +850,11 @@ void USBTestCli::SetInterfaceAltSetting(const cxxopts::ParseResult &result)
     if (this->usb_device->InterfaceSetAltSetting(interface, altsetting))
         return;
 
-    std::cout << "Info: USB set interface: 0x"<< std::hex << std::setw(4) << std::setfill('0')
-              << interface << " alternate setting: 0x" << std::hex << std::setw(4)
-              << std::setfill('0') << static_cast<uint32_t>(altsetting) << " Done\n";
+    std::stringstream stream;
+    stream << "USB set interface: 0x"<< std::hex << std::setw(4) << std::setfill('0') << interface
+           << " alternate setting: 0x" << std::hex << std::setw(4) << std::setfill('0')
+           << static_cast<uint32_t>(altsetting) << " Done";
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
 }
 
 
@@ -856,12 +867,11 @@ void USBTestCli::GetInterfaceAltSetting(const cxxopts::ParseResult &result)
 {
     if (!result.count("inter_getalt"))
         return;
-    std::cout << "\n";
-    std::cout << "Info: USB get interface alternate setting:\n";
 
     if (!result.count("interface"))
     {
-        std::cout << "Error: Missing --interface option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --interface option");
         return;
     }
     uint16_t interface = result["interface"].as<uint16_t>();
@@ -870,9 +880,11 @@ void USBTestCli::GetInterfaceAltSetting(const cxxopts::ParseResult &result)
     if (this->usb_device->InterfaceGetAltSetting(interface, altsetting))
         return;
 
-    std::cout << "Info: USB interface: 0x"<< std::hex << std::setw(4) << std::setfill('0')
-              << interface << " alternate setting: 0x" << std::hex << std::setw(4)
-              << std::setfill('0') << static_cast<uint32_t>(altsetting) << "\n";
+    std::stringstream stream;
+    stream << "USB interface: 0x"<< std::hex << std::setw(4) << std::setfill('0') << interface
+           << " alternate setting: 0x" << std::hex << std::setw(4) << std::setfill('0')
+           << static_cast<uint32_t>(altsetting);
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
 }
 
 
@@ -885,12 +897,11 @@ void USBTestCli::GetEndpointStatus(const cxxopts::ParseResult &result)
 {
     if (!result.count("ep_getstatus"))
         return;
-    std::cout << "\n";
-    std::cout << "Info: USB get end point status:\n";
 
     if (!result.count("endpoint"))
     {
-        std::cout << "Error: Missing --endpoint option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --endpoint option");
         return;
     }
 
@@ -899,9 +910,10 @@ void USBTestCli::GetEndpointStatus(const cxxopts::ParseResult &result)
     if (this->usb_device->EndpointGetStatus(ep, status))
         return;
 
-    std::cout << "Info: USB endpoint: 0x" << std::hex << std::setw(4) << std::setfill('0')
-              << ep << " status: 0x" << std::hex << std::setw(4) << std::setfill('0')
-              << status << "\n";
+    std::stringstream stream;
+    stream << "USB endpoint: 0x" << std::hex << std::setw(4) << std::setfill('0') << ep
+           << " status: 0x" << std::hex << std::setw(4) << std::setfill('0') << status;
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
 }
 
 
@@ -914,19 +926,19 @@ void USBTestCli::ClearEndpointFeature(const cxxopts::ParseResult &result)
 {
     if (!result.count("ep_clearfeat"))
         return;
-    std::cout << "\n";
-    std::cout << "Info: USB clear end point feature:\n";
 
     if (!result.count("endpoint"))
     {
-        std::cout << "Error: Missing --endpoint option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --endpoint option");
         return;
     }
     uint16_t endpoint = result["endpoint"].as<uint16_t>();
 
     if (!result.count("feature"))
     {
-        std::cout << "Error: Missing --feature option:\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --feature option:");
         return;
     }
     uint16_t feature = result["feature"].as<uint16_t>();
@@ -934,9 +946,10 @@ void USBTestCli::ClearEndpointFeature(const cxxopts::ParseResult &result)
     if (this->usb_device->EndpointClearFeature(endpoint, feature))
         return;
 
-    std::cout << "Info: USB clear endpoint: 0x"<< std::hex << std::setw(4) << std::setfill('0')
-              << endpoint << " feature: 0x" << std::hex << std::setw(4) << std::setfill('0')
-              << feature << " Done\n";
+    std::stringstream stream;
+    stream << "USB clear endpoint: 0x"<< std::hex << std::setw(4) << std::setfill('0') << endpoint
+           << " feature: 0x" << std::hex << std::setw(4) << std::setfill('0') << feature << " Done";
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
 }
 
 
@@ -949,19 +962,19 @@ void USBTestCli::SetEndpointFeature(const cxxopts::ParseResult &result)
 {
     if (!result.count("ep_setfeat"))
         return;
-    std::cout << "\n";
-    std::cout << "Info: USB set end point feature:\n";
 
     if (!result.count("endpoint"))
     {
-        std::cout << "Error: Missing --endpoint option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --endpoint option");
         return;
     }
     uint16_t endpoint = result["endpoint"].as<uint16_t>();
 
     if (!result.count("feature"))
     {
-        std::cout << "Error: Missing --feature option:\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --feature option:");
         return;
     }
     uint16_t feature = result["feature"].as<uint16_t>();
@@ -969,9 +982,10 @@ void USBTestCli::SetEndpointFeature(const cxxopts::ParseResult &result)
     if (this->usb_device->EndpointSetFeature(endpoint, feature))
         return;
 
-    std::cout << "Info: USB set endpoint: 0x"<< std::hex << std::setw(4) << std::setfill('0')
-              << endpoint << " feature: 0x" << std::hex << std::setw(4) << std::setfill('0')
-              << feature << " Done\n";
+    std::stringstream stream;
+    stream << "USB set endpoint: 0x"<< std::hex << std::setw(4) << std::setfill('0') << endpoint
+           << " feature: 0x" << std::hex << std::setw(4) << std::setfill('0') << feature << " Done";
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
 }
 
 
@@ -984,12 +998,11 @@ void USBTestCli::SyncEndpointFrame(const cxxopts::ParseResult &result)
 {
     if (!result.count("ep_syncframe"))
         return;
-    std::cout << "\n";
-    std::cout << "Info: USB sync end point frame:\n";
 
     if (!result.count("endpoint"))
     {
-        std::cout << "Error: Missing --endpoint option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --endpoint option");
         return;
     }
     uint16_t endpoint = result["endpoint"].as<uint16_t>();
@@ -998,9 +1011,10 @@ void USBTestCli::SyncEndpointFrame(const cxxopts::ParseResult &result)
     if (this->usb_device->EndpointSynchFrame(endpoint, frame))
         return;
 
-    std::cout << "Info: USB sync endpoint: 0x"<< std::hex << std::setw(4) << std::setfill('0')
-              << endpoint << " frame: 0x" << std::hex << std::setw(4) << std::setfill('0')
-              << frame << " Done\n";
+    std::stringstream stream;
+    stream << "USB sync endpoint: 0x"<< std::hex << std::setw(4) << std::setfill('0') << endpoint
+           << " frame: 0x" << std::hex << std::setw(4) << std::setfill('0') << frame << " Done";
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());
 }
 
 
@@ -1015,11 +1029,10 @@ void USBTestCli::ClaimInterface(const cxxopts::ParseResult &result)
     if (!result.count("claim_interface"))
         return;
 
-    std::cout << "\n";
-    std::cout << "Info: Claim usb device interface:\n";
     if (!result.count("interface"))
     {
-        std::cout << "Error: Unable to claim usb device interface, missing --interface option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --interface option");
         return;
     }
     /* Get the List of interfaces to claim */
@@ -1027,7 +1040,8 @@ void USBTestCli::ClaimInterface(const cxxopts::ParseResult &result)
     if (this->usb_device->USBClaimInterface(interface))
         return;
 
-    std::cout << "Info: Claim usb device interface: " << interface << " Done\n";
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE,
+                         "Claim usb device interface: " + std::to_string(interface) + " Done");
 }
 
 
@@ -1041,17 +1055,17 @@ void USBTestCli::ReleaseInterface(const cxxopts::ParseResult &result)
     if (!result.count("release_interface"))
         return;
 
-    std::cout << "\n";
-    std::cout << "Info: Release usb device interface:\n";
     if (!result.count("interface"))
     {
-        std::cout << "Error: Unable to release usb device interface, missing --interface option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --interface option");
         return;
     }
     /* Get the List of interfaces to release */
     uint16_t interface = result["interface"].as<uint16_t>();
     this->usb_device->USBReleaseInterface(interface);
-    std::cout << "Info: Release usb device interface: " << interface << " Done\n";
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE,
+                         "Release usb device interface: " + std::to_string(interface) + " Done");
 }
 
 
@@ -1065,10 +1079,8 @@ void USBTestCli::ResetDevice(const cxxopts::ParseResult &result)
     if (!result.count("reset"))
         return;
 
-    std::cout << "\n";
-    std::cout << "Info: USB reset device:\n";
     this->usb_device->USBReset();
-    std::cout << "Info: USB reset device Done\n";
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, "USB reset device Done");
 }
 
 
@@ -1110,7 +1122,8 @@ uint8_t *USBTestCli::GetDataCli(const cxxopts::ParseResult &result, size_t &size
     uint8_t *data = new(std::nothrow) uint8_t[size];
     if(!data)
     {
-        std::cout << "Error: USB transfer failed, Memory allocation error\n" ;
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "USB transfer failed, Memory allocation error");
         return nullptr;
     }
 
@@ -1123,12 +1136,17 @@ uint8_t *USBTestCli::GetDataCli(const cxxopts::ParseResult &result, size_t &size
         size_t l_size = result["size"].as<size_t>();
         if (!l_size)
         {
-            std::cout << "Error: USB transfer failed, --size can not be zero\n" ;
+            cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                                 "Option --size can not be zero");
             delete[] data;
             return nullptr;
         }
         else if (l_size > size)
-            std::cout << "Warning: Ignoring the --size option, value too big for data length\n";
+        {
+            cli_dm->PrintMessage(DisplayManager::MessageType::WARNING_MESSAGE,
+                                 "Ignoring the --size option, value too big for data length");
+        }
+
         else
             size = l_size;
     }
@@ -1163,7 +1181,10 @@ uint8_t *USBTestCli::GetDataFile(const cxxopts::ParseResult &result, size_t &siz
     {
         size_t size_l = result["size"].as<size_t>();
         if (size_l > size)
-            std::cout << "Warning: Ignoring --size option, value too big for file size\n";
+        {
+            cli_dm->PrintMessage(DisplayManager::MessageType::WARNING_MESSAGE,
+                                 "Ignoring --size option, value too big for file size");
+        }
 
         size = size_l;
     }
@@ -1182,13 +1203,13 @@ void USBTestCli::ControlTransfer(const cxxopts::ParseResult &result)
         return;
 
     std::cout << "\n";
-    std::cout << "Info: USB control transfer:\n";
 
     /* check bmRequestType */
     uint8_t bmrequesttype = 0x00;
     if (!result.count("bmRequestType"))
     {
-        std::cout << "Error: Unable to send usb control transfer, missing --bmRequestType option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --bmRequestType option");
         return;
     }
     bmrequesttype = result["bmRequestType"].as<uint8_t>();
@@ -1198,7 +1219,8 @@ void USBTestCli::ControlTransfer(const cxxopts::ParseResult &result)
     uint8_t brequest = 0x00;
     if (!result.count("bRequest"))
     {
-        std::cout << "Error: Unable to send usb control transfer, missing --bRequest option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --bRequest option");
         return;
     }
     brequest = result["bRequest"].as<uint8_t>();
@@ -1207,7 +1229,7 @@ void USBTestCli::ControlTransfer(const cxxopts::ParseResult &result)
     uint16_t wvalue = 0x00;
     if (!result.count("wValue"))
     {
-        std::cout << "Error: Unable to send usb control transfer, missing --wValue option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, "Missing --wValue option");
         return;
     }
     wvalue = result["wValue"].as<uint16_t>();
@@ -1216,7 +1238,7 @@ void USBTestCli::ControlTransfer(const cxxopts::ParseResult &result)
     uint16_t windex = 0x00;
     if (!result.count("wIndex"))
     {
-        std::cout << "Error: Unable to send usb control transfer, missing --wIndex option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, "Missing --wIndex option");
         return;
     }
     windex = result["wIndex"].as<uint16_t>();
@@ -1228,7 +1250,7 @@ void USBTestCli::ControlTransfer(const cxxopts::ParseResult &result)
     /* check the size for device to host transfer */
     if (transfer_direction && !result.count("size"))
     {
-        std::cout << "Error: Missing --size option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, "Missing --size option");
         return;
     }
 
@@ -1262,7 +1284,8 @@ void USBTestCli::ControlTransfer(const cxxopts::ParseResult &result)
         data = new(std::nothrow) uint8_t[size];
         if (!data)
         {
-            std::cout << "Error: USB control transfer failed, Memory allocation error\n" ;
+            cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                                 "USB control transfer failed, Memory allocation error");
             return ;
         }
         std::memset(data, 0x00, size);
@@ -1270,7 +1293,8 @@ void USBTestCli::ControlTransfer(const cxxopts::ParseResult &result)
     }
     else
     {
-        std::cout << "Error: USB control transfer failed, missing data options\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --data0(8/16/32/64) or --file options");
         return;
     }
 
@@ -1279,8 +1303,9 @@ void USBTestCli::ControlTransfer(const cxxopts::ParseResult &result)
                                                         data, static_cast<uint16_t>(size));
     if (result_l < 0)
     {
-        std::cout << "Error: USB control transfer failed, "
-                  << this->usb_device->GetStrError(result_l) << "\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "USB control transfer failed, " +
+                             this->usb_device->GetStrError(result_l));
         delete[] data;
         return;
     }
@@ -1289,15 +1314,13 @@ void USBTestCli::ControlTransfer(const cxxopts::ParseResult &result)
     if (static_cast<size_t>(result_l) < size)
     {
         size = static_cast<uint16_t>(result_l);
-        std::cout << std::hex << std::setfill ('0');
-        std::cout << "Warning : The actual size of transfered data is :0x" << std::setw(4)
-                  << size << "\n";
+        std::stringstream stream;
+        stream << std::hex << std::setfill ('0') << "The actual size of transfered data is :0x"
+               << std::setw(4) << size;
+        cli_dm->PrintMessage(DisplayManager::MessageType::WARNING_MESSAGE, stream.str());
     }
 
-
-    std::cout << "Info: USB control transfer Done\n";
-    /* get the nbr of bytes that were actually transferred */
-
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE,"USB control transfer Done");
 
     /* write to the file */
     if (result.count("file") && transfer_direction)
@@ -1331,11 +1354,10 @@ void USBTestCli::BulkTransfer(const cxxopts::ParseResult &result)
     if (!result.count("bulk"))
         return;
 
-    std::cout << "\n";
-    std::cout << "Info: USB bulk transfer:\n";
     if (!result.count("endpoint"))
     {
-        std::cout << "Error: Missing --endpoint option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --endpoint option");
         return;
     }
     uint8_t ep = result["endpoint"].as<uint8_t>();
@@ -1344,7 +1366,7 @@ void USBTestCli::BulkTransfer(const cxxopts::ParseResult &result)
     /* check the size for device to host transfer */
     if (transfer_direction && !result.count("size"))
     {
-        std::cout << "Error: Missing --size option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, "Missing --size option");
     }
 
     /* check the data to be sent */
@@ -1384,7 +1406,8 @@ void USBTestCli::BulkTransfer(const cxxopts::ParseResult &result)
         data = new(std::nothrow) uint8_t[size];
         if (!data)
         {
-            std::cout << "Error: USB Bulk transfer failed, Memory allocation error\n" ;
+            cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                                 "USB Bulk transfer failed, Memory allocation error");
             return ;
         }
         std::memset(data, 0x00, size);
@@ -1392,7 +1415,8 @@ void USBTestCli::BulkTransfer(const cxxopts::ParseResult &result)
     }
     else
     {
-        std::cout << "Error: USB Bulk transfer failed, missing data options\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --data0(8/16/32/64) or --file options");
         return;
     }
 
@@ -1400,8 +1424,9 @@ void USBTestCli::BulkTransfer(const cxxopts::ParseResult &result)
     int result_l = this->usb_device->USBBulkTransfer(ep, data, static_cast<int>(size));
     if (result_l < 0)
     {
-        std::cout << "Error: USB Bulk transfer failed, "
-                  << this->usb_device->GetStrError(result_l) << "\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "USB Bulk transfer failed, " +
+                             this->usb_device->GetStrError(result_l));
         return;
     }
 
@@ -1409,14 +1434,13 @@ void USBTestCli::BulkTransfer(const cxxopts::ParseResult &result)
     if (static_cast<size_t>(result_l) < size)
     {
         size = static_cast<uint16_t>(result_l);
-        std::cout << std::hex << std::setfill ('0');
-        std::cout << "Warning : The actual size of transfered data is :0x" << std::setw(4)
-                  << size << "\n";
+        std::stringstream stream;
+        stream << std::hex << std::setfill ('0') << "The actual size of transfered data is :0x"
+               << std::setw(4) << size;
+        cli_dm->PrintMessage(DisplayManager::MessageType::WARNING_MESSAGE, stream.str());
     }
 
-
-    std::cout << "Info: USB Bulk transfer Done\n";
-    /* get the nbr of bytes that were actually transferred */
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, "USB Bulk transfer Done");
 
     /* write to the file */
     if (result.count("file") && transfer_direction)
@@ -1449,11 +1473,10 @@ void USBTestCli::InterruptTransfer(const cxxopts::ParseResult &result)
     if (!result.count("interrupt"))
         return;
 
-    std::cout << "\n";
-    std::cout << "Info: USB interrupt transfer:\n";
     if (!result.count("endpoint"))
     {
-        std::cout << "Error: Missing --endpoint option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --endpoint option");
         return;
     }
     uint8_t ep = result["endpoint"].as<uint8_t>();
@@ -1462,7 +1485,7 @@ void USBTestCli::InterruptTransfer(const cxxopts::ParseResult &result)
     /* check the size for device to host transfer */
     if (transfer_direction && !result.count("size"))
     {
-        std::cout << "Error: Missing --size option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, "Missing --size option");
     }
 
     /* check the data to be sent */
@@ -1502,7 +1525,8 @@ void USBTestCli::InterruptTransfer(const cxxopts::ParseResult &result)
         data = new(std::nothrow) uint8_t[size];
         if (!data)
         {
-            std::cout << "Error: USB interrupt transfer failed, Memory allocation error\n" ;
+            cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                                 "USB interrupt transfer failed, Memory allocation error");
             return ;
         }
         std::memset(data, 0x00, size);
@@ -1510,7 +1534,8 @@ void USBTestCli::InterruptTransfer(const cxxopts::ParseResult &result)
     }
     else
     {
-        std::cout << "Error: USB interrupt transfer failed, missing data options\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --data0(8/16/32/64) or --file options");
         return;
     }
 
@@ -1518,8 +1543,9 @@ void USBTestCli::InterruptTransfer(const cxxopts::ParseResult &result)
     int result_l = this->usb_device->USBInterruptTransfer(ep, data, static_cast<int>(size));
     if (result_l < 0)
     {
-        std::cout << "Error: USB interrupt transfer failed, "
-                  << this->usb_device->GetStrError(result_l) << "\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "USB interrupt transfer failed, " +
+                             this->usb_device->GetStrError(result_l));
         return;
     }
 
@@ -1527,13 +1553,13 @@ void USBTestCli::InterruptTransfer(const cxxopts::ParseResult &result)
     if (static_cast<size_t>(result_l) < size)
     {
         size = static_cast<uint16_t>(result_l);
-        std::cout << std::hex << std::setfill ('0');
-        std::cout << "Warning : The actual size of transfered data is :0x" << std::setw(4)
-                  << size << "\n";
+        std::stringstream stream;
+        stream << std::hex << std::setfill ('0') << "The actual size of transfered data is :0x"
+               << std::setw(4) << size;
+        cli_dm->PrintMessage(DisplayManager::MessageType::WARNING_MESSAGE, stream.str());
     }
 
-
-    std::cout << "Info: USB Bulk transfer Done\n";
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, "USB Interrupt transfer Done");
     /* get the nbr of bytes that were actually transferred */
 
     /* write to the file */
@@ -1556,5 +1582,3 @@ void USBTestCli::InterruptTransfer(const cxxopts::ParseResult &result)
     delete[] data;
 
 }
-
-

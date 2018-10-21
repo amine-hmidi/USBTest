@@ -26,6 +26,7 @@
 /* C++ Includes */
 #include <iostream>
 #include <iomanip>
+#include <sstream>
 
 /* C Includes */
 
@@ -63,15 +64,16 @@ const DFUClass::Status DFUClass::DfuGetStatus()
 
     if (result < 0)
     {
-        std::cout << "Error: Unable to Get DFU device Status, "  << this->GetStrError(result)
-                  << "\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Unable to Get DFU device Status, "  + this->GetStrError(result));
         return this->dfu_status;
     }
 
     if (result < 6)
     {
-        std::cout << "Error: Unable to Get DFU device Status, Recieved Bytes number is less than"
-                     "0x06\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Unable to Get DFU device Status, Recieved Bytes number is less than"
+                             " 0x06");
         return this->dfu_status;
     }
 
@@ -107,14 +109,16 @@ DFUClass::DFUState DFUClass::DfuGetState()
 
     if (result < 0)
     {
-        std::cout << "Error: Unable to Get DFU device State, "  << GetStrError(result) << "\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Unable to Get DFU device State, " + GetStrError(result));
         return DFUState::stateUNKNOWN;
     }
 
     if (result != 1)
     {
-        std::cout << "Error: Unable to Get DFU device State, Recieved Bytes number is different "
-                     "from 0x01\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Unable to Get DFU device State, Recieved Bytes number is different "
+                             "from 0x01");
         return DFUState::stateUNKNOWN;
     }
 
@@ -147,9 +151,11 @@ int DFUClass::DfuClearStatus()
 
     if(this->dfu_state != DFUClass::DFUState::dfuERROR)
     {
-        std::cout << "Warning: Device is not in dfuERROR state (" << GetStateStr(this->dfu_state)
-                  << static_cast<uint32_t>(this->dfu_state)
-                  << "), Clear Status command will be sent anyway\n";
+        std::stringstream stream;
+
+        usb_dm->PrintMessage(DisplayManager::MessageType::WARNING_MESSAGE,
+                             "Device is not in dfuERROR state (" + GetStateStr(this->dfu_state)
+                             + "), Clear Status command will be sent anyway");
     }
 
     /* Send Clear Status Command */
@@ -163,8 +169,8 @@ int DFUClass::DfuClearStatus()
 
     if (result < 0)
     {
-        std::cout << "Error: Unable to Send DFU device Clear Status, " << GetStrError(result)
-                  << "\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Unable to Send DFU device Clear Status, " + GetStrError(result));
         return result;
     }
 
@@ -178,15 +184,17 @@ int DFUClass::DfuClearStatus()
 
     if(this->dfu_status.bStatus != DFUClass::DFUStatus::OK)
     {
-        std::cout << "Error: DFU device did not switch to STATUS: OK, after Clear Status Command, "
-                     "(" << GetStatusStr(this->dfu_status.bStatus) << ")\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "DFU device did not switch to STATUS: OK, after Clear Status Command, "
+                             "(" + GetStatusStr(this->dfu_status.bStatus));
         return -99;
     }
 
     if(this->dfu_state != DFUClass::DFUState::dfuIDLE)
     {
-        std::cout << "Error: DFU device did not switch to STATE: dfuIDLE, after Clear Status "
-                     "Command, (" << GetStateStr(this->dfu_state) << ")\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "DFU device did not switch to STATE: dfuIDLE, after Clear Status "
+                             "Command, (" + GetStateStr(this->dfu_state) + ")");
         return -99;
     }
 
@@ -216,8 +224,9 @@ int DFUClass::DfuAbort()
         (this->dfu_state != dfuDNLOAD_IDLE) && (this->dfu_state != dfuMANIFEST_SYNC) &&
         (this->dfu_state != dfuUPLOAD_IDLE))
     {
-        std::cout << "Warning: Device is not in the right state (" << GetStateStr(this->dfu_state)
-                  << ") to send Abort command, Abort command will be sent anyway\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::WARNING_MESSAGE,
+                             "Device is not in the right state (" + GetStateStr(this->dfu_state)
+                             + ") to send Abort command, Abort command will be sent anyway");
     }
 
     int result = this->USBControlTransfer(
@@ -230,7 +239,8 @@ int DFUClass::DfuAbort()
 
     if (result < 0)
     {
-        std::cout << "Error: Unable to Send DFU device Abort, "  << GetStrError(result) << "\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Unable to Send DFU device Abort, "  + GetStrError(result));
         return result;
     }
 
@@ -244,15 +254,17 @@ int DFUClass::DfuAbort()
 
     if(this->dfu_status.bStatus != DFUClass::DFUStatus::OK)
     {
-        std::cout << "Error: DFU device did not switch to STATUS: OK, after Abort Command, ("
-                  << GetStatusStr(this->dfu_status.bStatus) << ")\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "DFU device did not switch to STATUS: OK, after Abort Command, ("
+                             + GetStatusStr(this->dfu_status.bStatus));
         return -99;
     }
 
     if(this->dfu_state != DFUClass::DFUState::dfuIDLE)
     {
-        std::cout << "Error: DFU device did not switch to STATE: dfuIDLE, after Abort Command, ("
-                  << GetStateStr(this->dfu_state) << ")\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "DFU device did not switch to STATE: dfuIDLE, after Abort Command, ("
+                             + GetStateStr(this->dfu_state));
         return -99;
     }
 
@@ -281,8 +293,9 @@ int DFUClass::DfuDetach()
 
     if (this->dfu_state != appIDLE)
     {
-        std::cout << "Warning: Device is not in the right state (" << GetStateStr(this->dfu_state)
-                  << ") to send DETACH command, DETACH command will be sent anyway\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::WARNING_MESSAGE,
+                             "Device is not in the right state (" + GetStateStr(this->dfu_state)
+                             + ") to send DETACH command, DETACH command will be sent anyway");
     }
 
     int result = this->USBControlTransfer(
@@ -295,7 +308,8 @@ int DFUClass::DfuDetach()
 
     if (result)
     {
-        std::cout << "Error: Unable to Send DFU DETACH request, "  << GetStrError(result) << "\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Unable to Send DFU DETACH request, "  + GetStrError(result));
         return result;
     }
 
@@ -311,7 +325,8 @@ int DFUClass::DfuDetach()
     result = this->ReOpenDevice();
     if (result)
     {
-        std::cout << "Error: Unable to reconnect to target device after DFU DETACH request\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Unable to reconnect to target device after DFU DETACH request");
         return result;
     }
 
@@ -325,15 +340,17 @@ int DFUClass::DfuDetach()
 
     if(this->dfu_status.bStatus != DFUClass::DFUStatus::OK)
     {
-        std::cout << "Error: DFU device did not switch to STATUS: OK, after DETACH Command, ("
-                  << GetStatusStr(this->dfu_status.bStatus) << ")\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "DFU device did not switch to STATUS: OK, after DETACH Command, ("
+                             + GetStatusStr(this->dfu_status.bStatus));
         return -99;
     }
 
     if(this->dfu_state != DFUClass::DFUState::appDETACH)
     {
-        std::cout << "Error: DFU device did not switch to STATE: appDETACH, after DETACH Command, "
-                  << "(" << GetStateStr(this->dfu_state) << ")\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "DFU device did not switch to STATE: appDETACH, after DETACH Command, "
+                             "(" + GetStateStr(this->dfu_state));
         return -99;
     }
 
@@ -367,8 +384,9 @@ int DFUClass::DfuDownloadPacket(uint16_t wBlockNum, const uint8_t *data, uint16_
 
     if((this->dfu_state != dfuDNLOAD_IDLE) && (this->dfu_state != dfuIDLE))
     {
-        std::cout << "Warning: Device is not in the right state (" << GetStateStr(this->dfu_state)
-                  << ") to send Download command, Download command will be sent anyway\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::WARNING_MESSAGE,
+                             "Device is not in the right state (" + GetStateStr(this->dfu_state)
+                             + ") to send Download command, Download command will be sent anyway");
     }
 
     /* Send Buffer */
@@ -382,15 +400,18 @@ int DFUClass::DfuDownloadPacket(uint16_t wBlockNum, const uint8_t *data, uint16_
 
     if (result < 0)
     {
-        std::cout << "Error: Unable to Send DFU Download request, "  << GetStrError(result) << "\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Unable to Send DFU Download request, "  + GetStrError(result));
         return result;
     }
 
     if (result != length)
     {
-        std::cout << "Error: Error while sending DFU Download request, Device only received 0x"
-                  << std::setw(4) << static_cast<uint32_t>(result) << " bytes out of 0x"
-                  << std::setw(4) << static_cast<uint32_t>(result) << " bytes\n";
+        std::stringstream stream;
+        stream << "Error while sending DFU Download request, Device only received 0x"
+               << std::setw(4) << static_cast<uint32_t>(result) << " bytes out of 0x"
+               << std::setw(4) << static_cast<uint32_t>(result) << " bytes";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return -99;
     }
 
@@ -410,34 +431,45 @@ int DFUClass::DfuDownloadPacket(uint16_t wBlockNum, const uint8_t *data, uint16_
 
     if(this->dfu_state != DFUClass::DFUState::dfuDNLOAD_SYNC)
     {
-        std::cout << "Error: DFU device did not switch to STATE: dfuDNLOAD_SYNC, after Download "
-                  << "Command, (" << GetStateStr(this->dfu_state) << ")\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "DFU device did not switch to STATE: dfuDNLOAD_SYNC, after Download "
+                             "Command, (" + GetStateStr(this->dfu_state) + ")");
         return -99;
     }
 
     /* Send the First Get Status */
     DfuGetStatus();
-    if ((this->dfu_status.bStatus == DFUClass::DFUStatus::statusUNKNOWN) ||
+    if ((this->dfu_status.bStatus == DFUClass::DFUStatus::statusUNKNOWN) &&
          (this->dfu_status.bState == DFUClass::DFUState::stateUNKNOWN))
     {
         return -99;
     }
 
+    /* donwload complete */
+    if ((this->dfu_status.bStatus == DFUClass::DFUStatus::OK) &&
+         (this->dfu_status.bState == DFUClass::DFUState::dfuDNLOAD_IDLE))
+    {
+        return result;
+    }
+
     if (this->dfu_status.bStatus != DFUClass::DFUStatus::OK)
     {
-        std::cout << "Error: DFU device did not switch to STATUS: OK, after Download Command 1st "
-                  << "Get Status, (" << GetStatusStr(this->dfu_status.bStatus) << ")\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "DFU device did not switch to STATUS: OK, after Download Command's "
+                             "Get Status, (" + GetStatusStr(this->dfu_status.bStatus) + ")");
         return -99;
     }
 
     if (this->dfu_state != DFUClass::DFUState::dfuDNLOAD_SYNC &&
        this->dfu_state != DFUClass::DFUState::dfuDNBUSY)
     {
-        std::cout << "Error: DFU device did not switch to STATE: dfuDNLOAD_SYNC/dfuDNBUSY, after "
-                  << "Download Command 1st Get Status, (" << GetStateStr(this->dfu_state) << ")\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "DFU device did not switch to STATE: dfuDNLOAD_SYNC/dfuDNBUSY, after "
+                             "Download Command's Get Status, (" + GetStateStr(this->dfu_state) + ")");
         return -99;
     }
 
+    /* download buzy or synchronize */
     /* Send the Second Get Status */
     DfuGetStatus();
     if ((this->dfu_status.bStatus == DFUClass::DFUStatus::statusUNKNOWN) ||
@@ -448,15 +480,17 @@ int DFUClass::DfuDownloadPacket(uint16_t wBlockNum, const uint8_t *data, uint16_
 
     if (this->dfu_status.bStatus != DFUClass::DFUStatus::OK)
     {
-        std::cout << "Error: DFU device did not switch to STATUS: OK, after Download Command 2nd "
-                  << "Get Status, (" << GetStatusStr(this->dfu_status.bStatus) << ")\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "DFU device did not switch to STATUS: OK, after Download Command 2nd "
+                             "Get Status, (" + GetStatusStr(this->dfu_status.bStatus) + ")");
         return -99;
     }
 
     if (this->dfu_state != DFUClass::DFUState::dfuDNLOAD_IDLE)
     {
-        std::cout << "Error: DFU device did not switch to STATE: dfuDNLOAD_IDLE, after Download "
-                  << "Command 2nd Get Status, (" << GetStateStr(this->dfu_state) << ")\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "DFU device did not switch to STATE: dfuDNLOAD_IDLE, after Download "
+                             "Command 2nd Get Status, (" + GetStateStr(this->dfu_state) + ")");
         return -99;
     }
 
@@ -487,9 +521,10 @@ int DFUClass::DfuDownloadZero(uint16_t wBlockNum)
 
     if ((this->dfu_state != dfuDNLOAD_IDLE))
     {
-        std::cout << "Warning: Device is not in the right state (" << GetStateStr(this->dfu_state)
-                  << ")to send Download with Zero Length command, Download command will be sent"
-                  << " anyway\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::WARNING_MESSAGE,
+                             "Device is not in the right state (" + GetStateStr(this->dfu_state)
+                             + ")to send Download with Zero Length command, Download command will "
+                               "be sent anyway");
     }
 
     /* Send Buffer */
@@ -503,7 +538,8 @@ int DFUClass::DfuDownloadZero(uint16_t wBlockNum)
 
     if (result < 0)
     {
-        std::cout << "Error: Unable to Send DFU Download request, "  << GetStrError(result) << "\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Unable to Send DFU Download request, "  + GetStrError(result));
         return result;
     }
 
@@ -523,8 +559,9 @@ int DFUClass::DfuDownloadZero(uint16_t wBlockNum)
 
     if(this->dfu_state != DFUClass::DFUState::dfuMANIFEST_SYNC)
     {
-        std::cout << "Error: DFU device did not switch to STATE: dfuMANIFEST_SYNC, after Download "
-                  << "Zero Length Command, (" << GetStateStr(this->dfu_state) << ")\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "DFU device did not switch to STATE: dfuMANIFEST_SYNC, after Download "
+                             "Zero Length Command, (" + GetStateStr(this->dfu_state) + ")");
         return -99;
     }
 
@@ -538,21 +575,21 @@ int DFUClass::DfuDownloadZero(uint16_t wBlockNum)
 
     if (this->dfu_status.bStatus != DFUClass::DFUStatus::OK)
     {
-        std::cout << "Error: DFU device did not switch to STATUS: OK, after Download Zero Length "
-                  << "Command Get Status, (" << GetStatusStr(this->dfu_status.bStatus) << ")\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "DFU device did not switch to STATUS: OK, after Download Zero Length "
+                             "Command Get Status, (" + GetStatusStr(this->dfu_status.bStatus) + ")");
         return -99;
     }
     if(this->dfu_state != DFUClass::DFUState::dfuMANIFEST)
     {
-        std::cout << "Error: DFU device did not switch to STATE: dfuMANIFEST, after Download Zero "
-                  <<  "Length Command Get Status, (" << GetStateStr(this->dfu_state) << ")\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "DFU device did not switch to STATE: dfuMANIFEST, after Download Zero "
+                             "Length Command Get Status, (" + GetStateStr(this->dfu_state) + ")");
         return -99;
     }
 
     if (!(this->manif_tolerant))
     {
-        /* Send the 2nd Get Status anyway */
-        DfuGetStatus();
         return 0;
     }
 
@@ -569,9 +606,10 @@ int DFUClass::DfuDownloadZero(uint16_t wBlockNum)
 
     if (this->dfu_state != DFUClass::DFUState::dfuMANIFEST_SYNC)
     {
-        std::cout << "Error: DFU device did not switch to STATE: dfuMANIFEST_SYNC, after Download "
-                  << "Zero Length Command 1st Get Status, (" << GetStateStr(this->dfu_state)
-                  << ")\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "DFU device did not switch to STATE: dfuMANIFEST_SYNC, after Download "
+                             "Zero Length Command 1st Get Status, (" + GetStateStr(this->dfu_state)
+                             + ")");
         return -99;
     }
 
@@ -585,15 +623,19 @@ int DFUClass::DfuDownloadZero(uint16_t wBlockNum)
 
     if(this->dfu_status.bStatus != DFUClass::DFUStatus::OK)
     {
-        std::cout << "Error: DFU device did not switch to STATUS: OK, after Download Zero Length "
-                  << "Command 2nd Get Status, (" << GetStatusStr(this->dfu_status.bStatus) << ")\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "DFU device did not switch to STATUS: OK, after Download Zero Length "
+                             "Command 2nd Get Status, (" + GetStatusStr(this->dfu_status.bStatus) +
+                             ")");
         return -99;
     }
 
     if (this->dfu_state != DFUClass::DFUState::dfuIDLE)
     {
-        std::cout << "Error: DFU device did not switch to STATE: dfuIDLE, after Download Zero "
-                  << "Length Command 2nd Get Status, (" << GetStateStr(this->dfu_state) << ")\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "DFU device did not switch to STATE: dfuIDLE, after Download Zero "
+                             "Length Command 2nd Get Status, (" + GetStateStr(this->dfu_state) +
+                             ")");
         return -99;
     }
 
@@ -623,8 +665,9 @@ int DFUClass::DfuUploadPacket(uint16_t wBlockNum, uint8_t *data, uint16_t length
 
     if ((this->dfu_state != dfuIDLE) && (this->dfu_state != dfuUPLOAD_IDLE))
     {
-        std::cout << "Warning: Device is not in the right state (" << GetStateStr(this->dfu_state)
-                  << ") to send Upload command, Upload command will be sent anyway\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::WARNING_MESSAGE,
+                             "Device is not in the right state (" + GetStateStr(this->dfu_state)
+                             + ") to send Upload command, Upload command will be sent anyway");
         return -99;
     }
 
@@ -639,7 +682,8 @@ int DFUClass::DfuUploadPacket(uint16_t wBlockNum, uint8_t *data, uint16_t length
 
     if (result < 0)
     {
-        std::cout << "Error: Unable to Send DFU Upload request, "  << GetStrError(result) << "\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Unable to Send DFU Upload request, " + GetStrError(result));
         return result;
     }
 
@@ -653,16 +697,18 @@ int DFUClass::DfuUploadPacket(uint16_t wBlockNum, uint8_t *data, uint16_t length
 
     if (this->dfu_status.bStatus != DFUClass::DFUStatus::OK)
     {
-        std::cout << "Error: DFU device did not switch to STATUS: OK, after Upload Command Get "
-                  << "Status, (" << GetStatusStr(this->dfu_status.bStatus) << ")\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "DFU device did not switch to STATUS: OK, after Upload Command Get "
+                             "Status, (" + GetStatusStr(this->dfu_status.bStatus) + ")");
         return -99;
     }
 
     if ((this->dfu_state != DFUClass::DFUState::dfuIDLE) &&
         (this->dfu_state != DFUClass::DFUState::dfuUPLOAD_IDLE))
     {
-        std::cout << "Error: DFU device did not switch to STATE: dfuIDLE/dfuUPLOAD_IDLE, after "
-                  << "Upload Command Get Status, (" << GetStateStr(this->dfu_state) << ")\n";
+        usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "DFU device did not switch to STATE: dfuIDLE/dfuUPLOAD_IDLE, after "
+                             "Upload Command Get Status, (" + GetStateStr(this->dfu_state) + ")");
         return -99;
     }
 

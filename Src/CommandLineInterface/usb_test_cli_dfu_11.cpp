@@ -55,39 +55,45 @@ void USBTestCli::InitDFU11Commands()
             ;
 }
 
+
 void USBTestCli::DisplayDFU11Help()
 {
-    std::cout << "DFU 1.1 options\n";
+    std::stringstream stream;
+
+    stream << "DFU 1.1 options\n";
     /* **** */
-    std::cout << "\t    --dfu                   Connect as USB in DFU mode (must use --idvendor\n";
-    std::cout << "\t                            and --idproduct usb options) \n";
-    std::cout << "\t    --dfu_getstatus         Request the DFU device status\n";
-    std::cout << "\t    --dfu_getstate          Request the DFU device state\n";
-    std::cout << "\t    --dfu_clearstatus       Send a DFU device clear status request\n";
-    std::cout << "\t    --dfu_abort             Send a DFU device abort request\n";
-    std::cout << "\t    --dfu_detach            Send a DFU device detach request\n";
-    std::cout << "\t    --dfu_dnload            Send a DFU download request\n";
-    std::cout << "\t    --dfu_upload            Send a DFU upload request\n";
-    std::cout << "\t    --wBlockNum             The packet number from which the download/upload\n";
-    std::cout << "\t                            operation will start\n";
+    stream << "\t    --dfu                   Connect as USB in DFU mode (must use --idvendor\n";
+    stream << "\t                            and --idproduct usb options) \n";
+    stream << "\t    --dfu_getstatus         Request the DFU device status\n";
+    stream << "\t    --dfu_getstate          Request the DFU device state\n";
+    stream << "\t    --dfu_clearstatus       Send a DFU device clear status request\n";
+    stream << "\t    --dfu_abort             Send a DFU device abort request\n";
+    stream << "\t    --dfu_detach            Send a DFU device detach request\n";
+    stream << "\t    --dfu_dnload            Send a DFU download request\n";
+    stream << "\t    --dfu_upload            Send a DFU upload request\n";
+    stream << "\t    --wBlockNum             The packet number from which the download/upload\n";
+    stream << "\t                            operation will start";
+
+    cli_dm->PrintMessage(DisplayManager::MessageType::BASIC_MESSAGE, stream.str());
 }
+
 
 void USBTestCli::ParseDFU11Cmds(const cxxopts::ParseResult &result)
 {
     if(result.count("dfu"))
     {
-        std::cout << "\n";
-        std::cout << "Info: Establishing connection with target device:\n";
         /* Check if both idvendor and idproduct are present */
         if(!result.count("idvendor"))
         {
-            std::cout << "Error: Missing --idvendor option\n";
+            cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                                 "Missing --idvendor option");
             return;
         }
 
         if(!result.count("idproduct"))
         {
-            std::cout << "Error: Missing --idproduct option\n";
+            cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                                 "Missing --idproduct option");
             return;
         }
 
@@ -112,6 +118,7 @@ void USBTestCli::ParseDFU11Cmds(const cxxopts::ParseResult &result)
     DFU11ClearStatus(result, dfu_device);
     DFU11Abort(result, dfu_device);
     DFU11Detach(result, dfu_device);
+    DFU11Upload(result, dfu_device);
 }
 
 
@@ -127,7 +134,8 @@ void USBTestCli::ConnectDFU11(uint16_t idVendor, uint16_t idProduct)
     usb_device = new(std::nothrow) DFUClass(idVendor, idProduct);
     if (!usb_device)
     {
-        std::cout << "Error: Unable to initialize the usb device, Mmeory allocation error\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Unable to initialize the usb device, Mmeory allocation error");
         return;
     }
 
@@ -140,7 +148,7 @@ void USBTestCli::ConnectDFU11(uint16_t idVendor, uint16_t idProduct)
         return;
     }
 
-    std::cout << "Info: Connection established\n";
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE,"Connection established");
 }
 
 
@@ -148,8 +156,6 @@ void USBTestCli::DFU11GetStatus(const cxxopts::ParseResult &result, DFUClass *df
 {
     if (!result.count("dfu_getstatus"))
         return;
-    std::cout << "\n";
-    std::cout << "Info: DFU get status:\n";
 
     DFUClass::Status status = dfu_device->DfuGetStatus();
     if ((status.bStatus == DFUClass::DFUStatus::statusUNKNOWN) &&
@@ -164,8 +170,6 @@ void USBTestCli::DFU11GetState(const cxxopts::ParseResult &result, DFUClass *dfu
 {
     if (!result.count("dfu_getstate"))
         return;
-    std::cout << "\n";
-    std::cout << "Info: DFU get state:\n";
 
     DFUClass::DFUState state = dfu_device->DfuGetState();
     if (state == DFUClass::DFUState::stateUNKNOWN)
@@ -179,13 +183,12 @@ void USBTestCli::DFU11ClearStatus(const cxxopts::ParseResult &result, DFUClass *
 {
     if (!result.count("dfu_clearstatus"))
         return;
-    std::cout << "\n";
-    std::cout << "Info: DFU clear status:\n";
 
     if (dfu_device->DfuClearStatus())
         return;
 
-    std::cout << "Info: DFU clear status Done\n";
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE,
+                         "DFU clear status Done");
 }
 
 
@@ -193,13 +196,11 @@ void USBTestCli::DFU11Abort(const cxxopts::ParseResult &result, DFUClass *dfu_de
 {
     if (!result.count("dfu_abort"))
         return;
-    std::cout << "\n";
-    std::cout << "Info: DFU abort:\n";
 
     if (dfu_device->DfuAbort())
         return;
 
-    std::cout << "Info: DFU abort Done\n";
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, "DFU abort Done");
 }
 
 
@@ -207,13 +208,11 @@ void USBTestCli::DFU11Detach(const cxxopts::ParseResult &result, DFUClass *dfu_d
 {
     if (!result.count("dfu_detach"))
         return;
-    std::cout << "\n";
-    std::cout << "Info: DFU detach:\n";
 
     if (dfu_device->DfuDetach())
         return;
 
-    std::cout << "Info: DFU detach Done\n";
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, "DFU detach Done");
 }
 
 
@@ -221,13 +220,12 @@ void USBTestCli::DFU11Download(const cxxopts::ParseResult &result, DFUClass *dfu
 {
     if (!result.count("dfu_dnload"))
         return;
-    std::cout << "\n";
-    std::cout << "Info: DFU download:\n";
 
     uint16_t wBlockNum = 0;
     if (!result.count("wBlockNum"))
     {
-        std::cout << "Warning: Missing --wBlockNum option, assuming wBlockNum is 0\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::WARNING_MESSAGE,
+                             "Missing --wBlockNum option, assuming wBlockNum is 0");
     }
     else
     {
@@ -263,7 +261,8 @@ void USBTestCli::DFU11Download(const cxxopts::ParseResult &result, DFUClass *dfu
     }
     else
     {
-        std::cout << "Error: DFU download failed, missing data options\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Missing --data8(16/32/64) or --file options");
         return;
     }
 
@@ -271,7 +270,7 @@ void USBTestCli::DFU11Download(const cxxopts::ParseResult &result, DFUClass *dfu
     {
         if (dfu_device->DfuDownloadZero(wBlockNum))
         {
-            std::cout << "Error: DFU download failed\n";
+            cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, "DFU download failed");
             return;
         }
     }
@@ -280,13 +279,13 @@ void USBTestCli::DFU11Download(const cxxopts::ParseResult &result, DFUClass *dfu
         /* send data */
         if (dfu_device->DfuDownload(wBlockNum, data, size))
         {
-            std::cout << "Error: DFU download failed\n";
+            cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, "DFU download failed");
             delete[] data;
             return;
         }
     }
 
-    std::cout << "Info: DFU download Done\n";
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE,"DFU download Done");
 
     /* check data display */
     if (result.count("display8"))
@@ -306,13 +305,12 @@ void USBTestCli::DFU11Upload(const cxxopts::ParseResult &result, DFUClass *dfu_d
 {
     if (!result.count("dfu_upload"))
         return;
-    std::cout << "\n";
-    std::cout << "Info: DFU upload:\n";
 
     uint16_t wBlockNum = 0;
     if (!result.count("wBlockNum"))
     {
-        std::cout << "Warning: Missing --wBlockNum option, assuming wBlockNum is 0\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::WARNING_MESSAGE,
+                             "Missing --wBlockNum option, assuming wBlockNum is 0");
     }
     else
     {
@@ -322,7 +320,7 @@ void USBTestCli::DFU11Upload(const cxxopts::ParseResult &result, DFUClass *dfu_d
     /* check the size for device to host transfer */
     if (!result.count("size"))
     {
-        std::cout << "Error: Missing --size option\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,"Missing --size option");
         return;
     }
 
@@ -333,25 +331,27 @@ void USBTestCli::DFU11Upload(const cxxopts::ParseResult &result, DFUClass *dfu_d
     size = result["size"].as<size_t>();
     if (!size)
     {
-        std::cout << "Error: DFU upload failed, --size can not be zero\n" ;
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "DFU upload failed, --size can not be zero");
         return;
     }
     data = new(std::nothrow) uint8_t[size];
     if (!data)
     {
-        std::cout << "Error: DFU upload, Memory allocation error\n" ;
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "DFU upload, Memory allocation error");
         return ;
     }
     std::memset(data, 0x00, size);
 
     if (dfu_device->DfuUpload(wBlockNum, data, size))
     {
-        std::cout << "Error: DFU download failed\n";
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, "DFU upload failed");
         delete[] data;
         return;
     }
 
-    std::cout << "Info: DFU upload Done\n";
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, "DFU upload Done");
 
     /* write to the file */
     if (result.count("file"))

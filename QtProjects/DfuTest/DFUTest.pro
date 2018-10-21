@@ -83,6 +83,7 @@ DEFINES += \
 ############ SOURCE FILES
 SOURCES += \
     ../../Src/main.cpp \
+    ../../Src/DisplayManager/display_manager.cpp \
     ../../Src/StandardUSB/standard_usb.cpp \
     ../../Src/StandardUSB/usb_standard_requests.cpp \
     ../../Src/StandardUSB/usb_descriptors_requests.cpp \
@@ -92,21 +93,21 @@ SOURCES += \
     ../../Src/CommandLineInterface/usb_test_cli.cpp \
     ../../Src/CommandLineInterface/usb_test_cli_copyrights_warranty.cpp \
     ../../Src/CommandLineInterface/usb_test_cli_std_usb.cpp \
-    ../../Src/CommandLineInterface/usb_test_cli_dfu_11.cpp
-
-
+    ../../Src/CommandLineInterface/usb_test_cli_dfu_11.cpp \
 
 
 ############ INCLUDE FILES
 HEADERS += \
+    ../../Inc/DisplayManager/display_manager.h \
     ../../Inc/StandardUSB/standard_usb.h \
     ../../Inc/CommandLineInterface/usb_test_cli.h \
-    ../../Inc/Dfu1.1/dfu_class.h
+    ../../Inc/Dfu1.1/dfu_class.h \
 
 
 ############ INCLUDE DIRECTORIES
 INCLUDEPATH += \
     ../../Inc/ \
+    ../../Inc/DisplayManager/ \
     ../../Inc/StandardUSB/ \
     ../../Inc/CommandLineInterface/ \
     ../../Inc/Dfu1.1/
