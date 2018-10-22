@@ -49,6 +49,7 @@ void USBTestCli::InitDFU11Commands()
             ("dfu_abort", "Send a DFU device abort request")
             ("dfu_detach", "Send a DFU device detach request")
             ("dfu_dnload", "Send a DFU download request")
+            ("dfu_dnload0", "Send a DFU download request with zero length")
             ("dfu_upload", "Send a DFU upload request")
             ("wBlockNum", "The packet number from which the download/upload will start",\
              cxxopts::value<uint16_t>())
@@ -70,6 +71,7 @@ void USBTestCli::DisplayDFU11Help()
     stream << "\t    --dfu_abort             Send a DFU device abort request\n";
     stream << "\t    --dfu_detach            Send a DFU device detach request\n";
     stream << "\t    --dfu_dnload            Send a DFU download request\n";
+    stream << "\t    --dfu_dnload0           Send a DFU download request with zero length\n";
     stream << "\t    --dfu_upload            Send a DFU upload request\n";
     stream << "\t    --wBlockNum             The packet number from which the download/upload\n";
     stream << "\t                            operation will start";
@@ -119,6 +121,8 @@ void USBTestCli::ParseDFU11Cmds(const cxxopts::ParseResult &result)
     DFU11Abort(result, dfu_device);
     DFU11Detach(result, dfu_device);
     DFU11Upload(result, dfu_device);
+    DFU11Download(result, dfu_device);
+    DFU11DownloadZero(result, dfu_device);
 }
 
 
@@ -236,21 +240,22 @@ void USBTestCli::DFU11Download(const cxxopts::ParseResult &result, DFUClass *dfu
     uint8_t *data = nullptr;
     size_t size = 0x00;
 
+    if (result.count("data0"))
+    {
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,
+                             "Rejected --data0 option, consider using dfu_dnload0 option");
+        return;
+    }
+
     /* 1, 2, 4 or 8 bytes pointer data
      * ignore --file, check --size options if any
      */
-    if(result.count("data8") || result.count("data16") || result.count("data32") ||\
+    else if(result.count("data8") || result.count("data16") || result.count("data32") ||\
             result.count("data64"))
     {
         data = GetDataCli(result, size);
         if (!data)
             return;
-    }
-    /* null data */
-    else if (result.count("data0"))
-    {
-        data = nullptr;
-        size = 0x00;
     }
     /* data will transfered from file */
     else if (result.count("file"))
@@ -266,38 +271,54 @@ void USBTestCli::DFU11Download(const cxxopts::ParseResult &result, DFUClass *dfu
         return;
     }
 
-    if (!data)
+    /* send data */
+    if (dfu_device->DfuDownload(wBlockNum, data, size))
     {
-        if (dfu_device->DfuDownloadZero(wBlockNum))
-        {
-            cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, "DFU download failed");
-            return;
-        }
-    }
-    else
-    {
-        /* send data */
-        if (dfu_device->DfuDownload(wBlockNum, data, size))
-        {
-            cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, "DFU download failed");
-            delete[] data;
-            return;
-        }
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, "DFU download failed");
+        delete[] data;
+        return;
     }
 
     cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE,"DFU download Done");
 
     /* check data display */
     if (result.count("display8"))
-        this->usb_device->DisplayData8(data, size);
+        cli_dm->DisplayData8(data, size);
     else if (result.count("display16"))
-        this->usb_device->DisplayData16(data, size);
+        cli_dm->DisplayData16(data, size);
     else if (result.count("display32"))
-            this->usb_device->DisplayData32(data, size);
+        cli_dm->DisplayData32(data, size);
     else if (result.count("display64"))
-        this->usb_device->DisplayData64(data, size);
+        cli_dm->DisplayData64(data, size);
 
     delete[] data;
+}
+
+
+void USBTestCli::DFU11DownloadZero(const cxxopts::ParseResult &result, DFUClass *dfu_device)
+{
+    if (!result.count("dfu_dnload0"))
+        return;
+
+    uint16_t wBlockNum = 0;
+    if (!result.count("wBlockNum"))
+    {
+        cli_dm->PrintMessage(DisplayManager::MessageType::WARNING_MESSAGE,
+                             "Missing --wBlockNum option, assuming wBlockNum is 0");
+    }
+    else
+    {
+        wBlockNum = result["wBlockNum"].as<uint16_t>();
+    }
+
+    /* send data */
+    if (dfu_device->DfuDownloadZero(wBlockNum))
+    {
+        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, "DFU download 0 failed");
+        return;
+    }
+
+    cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE,"DFU download 0 Done");
 }
 
 
@@ -362,13 +383,13 @@ void USBTestCli::DFU11Upload(const cxxopts::ParseResult &result, DFUClass *dfu_d
 
     /* check data display */
     if (result.count("display8"))
-        this->usb_device->DisplayData8(data, size);
+        cli_dm->DisplayData8(data, size);
     else if (result.count("display16"))
-        this->usb_device->DisplayData16(data, size);
+        cli_dm->DisplayData16(data, size);
     else if (result.count("display32"))
-            this->usb_device->DisplayData32(data, size);
+        cli_dm->DisplayData32(data, size);
     else if (result.count("display64"))
-        this->usb_device->DisplayData64(data, size);
+        cli_dm->DisplayData64(data, size);
 
     delete[] data;
 }

@@ -146,6 +146,7 @@ private:
     void DFU11Abort(const cxxopts::ParseResult &result, DFUClass *dfu_device);
     void DFU11Detach(const cxxopts::ParseResult &result, DFUClass *dfu_device);
     void DFU11Download(const cxxopts::ParseResult &result, DFUClass *dfu_device);
+    void DFU11DownloadZero(const cxxopts::ParseResult &result, DFUClass *dfu_device);
     void DFU11Upload(const cxxopts::ParseResult &result, DFUClass *dfu_device);
 #endif
 
