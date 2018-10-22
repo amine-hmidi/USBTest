@@ -60,7 +60,7 @@ void DisplayManager::PrintMessage(DisplayManager::MessageType type, const std::s
     else if (type == DisplayManager::MessageType::WARNING_MESSAGE)
         std::cout << "Warning: ";
     else if (type == DisplayManager::MessageType::ERROR_MESSAGE)
-        std::cout << "Error :";
+        std::cout << "Error: ";
 
     std::cout << message << "\n";
 }
@@ -73,7 +73,7 @@ void DisplayManager::PrintMessage(DisplayManager::MessageType type, const char *
     else if (type == DisplayManager::MessageType::WARNING_MESSAGE)
         std::cout << "Warning: ";
     else if (type == DisplayManager::MessageType::ERROR_MESSAGE)
-        std::cout << "Error :";
+        std::cout << "Error: ";
 
     std::cout << std::string(message) << "\n";
 }
@@ -85,7 +85,7 @@ void DisplayManager::DisplayData8(uint8_t *data, size_t size)
                          "0x0C 0x0D 0x0E 0x0F";
 
     PrintMessage(MessageType::INFO_MESSAGE, header);
-    PrintMessage(MessageType::INFO_MESSAGE, "\n");
+    PrintMessage(MessageType::INFO_MESSAGE, "");
 
     size_t nbr = size / 0x10;
     uint32_t remain = size % 0x10;
@@ -125,7 +125,7 @@ void DisplayManager::DisplayData16(uint8_t *data, size_t size)
     std::string header = "OFFSET      0x0000 0x0002 0x0004 0x0006 0x0008 0x000A 0x000C 0x000E";
 
     PrintMessage(MessageType::INFO_MESSAGE, header);
-    PrintMessage(MessageType::INFO_MESSAGE, "\n");
+    PrintMessage(MessageType::INFO_MESSAGE, "");
 
     size_t nbr = size / 0x10;
     uint32_t remain = size % 0x10;
@@ -172,7 +172,7 @@ void DisplayManager::DisplayData32(uint8_t *data, size_t size)
                          " 0x00000014 0x00000018 0x0000001C";
 
     PrintMessage(MessageType::INFO_MESSAGE, header);
-    PrintMessage(MessageType::INFO_MESSAGE, "\n");
+    PrintMessage(MessageType::INFO_MESSAGE, "");
 
     size_t nbr = size / 0x20;
     uint32_t remain = size % 0x20;
@@ -220,10 +220,10 @@ void DisplayManager::DisplayData32(uint8_t *data, size_t size)
 void DisplayManager::DisplayData64(uint8_t *data, size_t size)
 {
     std::string header = "OFFSET      0x0000000000000000  0x0000000000000008  0x0000000000000010  "
-                         "0x0000000000000018\n\n";
+                         "0x0000000000000018";
 
     PrintMessage(MessageType::INFO_MESSAGE, header);
-    PrintMessage(MessageType::INFO_MESSAGE, "\n");
+    PrintMessage(MessageType::INFO_MESSAGE, "");
 
     size_t nbr = size / 0x20;
     uint32_t remain = size % 0x20;

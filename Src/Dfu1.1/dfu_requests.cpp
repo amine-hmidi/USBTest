@@ -35,6 +35,8 @@
 #include <libusb-1.0/libusb.h>
 #ifdef __linux__
 #include <unistd.h>
+#elif WIN32
+#include <windows.h>
 #endif
 
 /* ********************************************************************************************** */
@@ -50,6 +52,8 @@ const DFUClass::Status DFUClass::DfuGetStatus()
     /* wait for the PollTimeout */
 #ifdef __linux__
     usleep(1000 * this->dfu_status.bwPollTimeOut);
+#elif WIN32
+    Sleep(this->dfu_status.bwPollTimeOut);
 #endif
 
     this->dfu_status.Clear();
@@ -139,8 +143,6 @@ DFUClass::DFUState DFUClass::DfuGetState()
  */
 int DFUClass::DfuClearStatus()
 {
-    std::cout << std::hex << std::setfill ('0');
-
     /* check that the device is in dfuERROR state */
     DfuGetStatus();
     if ((this->dfu_status.bStatus == DFUClass::DFUStatus::statusUNKNOWN) ||
@@ -210,8 +212,6 @@ int DFUClass::DfuClearStatus()
  */
 int DFUClass::DfuAbort()
 {
-    std::cout << std::hex << std::setfill ('0');
-
     /* check that the device is in the right state */
     DfuGetStatus();
     if ((this->dfu_status.bStatus == DFUClass::DFUStatus::statusUNKNOWN) ||
@@ -281,8 +281,6 @@ int DFUClass::DfuAbort()
  */
 int DFUClass::DfuDetach()
 {
-    std::cout << std::hex << std::setfill ('0');
-
     /* check that the device is in the right state */
     DfuGetStatus();
     if ((this->dfu_status.bStatus == DFUClass::DFUStatus::statusUNKNOWN) ||
@@ -314,11 +312,16 @@ int DFUClass::DfuDetach()
     }
 
     /* Send USB reset Command */
-    this->USBReset();
+    if (!will_detach)
+    {
+        this->USBReset();
+    }
 
     /* Give the device some time to reconnect */
 #ifdef __linux__
     usleep(1000 * 1000);
+#elif WIN32
+    Sleep(1000);
 #endif
     /* Reconnect the device in case of descriptor change
      * asuming that the device will keep the same idProduct */
@@ -372,8 +375,6 @@ int DFUClass::DfuDetach()
  */
 int DFUClass::DfuDownloadPacket(uint16_t wBlockNum, const uint8_t *data, uint16_t length)
 {
-    std::cout << std::hex << std::setfill ('0');
-
     /* check that the device is in the right state */
     DfuGetStatus();
     if ((this->dfu_status.bStatus == DFUClass::DFUStatus::statusUNKNOWN) ||
@@ -509,8 +510,6 @@ int DFUClass::DfuDownloadPacket(uint16_t wBlockNum, const uint8_t *data, uint16_
  */
 int DFUClass::DfuDownloadZero(uint16_t wBlockNum)
 {
-    std::cout << std::hex << std::setfill ('0');
-
     /* check that the device is in the right state */
     DfuGetStatus();
     if ((this->dfu_status.bStatus == DFUClass::DFUStatus::statusUNKNOWN) ||
@@ -596,6 +595,8 @@ int DFUClass::DfuDownloadZero(uint16_t wBlockNum)
     /* wait for the PollTimeout */
 #ifdef __linux__
     usleep(1000 * this->dfu_status.bwPollTimeOut);
+#elif WIN32
+    Sleep(this->dfu_status.bwPollTimeOut);
 #endif
     /* check that the device is in the right state */
     DfuGetState();
@@ -653,8 +654,6 @@ int DFUClass::DfuDownloadZero(uint16_t wBlockNum)
  */
 int DFUClass::DfuUploadPacket(uint16_t wBlockNum, uint8_t *data, uint16_t length)
 {
-    std::cout << std::hex << std::setfill ('0');
-
     /* check that the device is in the right state */
     DfuGetStatus();
     if ((this->dfu_status.bStatus == DFUClass::DFUStatus::statusUNKNOWN) ||
@@ -784,6 +783,4 @@ int DFUClass::DfuUpload(uint16_t wBlockNum, uint8_t *data, size_t length)
 
     return 0;
 }
-
-
 

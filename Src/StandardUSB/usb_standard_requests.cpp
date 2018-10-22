@@ -64,7 +64,7 @@ int StandardUSB::DeviceGetStatus(uint16_t &status)
     if(result < 0)
     {
         std::stringstream stream;
-        stream << "Error:  Unable to request USB device status, " << GetStrError(result);
+        stream << "Unable to request USB device status, " << GetStrError(result);
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return result;
     }
@@ -72,7 +72,7 @@ int StandardUSB::DeviceGetStatus(uint16_t &status)
     if(result != 2)
     {
         std::stringstream stream;
-        stream << "Error:  USB get device status error, Unexpected nbr of byte transfered"
+        stream << "USB get device status error, Unexpected nbr of byte transfered"
                << " (0x" << std::hex << std::setw(4) << std::setfill('0')
                << static_cast<uint32_t>(result) << " , expected 0x02)";
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
@@ -108,7 +108,7 @@ int StandardUSB::DeviceClearFeature(uint16_t feature)
     if(result < 0)
     {
         std::stringstream stream;
-        stream << "Error:  Unable to Clear USB device Feature: 0x" << std::hex
+        stream << "Unable to Clear USB device Feature: 0x" << std::hex
                << std::setw(4) << std::setfill('0') <<  static_cast<uint32_t>(feature)
                << " ," << GetStrError(result) << "\n";
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
@@ -119,7 +119,7 @@ int StandardUSB::DeviceClearFeature(uint16_t feature)
     if(result)
     {
         std::stringstream stream;
-        stream << "Error:  USB clear device feature error, Unexpected nbr of byte transfered"
+        stream << "USB clear device feature error, Unexpected nbr of byte transfered"
                << " (0x" << std::hex << std::setw(4) << std::setfill('0')
                << static_cast<uint32_t>(result) << " , expected 0x00)";
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
@@ -152,7 +152,7 @@ int StandardUSB::DeviceSetFeature(uint16_t feature)
     if(result < 0)
     {
         std::stringstream stream;
-        stream << "Error:  Unable to Set USB device Feature: 0x" << std::hex
+        stream << "Unable to Set USB device Feature: 0x" << std::hex
                <<  std::setw(4) << std::setfill('0') << static_cast<uint32_t>(feature)
                 << " ," << GetStrError(result);
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
@@ -163,7 +163,7 @@ int StandardUSB::DeviceSetFeature(uint16_t feature)
     if(result)
     {
         std::stringstream stream;
-        stream << "Error:  USB set device feature error, Unexpected nbr of byte transfered"
+        stream << "USB set device feature error, Unexpected nbr of byte transfered"
                << " (0x" << std::hex << std::setw(4) << std::setfill('0')
                << static_cast<uint32_t>(result) << " , expected 0x00)";
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
@@ -196,7 +196,7 @@ int StandardUSB::DeviceSetAddress(uint16_t address)
     if(result < 0)
     {
         std::stringstream stream;
-        stream << "Error:  Unable to Set USB device Address: 0x"  << std::hex
+        stream << "Unable to Set USB device Address: 0x"  << std::hex
                   << std::setw(4) << std::setfill('0') << static_cast<uint32_t>(address)
                   << " ," << GetStrError(result);
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
@@ -206,7 +206,7 @@ int StandardUSB::DeviceSetAddress(uint16_t address)
     if(result)
     {
         std::stringstream stream;
-        stream << "Error:  USB set device address error, Unexpected nbr of byte transfered"
+        stream << "USB set device address error, Unexpected nbr of byte transfered"
                   << " (0x" << std::hex << std::setw(4) << std::setfill('0')
                   << static_cast<uint32_t>(result) << " , expected 0x00)";
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
@@ -245,7 +245,7 @@ int StandardUSB::DeviceGetDescriptor(uint8_t type, uint8_t index, uint16_t langu
     if(result < 0)
     {
         std::stringstream stream;
-        stream << "Error:  Unable to Get USB Descriptor with type: 0x"  << std::hex
+        stream << "Unable to Get USB Descriptor with type: 0x"  << std::hex
                << std::setw(4) << std::setfill('0') << static_cast<uint32_t>(type)
                << " ,index: 0x" << static_cast<uint32_t>(index) <<" ,language: 0x"
                << static_cast<uint32_t>(language) <<  " ," << GetStrError(result);
@@ -285,7 +285,7 @@ int StandardUSB::DeviceSetDescriptor(uint8_t type, uint8_t index, uint16_t langu
     if(result < 0)
     {
         std::stringstream stream;
-        stream << "Error:  Unable to Set USB Descriptor with type: 0x"  << std::hex
+        stream << "Unable to Set USB Descriptor with type: 0x"  << std::hex
                << std::setw(4) << std::setfill('0') << static_cast<uint32_t>(type)
                << " ,index: 0x" << static_cast<uint32_t>(index) <<" ,language: 0x"
                << static_cast<uint32_t>(language) << " ," << GetStrError(result);
@@ -321,7 +321,7 @@ int StandardUSB::DeviceGetCongiguration(uint8_t &data)
     if(result < 0)
     {
         std::stringstream stream;
-        stream << "Error:  Unable to Get USB Configuration ,"  << std::hex << std::setw(4)
+        stream << "Unable to Get USB Configuration ,"  << std::hex << std::setw(4)
                << std::setfill('0') << GetStrError(result);
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return  result;
@@ -330,7 +330,7 @@ int StandardUSB::DeviceGetCongiguration(uint8_t &data)
     if(result != 1)
     {
         std::stringstream stream;
-        stream << "Error:  USB get device configuration error, Unexpected nbr of byte "
+        stream << "USB get device configuration error, Unexpected nbr of byte "
                << " transfered (0x" << std::hex << std::setw(4) << std::setfill('0')
                << static_cast<uint32_t>(result) << " , expected 0x01)";
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
@@ -365,7 +365,7 @@ int StandardUSB::DeviceSetCongiguration(uint16_t configuration)
     if(result < 0)
     {
         std::stringstream stream;
-        stream << "Error:  Unable to Set USB Configuration 0x"  << std::hex << std::setw(4)
+        stream << "Unable to Set USB Configuration 0x"  << std::hex << std::setw(4)
                << std::setfill('0') << static_cast<uint32_t>(configuration) << " ,"
                << GetStrError(result);
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
@@ -375,7 +375,7 @@ int StandardUSB::DeviceSetCongiguration(uint16_t configuration)
     if(result)
     {
         std::stringstream stream;
-        stream << "Error:  USB set device configuration error, Unexpected nbr of byte "
+        stream << "USB set device configuration error, Unexpected nbr of byte "
                << " transfered (0x" << std::hex << std::setw(4) << std::setfill('0')
                << static_cast<uint32_t>(result) << " , expected 0x00)";
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
@@ -414,7 +414,7 @@ int StandardUSB::InterfaceGetStatus(uint16_t interface, uint16_t &status)
     if(result < 0)
     {
         std::stringstream stream;
-        stream << "Error:  Unable to request USB Interface :0x"  << std::hex << std::setw(4)
+        stream << "Unable to request USB Interface :0x"  << std::hex << std::setw(4)
                << std::setfill('0') << static_cast<uint32_t>(interface) << " status, "
                << GetStrError(result);
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
@@ -424,7 +424,7 @@ int StandardUSB::InterfaceGetStatus(uint16_t interface, uint16_t &status)
     if(result != 2)
     {
         std::stringstream stream;
-        stream << "Error:  USB get interface status error, Unexpected nbr of byte transfered"
+        stream << "USB get interface status error, Unexpected nbr of byte transfered"
                << " (0x" << std::hex << std::setw(4) << std::setfill('0')
                << static_cast<uint32_t>(result) << " , expected 0x02)";
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
@@ -461,7 +461,7 @@ int StandardUSB::InterfaceClearFeature(uint16_t interface, uint16_t feature)
     if(result < 0)
     {
         std::stringstream stream;
-        stream << "Error:  Unable to Clear USB Interface :0x"  << std::hex << std::setw(2)
+        stream << "Unable to Clear USB Interface :0x"  << std::hex << std::setw(2)
                << std::setfill('0') << static_cast<uint32_t>(interface) << ", feature: 0x"
                << std::hex << std::setw(4) << std::setfill('0')
                << static_cast<uint32_t>(feature) << ", "<< GetStrError(result);
@@ -472,7 +472,7 @@ int StandardUSB::InterfaceClearFeature(uint16_t interface, uint16_t feature)
     if(result)
     {
         std::stringstream stream;
-        stream << "Error:  USB clear interface feature error, Unexpected nbr of byte transfered"
+        stream << "USB clear interface feature error, Unexpected nbr of byte transfered"
                << " (0x" << std::hex << std::setw(4) << std::setfill('0')
                << static_cast<uint32_t>(result) << " , expected 0x00)";
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
@@ -506,7 +506,7 @@ int StandardUSB::InterfaceSetFeature(uint16_t interface, uint16_t feature)
     if(result < 0)
     {
         std::stringstream stream;
-        stream << "Error:  Unable to Set USB Interface :0x"  << std::hex << std::setw(4)
+        stream << "Unable to Set USB Interface :0x"  << std::hex << std::setw(4)
                << std::setfill('0') << static_cast<uint32_t>(interface) << " , feature: 0x"
                << std::hex << std::setw(4) << std::setfill('0')
                << static_cast<uint32_t>(feature) << ", " << GetStrError(result);
@@ -517,7 +517,7 @@ int StandardUSB::InterfaceSetFeature(uint16_t interface, uint16_t feature)
     if(result != 1)
     {
         std::stringstream stream;
-        stream << "Error:  USB set interface feature error, Unexpected nbr of byte transfered"
+        stream << "USB set interface feature error, Unexpected nbr of byte transfered"
                << " (0x" << std::hex << std::setw(4) << std::setfill('0')
                << static_cast<uint32_t>(result) << " , expected 0x00)";
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
@@ -553,7 +553,7 @@ int StandardUSB::InterfaceGetAltSetting(uint16_t interface, uint8_t &alt_setting
     if(result < 0)
     {
         std::stringstream stream;
-        stream << "Error:  Unable to Get USB Interface :0x"  << std::hex << std::setw(4)
+        stream << "Unable to Get USB Interface :0x"  << std::hex << std::setw(4)
                << std::setfill('0') <<    static_cast<uint32_t>(interface)
                << " alternate setting nbr, " << GetStrError(result);
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
@@ -563,7 +563,7 @@ int StandardUSB::InterfaceGetAltSetting(uint16_t interface, uint8_t &alt_setting
     if(result != 1)
     {
         std::stringstream stream;
-        stream << "Error:  USB get interface alt setting error, Unexpected nbr of byte "
+        stream << "USB get interface alt setting error, Unexpected nbr of byte "
                << " transfered (0x" << std::hex << std::setw(4) << std::setfill('0')
                << static_cast<uint32_t>(result) << " , expected 0x01)";
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
@@ -593,7 +593,7 @@ int StandardUSB::InterfaceSetAltSetting(uint16_t interface, uint8_t alt_setting)
     if(result < 0)
     {
         std::stringstream stream;
-        stream << "Error:  Unable to Set USB Interface :0x"  << std::hex << std::setw(4)
+        stream << "Unable to Set USB Interface :0x"  << std::hex << std::setw(4)
                << std::setfill('0') << static_cast<uint32_t>(interface)
                << " alternate setting nbr :0x" << std::hex << std::setw(4)
                << static_cast<uint32_t>(alt_setting) <<  " ," << GetStrError(result);
@@ -641,7 +641,7 @@ int StandardUSB::EndpointGetStatus(uint16_t endpoint, uint16_t &status)
     if(result != 2)
     {
         std::stringstream stream;
-        stream << "Error:  USB get endpoint status error, Unexpected nbr of byte transfered"
+        stream << "USB get endpoint status error, Unexpected nbr of byte transfered"
                << " (0x" << std::hex << std::setw(4) << std::setfill('0')
                << static_cast<uint32_t>(result) << " , expected 0x02)";
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
@@ -677,7 +677,7 @@ int StandardUSB::EndpointClearFeature(uint16_t endpoint, uint16_t feature)
     if(result < 0)
     {
         std::stringstream stream;
-        stream << "Error:  Unable to clear USB endpoint feature:0x"  << std::hex << std::setw(4)
+        stream << "Unable to clear USB endpoint feature:0x"  << std::hex << std::setw(4)
                << std::setfill('0') << static_cast<uint32_t>(endpoint) << std::hex
                << std::setw(4) << std::setfill('0') << " , feature: 0x"
                << static_cast<uint32_t>(feature) << ", " << GetStrError(result);
@@ -688,7 +688,7 @@ int StandardUSB::EndpointClearFeature(uint16_t endpoint, uint16_t feature)
     if(result)
     {
         std::stringstream stream;
-        stream << "Error:  USB clear endpoint feature error, Unexpected nbr of byte transfered"
+        stream << "USB clear endpoint feature error, Unexpected nbr of byte transfered"
                << " (0x" << std::hex << std::setw(4) << std::setfill('0')
                << static_cast<uint32_t>(result) << " , expected 0x00)";
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
@@ -723,7 +723,7 @@ int StandardUSB::EndpointSetFeature(uint16_t endpoint, uint16_t feature)
     if(result < 0)
     {
         std::stringstream stream;
-        stream << "Error:  Unable to set USB endpoint feature:0x"  << std::hex << std::setw(4)
+        stream << "Unable to set USB endpoint feature:0x"  << std::hex << std::setw(4)
                << std::setfill('0') << static_cast<uint32_t>(endpoint) << std::hex
                << std::setw(4) << std::setfill('0') << " , feature: 0x"
                << static_cast<uint32_t>(feature) << ", " << GetStrError(result);
@@ -734,7 +734,7 @@ int StandardUSB::EndpointSetFeature(uint16_t endpoint, uint16_t feature)
     if(result)
     {
         std::stringstream stream;
-        stream << "Error:  USB set endpoint feature error, Unexpected nbr of byte transfered"
+        stream << "USB set endpoint feature error, Unexpected nbr of byte transfered"
                << " (0x" << std::hex << std::setw(4) << std::setfill('0')
                << static_cast<uint32_t>(result) << " , expected 0x00)";
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
@@ -769,7 +769,7 @@ int StandardUSB::EndpointSynchFrame(uint16_t endpoint, uint16_t &frame)
     if(result < 0)
     {
         std::stringstream stream;
-        stream << "Error:  Unable to Synchronize Frame Endpoint :0x"  << std::hex
+        stream << "Unable to Synchronize Frame Endpoint :0x"  << std::hex
                << std::setw(4) << std::setfill('0') << static_cast<uint32_t>(endpoint) << ", "
                << GetStrError(result);
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
@@ -779,7 +779,7 @@ int StandardUSB::EndpointSynchFrame(uint16_t endpoint, uint16_t &frame)
     if(result != 2)
     {
         std::stringstream stream;
-        stream << "Error:  USB endpoint synchronize frame error, Unexpected nbr of byte "
+        stream << "USB endpoint synchronize frame error, Unexpected nbr of byte "
                << "transfered (0x" << std::hex << std::setw(4) << std::setfill('0')
                << static_cast<uint32_t>(result) << " , expected 0x02)";
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());

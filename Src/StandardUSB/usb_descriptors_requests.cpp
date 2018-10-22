@@ -50,7 +50,7 @@ libusb_device_descriptor *StandardUSB::GetDeviceDescriptor()
     if (!l_dev_desc)
     {
         std::stringstream stream;
-        stream << "Error: Unable to request USB device descriptor, Memory allocation error";
+        stream << "Unable to request USB device descriptor, Memory allocation error";
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return nullptr;
     }
@@ -61,7 +61,7 @@ libusb_device_descriptor *StandardUSB::GetDeviceDescriptor()
     if (result <= 0)
     {
         std::stringstream stream;
-        stream << "Error: Unable to request USB device descriptor, " << GetStrError(result);
+        stream << "Unable to request USB device descriptor, " << GetStrError(result);
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         delete l_dev_desc;
         return nullptr;
@@ -84,7 +84,7 @@ libusb_config_descriptor *StandardUSB::GetConfigurationDescriptor(uint8_t index)
     if (result < 0)
     {
         std::stringstream stream;
-        stream << "Error: Unable to request USB Configuration descriptor, " << GetStrError(result);
+        stream << "Unable to request USB Configuration descriptor, " << GetStrError(result);
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return nullptr;
     }

@@ -474,7 +474,7 @@ std::string DFUClass::GetStateStr(DFUClass::DFUState state)
 void DFUClass::DisplayDfuStatus()
 {
     std::stringstream stream;
-    std::cout << std::hex << std::setfill('0');
+    stream << std::hex << std::setfill('0');
 
     stream << "DFU 1.1 Status:";
     usb_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE, stream.str());

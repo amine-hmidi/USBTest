@@ -480,203 +480,6 @@ void StandardUSB::DisplayEndpointDescriptor(const struct libusb_endpoint_descrip
 }
 
 
-/**
- * @brief StandardUSB::DisplayData8
- * Displays data as 8bits in hex
- * @param data data to be displayed
- * @param size size of data
- */
-void StandardUSB::DisplayData8(uint8_t *data, size_t size)
-{
-    std::cout << "\n";
-    std::cout << std::hex << std::setfill ('0');
-    std::cout << "OFFSET      0x00 0x01 0x02 0x03 0x04 0x05 0x06 0x07 0x08 0x09 0x0A 0x0B 0x0C 0x0D"
-                 " 0x0E 0x0F\n\n";
-
-    size_t nbr = size / 0x10;
-    uint32_t remain = size % 0x10;
-
-    for (size_t i = 0; i < nbr; i++)
-    {
-        std::cout << "0x" << std::setw(8) << static_cast<uint32_t>(i * 0x10) << "  ";
-        for (uint32_t j = 0; j < 0x10; j++)
-        {
-            std::cout << "0x" << std::setw(2) << static_cast<uint32_t>(*(data + (i * 0x10) + j)) \
-                      << " ";
-        }
-        std::cout << "\n";
-    }
-
-    if (remain)
-    {
-        std::cout << "0x" << std::setw(8) << static_cast<uint32_t>(0x10 * nbr) << "  ";
-        for (uint32_t j = 0; j < remain; j++)
-        {
-            std::cout << "0x" << std::setw(2) << static_cast<uint32_t>(*(data + (nbr * 0x10) + j)) \
-                      << " ";
-        }
-        std::cout << "\n";
-    }
-}
-
-
-/**
- * @brief StandardUSB::DisplayData16
- * Displays data as 16bits in hex
- * @param data data to be displayed
- * @param size size of data
- */
-void StandardUSB::DisplayData16(uint8_t *data, size_t size)
-{
-    std::cout << "\n";
-    std::cout << std::hex << std::setfill ('0');
-    std::cout << "OFFSET      0x0000 0x0002 0x0004 0x0006 0x0008 0x000A 0x000C 0x000E\n\n";
-
-    size_t nbr = size / 0x10;
-    uint32_t remain = size % 0x10;
-
-    for (size_t i = 0; i < nbr; i++)
-    {
-        std::cout << "0x" << std::setw(8) << static_cast<uint32_t>(i * 0x10) << "  ";
-        for (uint32_t j = 0; j < 0x10; j += 2)
-        {
-            uint16_t value = static_cast<uint16_t>((*(data + (i * 0x10) + j)) | \
-                                                   (static_cast<uint32_t>((*(data + (i * 0x10) + j + 1))) << 8));
-            std::cout << "0x" << std::setw(4) << static_cast<uint32_t>(value) << " ";
-        }
-        std::cout << "\n";
-    }
-
-    if (remain)
-    {
-        std::cout << "0x" << std::setw(8) << static_cast<uint32_t>(0x10 * nbr) << "  ";
-        for (uint32_t j = 0; j < remain; j += 2)
-        {
-            uint16_t value = static_cast<uint16_t>(*(data + (nbr * 0x10) + j));
-            if ((j + 1) < remain)
-                value |=  static_cast<uint16_t>((static_cast<uint32_t>
-                                                 ((*(data + (nbr * 0x10) + j + 1))) << 8));
-
-
-            std::cout << "0x" << std::setw(4) << static_cast<uint32_t>(value) << " ";
-        }
-        std::cout << "\n";
-    }
-}
-
-
-/**
- * @brief StandardUSB::DisplayData32
- * Displays data as 32bits in hex
- * @param data data to be displayed
- * @param size size of data
- */
-void StandardUSB::DisplayData32(uint8_t *data, size_t size)
-{
-    std::cout << "\n";
-    std::cout << std::hex << std::setfill ('0');
-    std::cout << "OFFSET      0x00000000 0x00000004 0x00000008 0x0000000C 0x00000010 0x00000014 "
-                 "0x00000018 0x0000001C\n\n";
-
-    size_t nbr = size / 0x20;
-    uint32_t remain = size % 0x20;
-
-    for (size_t i = 0; i < nbr; i++)
-    {
-        std::cout << "0x" << std::setw(8) << static_cast<uint32_t>(i * 0x20) << "  ";
-        for (uint32_t j = 0; j < 0x20; j += 4)
-        {
-            uint32_t value = (*(data + (i * 0x20) + j)) | \
-                             ((static_cast<uint32_t>((*(data + (i * 0x20) + j + 1)))) << 8)  | \
-                             ((static_cast<uint32_t>((*(data + (i * 0x20) + j + 2)))) << 16) | \
-                             ((static_cast<uint32_t>((*(data + (i * 0x20) + j + 3)))) << 24);
-            std::cout << "0x" << std::setw(8) << static_cast<uint32_t>(value) << " ";
-        }
-        std::cout << "\n";
-    }
-
-    if (remain)
-    {
-        std::cout << "0x" << std::setw(8) << static_cast<uint32_t>(0x20 * nbr) << "  ";
-        for (uint32_t j = 0; j < remain; j += 4)
-        {
-            uint32_t value = (*(data + (nbr * 0x20) + j));
-            if ((j + 1) < remain)
-                value |= ((static_cast<uint32_t>((*(data + (nbr * 0x20) + j + 1)))) << 8);
-            if ((j + 2) < remain)
-                value |= ((static_cast<uint32_t>((*(data + (nbr * 0x20) + j + 2)))) << 16);
-            if ((j + 3) < remain)
-                value |= ((static_cast<uint32_t>((*(data + (nbr * 0x20) + j + 3)))) << 24);
-
-            std::cout << "0x" << std::setw(8) << static_cast<uint32_t>(value) << " ";
-        }
-        std::cout << "\n";
-    }
-}
-
-
-/**
- * @brief StandardUSB::DisplayData64
- * Displays data as 64bits in hex
- * @param data data to be displayed
- * @param size size of data
- */
-void StandardUSB::DisplayData64(uint8_t *data, size_t size)
-{
-    std::cout << "\n";
-    std::cout << std::hex << std::setfill ('0');
-    std::cout << "OFFSET      0x0000000000000000  0x0000000000000008  0x0000000000000010  "
-                 "0x0000000000000018\n\n";
-
-    size_t nbr = size / 0x20;
-    uint32_t remain = size % 0x20;
-
-    for (size_t i = 0; i < nbr; i++)
-    {
-        std::cout << "0x" << std::setw(8) << static_cast<uint32_t>(i * 0x20) << "  ";
-        for (uint32_t j = 0; j < 0x20; j += 8)
-        {
-            uint64_t value = (*(data + (i * 0x20) + j)) | \
-                             ((static_cast<uint64_t>((*(data + (i * 0x20) + j + 1)))) << 8)  | \
-                             ((static_cast<uint64_t>((*(data + (i * 0x20) + j + 2)))) << 16) | \
-                             ((static_cast<uint64_t>((*(data + (i * 0x20) + j + 3)))) << 24) | \
-                             ((static_cast<uint64_t>((*(data + (i * 0x20) + j + 4)))) << 32) | \
-                             ((static_cast<uint64_t>((*(data + (i * 0x20) + j + 5)))) << 40) | \
-                             ((static_cast<uint64_t>((*(data + (i * 0x20) + j + 6)))) << 48) | \
-                             ((static_cast<uint64_t>((*(data + (i * 0x20) + j + 7)))) << 56);
-            std::cout << "0x" << std::setw(16) << static_cast<uint64_t>(value) << "  ";
-        }
-        std::cout << "\n";
-    }
-
-    if (remain)
-    {
-        std::cout << "0x" << std::setw(8) << static_cast<uint32_t>(0x20 * nbr) << "  ";
-        for (uint32_t j = 0; j < remain; j += 8)
-        {
-            uint64_t value = (*(data + (nbr * 0x20) + j));
-            if ((j + 1) < remain)
-                value |= ((static_cast<uint64_t>((*(data + (nbr * 0x20) + j + 1)))) << 8);
-            if ((j + 2) < remain)
-                value |= ((static_cast<uint64_t>((*(data + (nbr * 0x20) + j + 2)))) << 16);
-            if ((j + 3) < remain)
-                value |= ((static_cast<uint64_t>((*(data + (nbr * 0x20) + j + 3)))) << 24);
-            if ((j + 4) < remain)
-                value |= ((static_cast<uint64_t>((*(data + (nbr * 0x20) + j + 4)))) << 32);
-            if ((j + 5) < remain)
-                value |= ((static_cast<uint64_t>((*(data + (nbr * 0x20) + j + 5)))) << 40);
-            if ((j + 6) < remain)
-                value |= ((static_cast<uint64_t>((*(data + (nbr * 0x20) + j + 6)))) << 48);
-            if ((j + 7) < remain)
-                value |= ((static_cast<uint64_t>((*(data + (nbr * 0x20) + j + 7)))) << 56);
-
-            std::cout << "0x" << std::setw(16) << static_cast<uint64_t>(value) << "  ";
-        }
-        std::cout << "\n";
-    }
-}
-
-
 /* ********************************************************************************************** */
 /* **************************** Device Handling/Discovering Functions *************************** */
 /* ********************************************************************************************** */
@@ -695,7 +498,7 @@ void StandardUSB::ListUSBDevices()
     if (count < 0)
     {
         std::stringstream stream;
-        stream << "Error:  Unable to list USB devices currently attached to the system, "
+        stream << "Unable to list USB devices currently attached to the system, "
                << GetStrError(static_cast<int>(count));
 
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
@@ -713,7 +516,7 @@ void StandardUSB::ListUSBDevices()
         if (libusb_get_device_descriptor(list[i], &dev_desc))
             continue;
 
-        stream << "Info:\tidVendor: 0x" << std::setw(4) << dev_desc.idVendor << " idProduct: 0x"
+        stream << "\tidvendor: 0x" << std::setw(4) << dev_desc.idVendor << " idproduct: 0x"
                << std::setw(4) << dev_desc.idProduct ;
 
         /* open device */
@@ -904,7 +707,7 @@ libusb_device *StandardUSB::GetUSBDevice()
     if (count < 0)
     {
         std::stringstream stream;
-        stream << "Error:  Unable to list USB devices currently attached to the system, "
+        stream << "Unable to list USB devices currently attached to the system, "
                << GetStrError(static_cast<int>(count));
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return nullptr;
@@ -931,7 +734,7 @@ libusb_device *StandardUSB::GetUSBDevice()
     {
         std::stringstream stream;
         stream << std::hex << std::setw(4) << std::setfill('0')
-               << "Error:  Unable to find USB device with idVendor: 0x" << this->vendor_id
+               << "Unable to find USB device with idVendor: 0x" << this->vendor_id
                << " & idProduct: 0x" << this->product_id;
 
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
@@ -957,7 +760,7 @@ libusb_device_handle *StandardUSB::GetUSBHandle(libusb_device *device)
     if(result < 0)
     {
         std::stringstream stream;
-        stream << "Error:  Unable to open USB device, " << GetStrError(result);
+        stream << "Unable to open USB device, " << GetStrError(result);
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
         return nullptr;
     }
@@ -1084,7 +887,7 @@ int StandardUSB::USBClaimInterface(int interface)
         if (result)
         {
             std::stringstream stream;
-            stream << "Error: Unable to detach kernel driver from interface: " << interface
+            stream << "Unable to detach kernel driver from interface: " << interface
                    << ", " << GetStrError(result);
 
             usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());
@@ -1097,7 +900,7 @@ int StandardUSB::USBClaimInterface(int interface)
     if(result < 0)
     {
         std::stringstream stream;
-        stream << "Error: Unable to claim interface: " << interface << " ,"
+        stream << "Unable to claim interface: " << interface << " ,"
                << GetStrError(result);
 
         usb_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, stream.str());

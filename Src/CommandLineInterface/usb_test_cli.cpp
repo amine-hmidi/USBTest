@@ -151,7 +151,7 @@ int USBTestCli::execute()
 
         /* Get the user's input */
         std::string input;
-        cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE, ">>>  ");
+        std::cout << ">>>  ";
         std::getline(std::cin, input);
 
         std::istringstream iss(input);
@@ -209,6 +209,7 @@ int USBTestCli::execute()
         /* parse the options list */
         try {
             auto result = options->parse(this->argument_nbr, this->arguments);
+            ++argument_nbr;
 
             /* check exit cmd */
             if (result.count("exit"))

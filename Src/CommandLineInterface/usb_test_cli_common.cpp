@@ -128,7 +128,7 @@ int8_t USBTestCli::WriteBinFile(std::string file, uint8_t *data, size_t size)
 
     std::fclose(f_des);
     cli_dm->PrintMessage(DisplayManager::MessageType::INFO_MESSAGE,
-                         "Writing in target file: " + file + "Done");
+                         "Writing in target file: " + file + " Done");
     return 0;
 }
 

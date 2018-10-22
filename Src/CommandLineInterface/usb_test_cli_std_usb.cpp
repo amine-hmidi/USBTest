@@ -1202,8 +1202,6 @@ void USBTestCli::ControlTransfer(const cxxopts::ParseResult &result)
     if (!result.count("control"))
         return;
 
-    std::cout << "\n";
-
     /* check bmRequestType */
     uint8_t bmrequesttype = 0x00;
     if (!result.count("bmRequestType"))
@@ -1332,13 +1330,13 @@ void USBTestCli::ControlTransfer(const cxxopts::ParseResult &result)
 
     /* check data display */
     if (result.count("display8"))
-        this->usb_device->DisplayData8(data, size);
+        cli_dm->DisplayData8(data, size);
     else if (result.count("display16"))
-        this->usb_device->DisplayData16(data, size);
+        cli_dm->DisplayData16(data, size);
     else if (result.count("display32"))
-            this->usb_device->DisplayData32(data, size);
+        cli_dm->DisplayData32(data, size);
     else if (result.count("display64"))
-        this->usb_device->DisplayData64(data, size);
+        cli_dm->DisplayData64(data, size);
 
     delete[] data;
 }
@@ -1451,13 +1449,13 @@ void USBTestCli::BulkTransfer(const cxxopts::ParseResult &result)
 
     /* check data display */
     if (result.count("display8"))
-        this->usb_device->DisplayData8(data, size);
+        cli_dm->DisplayData8(data, size);
     else if (result.count("display16"))
-        this->usb_device->DisplayData16(data, size);
+        cli_dm->DisplayData16(data, size);
     else if (result.count("display32"))
-            this->usb_device->DisplayData32(data, size);
+        cli_dm->DisplayData32(data, size);
     else if (result.count("display64"))
-        this->usb_device->DisplayData64(data, size);
+        cli_dm->DisplayData64(data, size);
 
     delete[] data;
 }
@@ -1571,13 +1569,13 @@ void USBTestCli::InterruptTransfer(const cxxopts::ParseResult &result)
 
     /* check data display */
     if (result.count("display8"))
-        this->usb_device->DisplayData8(data, size);
+        cli_dm->DisplayData8(data, size);
     else if (result.count("display16"))
-        this->usb_device->DisplayData16(data, size);
+        cli_dm->DisplayData16(data, size);
     else if (result.count("display32"))
-            this->usb_device->DisplayData32(data, size);
+        cli_dm->DisplayData32(data, size);
     else if (result.count("display64"))
-        this->usb_device->DisplayData64(data, size);
+        cli_dm->DisplayData64(data, size);
 
     delete[] data;
 

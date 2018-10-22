@@ -133,10 +133,6 @@ public:
     /* ****************************************************************************************** */
     static std::string GetStrError(int error);
     virtual void DisplayDescriptorsSet();
-    void DisplayData8(uint8_t *data, size_t size);
-    void DisplayData16(uint8_t *data, size_t size);
-    void DisplayData32(uint8_t *data, size_t size);
-    void DisplayData64(uint8_t *data, size_t size);
 
 protected:
 
