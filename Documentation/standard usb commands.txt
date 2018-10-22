@@ -19,13 +19,18 @@ Example:
 
     Output on success:
 
-    Info: USB devices' list:
-    Info:	idVendor: 0x1d6b idProduct: 0x0002 EHCI Host Controller
-    Info:	idVendor: 0x1d6b idProduct: 0x0003 xHCI Host Controller
-    Info:	idVendor: 0x04f2 idProduct: 0xb446 TOSHIBA Web Camera - HD
-    Info:	idVendor: 0x046d idProduct: 0xc31c USB Keyboard
-    Info:	idVendor: 0x046d idProduct: 0xc077 USB Optical Mouse
-    Info:	idVendor: 0x1d6b idProduct: 0x0002 xHCI Host Controller
+    Info: 	idvendor: 0x8087 idproduct: 0x8000
+    Info: 	idvendor: 0x1d6b idproduct: 0x0002 EHCI Host Controller
+    Info: 	idvendor: 0x1d6b idproduct: 0x0003 xHCI Host Controller
+    Info: 	idvendor: 0x04f2 idproduct: 0xb446 TOSHIBA Web Camera - HD
+    Info: 	idvendor: 0x8087 idproduct: 0x07dc 	
+    Info: 	idvendor: 0x0483 idproduct: 0xdf11 STM32  BOOTLOADER
+    Info: 	idvendor: 0x046d idproduct: 0xc077 USB Optical Mouse
+    Info: 	idvendor: 0x046d idproduct: 0xc31c USB Keyboard
+    Info: 	idvendor: 0x2109 idproduct: 0x2811 USB2.0 Hub
+    Info: 	idvendor: 0x2109 idproduct: 0x2811 USB2.0 Hub
+    Info: 	idvendor: 0x148f idproduct: 0x5370 802.11 n WLAN
+    Info: 	idvendor: 0x1d6b idproduct: 0x0002 xHCI Host Controller
 
 ##############################################
 # (2) Connecting to an usb device
@@ -43,12 +48,10 @@ Example:
 
     Output on success:
 
-    Info: Establishing connection with target device:
     Info: Connection established
 
     Output on failure:
 
-    Info: Establishing connection with target device:
     Error:  Unable to open USB device, Access denied (insufficient permissions)
 
 ##############################################
@@ -195,12 +198,10 @@ Example:
 
     Output on success:
 
-    Info: USB control transfer:
     Info: USB control transfer Done
-
-    OFFSET           0x0000   0x0002   0x0004   0x0006   0x0008   0x000A   0x000C   0x000E
-
-    0x00000000       0x0000
+    Info: OFFSET      0x0000 0x0002 0x0004 0x0006 0x0008 0x000A 0x000C 0x000E
+    Info:
+    Info: 0x00000000  0x0001
 
 Example:
     Send a usb get device status using dedicated option.

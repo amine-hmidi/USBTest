@@ -1,0 +1,252 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+                                       USB in DFU mode 1.1 Commands
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    + https://www.usb.org/developers/devclass_docs/DFU_1.1.pdf
+    + https://usb.org/
+
+##############################################
+# (1) Connecting to a usb dfu capable device
+##############################################
+
+    Before performing any dfu input/output operation with the device, the host must connect to
+the target device first, using the following cli options:
+    --dfu
+    --idvendor='usbidvendor'
+    --idproduct='usbidproduct'
+
+    The host will than check if the specified usb device is dfu capable or not, if so than it will
+proceed by claiming the dfu interface and extracting the dfu capabilities from the dfu functional
+descriptor
+
+Example:
+
+    Input: --dfu --idvendor=0x483 --idproduct=0xdf11
+
+    Output on success:
+    Info: Connection established
+
+    Output on failure:
+    Error: Unable to find USB device with idVendor: 0x483 & idProduct: 0xdf11
+
+##############################################
+# (2) DFU 1.1 Requests
+##############################################
+
+    The Universal Serial Bus Device Class Specification for Device Firmware Upgrade Version 1.1
+defines a number of DFU class-specific requests in order to accomplish the upgrade operations. All
+of these requests shall be accomplished using the control endpoint (ep0).
+The following table summarizes the DFU class-specific requests.
+
+ +---------------+---------------+----------+-----------+-----------+------------------+-----------+
+ |    Request    | bmRequestType | bRequest |   wValue  |   wIndex  |      wLength     |   Data    |
+ +---------------+---------------+----------+-----------+-----------+------------------+-----------+
+ | DFU_DETACH    |      0x21     |    0x0   | wTimeout  | interface |       0x0        | NULL      |
+ +---------------+---------------+----------+-----------+-----------+------------------+-----------+
+ | DFU_DNLOAD    |      0x21     |    0x1   | wBlockNum | interface | <= wTransferSize | DATA      |
+ +---------------+---------------+----------+-----------+-----------+------------------+-----------+
+ | DFU_UPLOAD    |      0xA1     |    0x2   | wBlockNum | interface | <= wTransferSize | DATA      |
+ +---------------+---------------+----------+-----------+-----------+------------------+-----------+
+ | DFU_GETSTATUS |      0xA1     |    0x3   |    0x0    | interface |       0x6        | STATUS    |
+ +---------------+---------------+----------+-----------+-----------+------------------+-----------+
+ | DFU_CLRSTATUS |      0x21     |    0x4   |    0x0    | interface |       0x0        | NULL      |
+ +---------------+---------------+----------+-----------+-----------+------------------+-----------+
+ | DFU_GETSTATE  |      0xA1     |    0x5   |    0x0    | interface |       0x1        | STATE     |
+ +---------------+---------------+----------+-----------+-----------+------------------+-----------+
+ | DFU_ABORT     |      0x21     |    0x6   |    0x0    | interface |       0x0        | NULL      |
+ +---------------+---------------+----------+-----------+-----------+------------------+-----------+
+
+**********************************************
+* (2-1) DFU Get Status
+**********************************************
+
+    The host employs the DFU_GETSTATUS request to facilitate synchronization with the device. Using
+the DFUTest application, the user request the dfu status using the control transfer options or the
+dedicated command:
+    --dfu_getstatus
+
+Example:
+    Send a dfu get status request using the dedicated command.
+
+    Input: --dfu_getstatus
+
+    Output on success:
+    Info: DFU 1.1 Status:
+    Info: 	bStatus       : 0x0a (errFIRMWARE)
+    Info: 	bwPollTimeout : 0x0000
+    Info: 	bState        : 0x0a (dfuERROR)
+    Info: 	iString       : 0x00
+
+**********************************************
+* (2-2) DFU Get State
+**********************************************
+
+    Using the DFUTest application, the user request the dfu state using the control transfer
+options or the dedicated command:
+    --dfu_getstate
+
+Example:
+    Send a dfu get state request using the dedicated command.
+
+    Input: --dfu_getstate
+
+    Output on success:
+    Info: DFU 1.1 State:
+    Info: 	bState       : 0x0a (dfuERROR)
+
+**********************************************
+* (2-3) DFU Clear Status
+**********************************************
+
+    Using the DFUTest application, the user request to clear the dfu device status using the control
+transfer options or the dedicated command:
+    --dfu_clearstatus
+
+Example:
+    Send a dfu clear status request using the dedicated command.
+
+    Input: --dfu_clearstatus
+
+    Output on success:
+    Info: DFU clear status Done
+
+**********************************************
+* (2-4) DFU Upload
+**********************************************
+
+    The DFU device specifies the maximum number of bytes per transfer via the wTransferSize field
+of the functional descriptor. The host shall receive between 0 and wTransferSize bytes from the
+device in a control-read transfer. Following each uploaded block, the host solicits the device
+status with the DFU_GETSTATUS request to check on any errors.
+
+    Using the DFUTest application, the user can upload data from the dfu device using
+the control transfer options or the dedicated options:
+    --dfu_upload
+    --wBlockNum="wBlockNum index"
+    --size=" <= wTransferSize"
+    --display8(16/32/64)
+    --file
+
+PS: If the user wants to upload a data buffer with a size greater than wTransferSize, he can use the
+--dfu_upload with it associated options.
+
+Example:
+    Upload data from a dfu device using the dedicated options, with wBlockNum index = 0x2 and
+size = 0x80
+    Input: --dfu_upload --wBlockNum=2 --size=0x80 --display8
+
+    Output on success:
+    Info: DFU upload Done
+    Info: OFFSET      0x00 0x01 0x02 0x03 0x04 0x05 0x06 0x07 0x08 0x09 0x0A 0x0B 0x0C 0x0D 0x0E 0x0F
+    Info:
+    Info: 0x00000000  0x00 0x00 0x03 0x20 0xed 0x04 0x00 0x08 0xc5 0x07 0x00 0x08 0xc7 0x07 0x00 0x08
+    Info: 0x00000010  0xc9 0x07 0x00 0x08 0xcb 0x07 0x00 0x08 0xcd 0x07 0x00 0x08 0x00 0x00 0x00 0x00
+    Info: 0x00000020  0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0xcf 0x07 0x00 0x08
+    Info: 0x00000030  0xd1 0x07 0x00 0x08 0x00 0x00 0x00 0x00 0xd3 0x07 0x00 0x08 0xd5 0x07 0x00 0x08
+    Info: 0x00000040  0x3d 0x05 0x00 0x08 0x3d 0x05 0x00 0x08 0x3d 0x05 0x00 0x08 0x3d 0x05 0x00 0x08
+    Info: 0x00000050  0x3d 0x05 0x00 0x08 0x3d 0x05 0x00 0x08 0x3d 0x05 0x00 0x08 0x3d 0x05 0x00 0x08
+    Info: 0x00000060  0x3d 0x05 0x00 0x08 0x3d 0x05 0x00 0x08 0x3d 0x05 0x00 0x08 0x3d 0x05 0x00 0x08
+    Info: 0x00000070  0x3d 0x05 0x00 0x08 0x3d 0x05 0x00 0x08 0x3d 0x05 0x00 0x08 0x3d 0x05 0x00 0x08
+
+Example:
+    Upload data from a dfu device using the dedicated options, with the initial wBlockNum index = 2
+and size = 0x8000 (>wTransferSize)
+    Input: --dfu_upload --wBlockNum=2 --size=0x1000 --file ./dfu_upload.bin
+
+    Output on success:
+    Info: DFU upload Done
+    Info: Writing in target file: ./dfu_upload.bin Done
+
+**********************************************
+* (2-5) DFU Download
+**********************************************
+
+    The DFU device specifies the maximum number of bytes per transfer via the wTransferSize field
+of the functional descriptor. The host shall sends between 0 and wTransferSize
+( > 0 && <= wTransferSize) bytes from the device in a control-write transfer. Following each
+download  block, the host solicits the device status with the DFU_GETSTATUS request to check on any
+errors.
+
+    Using the DFUTest application, the user can download data to the dfu device using the control
+transfer options or the dedicated options:
+    --dfu_dnload
+    --wBlockNum="wBlockNum index"
+    --data8(16/32/64)
+    --file
+    --display8(16/32/64)
+
+PS: If the user wants to download a data buffer with a size greater than wTransferSize, he can use
+the --dfu_download with it associated options.
+
+Example:
+    Download data to a dfu device using the dedicated options, with the initial wBlockNum index
+= 2 and a file witha size = 0x8000 (>wTransferSize)
+
+    Input: --dfu_dnload --wBlockNum 2 --file ./dfu_dnload.bin
+
+    Output on success:
+    Info: DFU download Done
+
+**********************************************
+* (2-6) DFU Download Zero Length
+**********************************************
+
+    After the final block of firmware has been sent to the device and the status solicited, the host
+sends a DFU_DNLOAD request with the wLength field cleared to 0 and then solicits the status again.
+If the result indicates that the device is ready and there are no errors, then the Transfer phase is
+complete and the Manifestation phase begins.
+
+    Using the DFUTest application, the user can reach the device's manifestation phase using the
+control transfer options or the dedicated options:
+    --dfu_dnload0
+    --wBlockNum="wBlockNum index"
+
+Example:
+    Download zero data to a dfu device using the dedicated options, with the initial wBlockNum = 2
+
+    Input: --dfu_dnload0 --wBlockNum 2
+
+    Output on success:
+    Info: DFU download 0 Done
+
+**********************************************
+* (2-7) DFU Abort
+**********************************************
+
+    The DFU_ABORT request enables the host to exit from certain states and return to the DFU_IDLE
+state. The device sets the OK status on receipt of this request.
+
+    Using the DFUTest application, the user can issue an abort request to the dfu device  using the
+control transfer options or the dedicated options:
+    --dfu_abort
+
+Example:
+    Sending a dfu abort request after a download packet operation
+
+    Input: --dfu_abort
+
+    Output on success:
+    Info: DFU abort Done
+
+**********************************************
+* (2-8) DFU Detach
+**********************************************
+
+    When bit 3 in bmAttributes (bitWillDetach) is set the device will generate a detach-attach
+sequence on the bus when it sees this request. Otherwise, the device starts a timer counting the
+amount of time specified, in milliseconds, in the wDetachTimeout field. If the device detects a USB
+reset while this timer is running, then DFU operating mode is enabled by the device; i.e., when USB
+reset signaling is detected, perform as normal unless this timer is running, in which case switch
+into DFU mode and stop the timer.
+
+    Using the DFUTest application, the user can issue a detach request to the dfu device  using the
+control transfer options or the dedicated options:
+    --dfu_detach
+
+Example:
+    Sending a dfu detach request to a dfu device
+
+    Input: --dfu_detach
+
+    Output on success:
+    Info: DFU detach Done
