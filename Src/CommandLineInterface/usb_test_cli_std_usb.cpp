@@ -226,7 +226,7 @@ void USBTestCli::DisplayUSBHelp()
     stream << "\t    --dislpay8              Upon data transfer success diplay data as 8bits\n";
     stream << "\t    --dislpay16             Upon data transfer success diplay data as 16bits\n";
     stream << "\t    --dislpay32             Upon data transfer success diplay data as 32bits\n";
-    stream << "\t    --dislpay64             Upon data transfer success diplay data as 64bits\n";
+    stream << "\t    --dislpay64             Upon data transfer success diplay data as 64bits";
     cli_dm->PrintMessage(DisplayManager::MessageType::BASIC_MESSAGE, stream.str());
 }
 

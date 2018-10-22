@@ -94,7 +94,7 @@ void USBTestCli::DisplayGenralHelp()
     stream << "\t    --show_w                Display CopyRights Warranty\n";
     stream << "\t    --show_c                Display CopyRights\n";
     stream << "\t    --version               Display USBTest Suite version\n";
-    stream << "\t    --exit                  Exit application\n";
+    stream << "\t    --exit                  Exit application";
     cli_dm->PrintMessage(DisplayManager::MessageType::BASIC_MESSAGE, stream.str());
 }
 
@@ -201,12 +201,16 @@ uint8_t *USBTestCli::ReadBinFile(std::string file, size_t &size)
  */
 void USBTestCli::DisplayHelp()
 {
-    std::cout << "Usage:\n";
-    std::cout << "\t[[OPTION <ARGUMENT>] [OPTION <ARGUMENT>] [OPTION <ARGUMENT>] ...]\n\n";
+    std::stringstream stream;
+    stream << "Usage:\n";
+    stream << "\t[[OPTION <ARGUMENT>] [OPTION <ARGUMENT>] [OPTION <ARGUMENT>] ...]\n\n";
+    cli_dm->PrintMessage(DisplayManager::MessageType::BASIC_MESSAGE, stream.str());
 
     DisplayGenralHelp();
-
 #if defined (STANDARD_USB)
     DisplayUSBHelp();
+#endif
+#if defined(USB_IN_DFU_MODE)
+    DisplayDFU11Help();
 #endif
 }
