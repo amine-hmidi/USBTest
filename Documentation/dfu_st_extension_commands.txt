@@ -1,0 +1,121 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+                                  USB in DFU mode 1.1 St Extension
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    + https://www.st.com/resource/en/application_note/cd00264379.pdf
+    + https://www.usb.org/developers/devclass_docs/DFU_1.1.pdf
+    + https://usb.org/
+
+##############################################
+# (1) Connecting to a usb dfu_se device
+##############################################
+
+    Before performing any dfu input/output operation with the device, the host must connect to
+the target device first, using the following cli option:
+    --dfuse
+
+    The host will than check if the specified usb device is dfu capable or not, if so than it will
+proceed by claiming the dfu interface and extracting the dfu capabilities from the dfu functional
+descriptor and checkcing the bcdDFUVersion field in the dfu functional descriptor
+
+Example:
+
+    Input: --dfuse
+
+    Output on success:
+    Info: Connection established
+
+    Output on failure:
+    Error: Unable to find USB device with idVendor: 0x483 & idProduct: 0xdf11
+
+##############################################
+# (2) Dfu_se Get Command
+##############################################
+
+    This command is a dfu upload packet command with wBlockNumber equal to zero. Using this command,
+the host request to read the commands supported by the dfu st-extension device.
+    Using the DFUSETest application, the user request dfu_se commands using the control transfer
+options, the standard dfu options or the dedicated command:
+    --dfuse_get
+
+Example:
+
+    Input: --dfuse_get
+
+    Output on success:
+    Info: DFUSE get command done
+    Info: OFFSET      0x00 0x01 0x02 0x03 0x04 0x05 0x06 0x07 0x08 0x09 0x0A 0x0B 0x0C 0x0D 0x0E 0x0F
+    Info:
+    Info: 0x00000000  0x00 0x21 0x41 0x92
+
+##############################################
+# (3) Dfu_se Set Address Pointer
+##############################################
+
+    This command is a dfu download packet command with wBlockNumber equal to zero and a buffer size
+equal to 5 (the first byte of the buffer is 0x21 and the remaining is the address to which the
+device must point <32bit address LSB first>).
+    Using the DFUSETest application, the user can set the device address pointer using the control
+transfer options, the standard dfu options or the dedicated command:
+    --dfuse_setaddress
+    --address
+
+Example:
+
+    Input: --dfuse_setaddress --address 0x8000000
+
+    Output on success:
+    Info: DFUSE set address pointer done
+
+##############################################
+# (4) Dfu_se Erase page/sector
+##############################################
+
+    This command is a dfu download packet command with wBlockNumber equal to zero and a buffer size
+equal to 5 (the first byte of the buffer is 0x41 and the remaining is the address of the page/sector
+to be erased <32bit address LSB first>).
+    Using the DFUSETest application, the user can erase a page/sector using the control transfer
+options, the standard dfu options or the dedicated command:
+    --dfuse_erase
+    --address
+
+Example:
+
+    Input: --dfuse_erase --address 0x8000000
+
+    Output on success:
+    Info: DFUSE sector erase done
+
+##############################################
+# (5) Dfu_se Mass Erase
+##############################################
+
+    This command is a dfu download packet command with wBlockNumber equal to zero and a buffer size
+equal to 1 (the first byte of the buffer is 0x41).
+    Using the DFUSETest application, the user can erase all the user flash using the control
+transfer options, the standard dfu options or the dedicated command:
+    --dfuse_masserase
+
+Example:
+
+    Input: --dfuse_masserase
+
+Output on success:
+    Info: DFUSE mass erase done
+
+##############################################
+# (6) Dfu_se Read Unprotect
+##############################################
+
+    This command is a dfu download packet command with wBlockNumber equal to zero and a buffer size
+equal to 1 (the first byte of the buffer is 0x92).
+    Using the DFUSETest application, the user can remove the read out protection from the user flash
+using the control transfer options, the standard dfu options or the dedicated command:
+    --dfuse_readunp
+
+Example:
+
+    Input: --dfuse_readunp
+
+    Output on success:
+    Info: DFUSE read unprotect done
