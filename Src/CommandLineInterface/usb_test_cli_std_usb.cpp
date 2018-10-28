@@ -91,7 +91,7 @@ void USBTestCli::InitUSBCommands()
 
             /* Standard requests options */
             ("address", "USB address",\
-             cxxopts::value<uint16_t>())
+             cxxopts::value<uint32_t>())
             ("type", "Descriptor type, used for get/set descriptor requests",\
              cxxopts::value<uint8_t>())
             ("index", "Descriptor index, used for get/set descriptor requests",\

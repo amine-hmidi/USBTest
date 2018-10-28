@@ -67,8 +67,6 @@ public:
     void DisplayData32(uint8_t *data, size_t size);
     void DisplayData64(uint8_t *data, size_t size);
 
-
-
 protected:
 
     DisplayManager() { std::ios_base::sync_with_stdio(false); }

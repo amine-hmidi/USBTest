@@ -518,9 +518,11 @@ int DFUClass::DfuDownloadZero(uint16_t wBlockNum)
         return -99;
     }
 
-    if ((this->dfu_state != dfuDNLOAD_IDLE)
+    if (((this->dfu_state != dfuDNLOAD_IDLE)
 #if defined (USB_DFU_STEXTENSION)
-        && (this->usb_class == USBClassType::DFU_ST_EX) && (this->dfu_state != dfuIDLE)
+         && (this->usb_class == USBClassType::DFU_1_1))
+        || ((this->usb_class == USBClassType::DFU_ST_EX) && (this->dfu_state != dfuDNLOAD_IDLE)
+            && (this->dfu_state != dfuIDLE))
 #endif
         )
     {
@@ -671,7 +673,6 @@ int DFUClass::DfuUploadPacket(uint16_t wBlockNum, uint8_t *data, uint16_t length
         usb_dm->PrintMessage(DisplayManager::MessageType::WARNING_MESSAGE,
                              "Device is not in the right state (" + GetStateStr(this->dfu_state)
                              + ") to send Upload command, Upload command will be sent anyway");
-        return -99;
     }
 
     /* Send Buffer */

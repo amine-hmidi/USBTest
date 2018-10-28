@@ -30,7 +30,7 @@
 ############ TEMPLATE
 TEMPLATE = app
 VERSION = 0.1.0
-QMAKE_TARGET_PRODUCT = DFUTest
+QMAKE_TARGET_PRODUCT = DFUSETest
 QMAKE_TARGET_COPYRIGHT = GPLv2.0
 QMAKE_TARGET_DESCRIPTION = A user space application for USB in DFU mode testing
 
@@ -59,11 +59,11 @@ RCC_DIR = $${DESTDIR}/.rcc
 UI_DIR = $${DESTDIR}/.ui
 
 win32 {
-QMAKE_CLEAN += $${DESTDIR}/DFUTest.exe
+QMAKE_CLEAN += $${DESTDIR}/DFUSETest.exe
 }
 
 unix {
-QMAKE_CLEAN += $${DESTDIR}/DFUTest
+QMAKE_CLEAN += $${DESTDIR}/DFUSETest
 }
 
 
@@ -91,6 +91,7 @@ SOURCES += \
     ../../Src/Dfu1.1/dfu_class.cpp \
     ../../Src/Dfu1.1/dfu_requests.cpp \
     ../../Src/DfuStExtension/dfu_st_extension.cpp \
+    ../../Src/CommandLineInterface/usb_test_cli_dfu_se.cpp \
     ../../Src/CommandLineInterface/usb_test_cli_common.cpp \
     ../../Src/CommandLineInterface/usb_test_cli.cpp \
     ../../Src/CommandLineInterface/usb_test_cli_copyrights_warranty.cpp \

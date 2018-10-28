@@ -88,6 +88,9 @@ USBTestCli::USBTestCli(int &, char **&argv)
 #if defined (USB_IN_DFU_MODE)
     InitDFU11Commands();
 #endif
+#if defined (USB_DFU_STEXTENSION)
+    InitDFUSECommands();
+#endif
 
     is_ok = true;
 }
@@ -223,6 +226,9 @@ int USBTestCli::execute()
 #endif
 #if defined (USB_IN_DFU_MODE)
             ParseDFU11Cmds(result);
+#endif
+#if defined (USB_DFU_STEXTENSION)
+            ParseDFUSECmds(result);
 #endif
         } catch (std::exception &e) {
             cli_dm->PrintMessage(DisplayManager::MessageType::ERROR_MESSAGE,e.what());

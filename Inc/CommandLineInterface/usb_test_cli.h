@@ -43,6 +43,9 @@
 #if defined (USB_IN_DFU_MODE)
 #include "dfu_class.h"
 #endif
+#if defined (USB_IN_DFU_MODE)
+#include "dfu_st_extension.h"
+#endif
 
 
 class USBTestCli
@@ -149,7 +152,17 @@ private:
     void DFU11DownloadZero(const cxxopts::ParseResult &result, DFUClass *dfu_device);
     void DFU11Upload(const cxxopts::ParseResult &result, DFUClass *dfu_device);
 #endif
-
+#if defined (USB_DFU_STEXTENSION)
+    void InitDFUSECommands();
+    void DisplayDFUSEHelp();
+    void ParseDFUSECmds(const cxxopts::ParseResult &result);
+    void ConnectDFUSE();
+    void DFUSEGetCommand(const cxxopts::ParseResult &result, DFUSE *dfu_se);
+    void DFUSESetAddressPointer(const cxxopts::ParseResult &result, DFUSE *dfu_se);
+    void DFUSEErase(const cxxopts::ParseResult &result, DFUSE *dfu_se);
+    void DFUSEMassErase(const cxxopts::ParseResult &result, DFUSE *dfu_se);
+    void DFUSEReadUnprotect(const cxxopts::ParseResult &result, DFUSE *dfu_se);
+#endif
 
 
 

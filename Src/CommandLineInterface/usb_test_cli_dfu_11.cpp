@@ -110,7 +110,8 @@ void USBTestCli::ParseDFU11Cmds(const cxxopts::ParseResult &result)
     if (!this->usb_device)
         return;
 
-    if (this->usb_device->DeviceClass() != StandardUSB::USBClassType::DFU_1_1)
+    if ((this->usb_device->DeviceClass() != StandardUSB::USBClassType::DFU_1_1) &&
+        (this->usb_device->DeviceClass() != StandardUSB::USBClassType::DFU_ST_EX))
         return;
 
     DFUClass *dfu_device = dynamic_cast<DFUClass *>(usb_device);
@@ -225,11 +226,20 @@ void USBTestCli::DFU11Download(const cxxopts::ParseResult &result, DFUClass *dfu
     if (!result.count("dfu_dnload"))
         return;
 
+#ifndef USB_DFU_STEXTENSION
     uint16_t wBlockNum = 0;
+#else
+    uint16_t wBlockNum = 2;
+#endif
+
     if (!result.count("wBlockNum"))
     {
         cli_dm->PrintMessage(DisplayManager::MessageType::WARNING_MESSAGE,
+#ifndef USB_DFU_STEXTENSION
                              "Missing --wBlockNum option, assuming wBlockNum is 0");
+#else
+                             "Missing --wBlockNum option, assuming wBlockNum is 2");
+#endif
     }
     else
     {
@@ -327,11 +337,19 @@ void USBTestCli::DFU11Upload(const cxxopts::ParseResult &result, DFUClass *dfu_d
     if (!result.count("dfu_upload"))
         return;
 
+#ifndef USB_DFU_STEXTENSION
     uint16_t wBlockNum = 0;
+#else
+    uint16_t wBlockNum = 2;
+#endif
     if (!result.count("wBlockNum"))
     {
         cli_dm->PrintMessage(DisplayManager::MessageType::WARNING_MESSAGE,
+#ifndef USB_DFU_STEXTENSION
                              "Missing --wBlockNum option, assuming wBlockNum is 0");
+#else
+                             "Missing --wBlockNum option, assuming wBlockNum is 2");
+#endif
     }
     else
     {

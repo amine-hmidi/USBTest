@@ -213,4 +213,7 @@ void USBTestCli::DisplayHelp()
 #if defined(USB_IN_DFU_MODE)
     DisplayDFU11Help();
 #endif
+#if defined (USB_DFU_STEXTENSION)
+    DisplayDFUSEHelp();
+#endif
 }

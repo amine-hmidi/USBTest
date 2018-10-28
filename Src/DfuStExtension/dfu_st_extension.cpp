@@ -111,7 +111,10 @@ int8_t DFUSE::DfuseGetCommand(uint8_t *data, uint16_t length)
 {
     int result = this->DfuUploadPacket(0x00, data, length);
     if (result < 0)
+    {
         return static_cast<int8_t>(result);
+    }
+
     return  0;
 }
 
