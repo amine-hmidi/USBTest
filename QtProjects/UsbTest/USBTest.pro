@@ -88,13 +88,15 @@ SOURCES += \
     ../../Src/CommandLineInterface/usb_test_cli_common.cpp \
     ../../Src/CommandLineInterface/usb_test_cli.cpp \
     ../../Src/CommandLineInterface/usb_test_cli_copyrights_warranty.cpp \
-    ../../Src/CommandLineInterface/usb_test_cli_std_usb.cpp
+    ../../Src/CommandLineInterface/usb_test_cli_std_usb.cpp \
+    ../../Src/DisplayManager/display_manager.cpp \
 
 
 ############ INCLUDE FILES
 HEADERS += \
     ../../Inc/StandardUSB/standard_usb.h \
     ../../Inc/CommandLineInterface/usb_test_cli.h \
+    ../../Inc/DisplayManager/display_manager.h \
 
 
 ############ INCLUDE DIRECTORIES
@@ -102,6 +104,7 @@ INCLUDEPATH += \
     ../../Inc/ \
     ../../Inc/StandardUSB/ \
     ../../Inc/CommandLineInterface/ \
+    ../../Inc/DisplayManager/ \
 
 
 #################################################################################################
