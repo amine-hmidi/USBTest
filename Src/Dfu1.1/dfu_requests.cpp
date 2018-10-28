@@ -522,9 +522,9 @@ int DFUClass::DfuDownloadZero(uint16_t wBlockNum)
 #if defined (USB_DFU_STEXTENSION)
          && (this->usb_class == USBClassType::DFU_1_1))
         || ((this->usb_class == USBClassType::DFU_ST_EX) && (this->dfu_state != dfuDNLOAD_IDLE)
-            && (this->dfu_state != dfuIDLE))
+            && (this->dfu_state != dfuIDLE)
 #endif
-        )
+        ))
     {
         usb_dm->PrintMessage(DisplayManager::MessageType::WARNING_MESSAGE,
                              "Device is not in the right state (" + GetStateStr(this->dfu_state)

@@ -43,7 +43,7 @@
 #if defined (USB_IN_DFU_MODE)
 #include "dfu_class.h"
 #endif
-#if defined (USB_IN_DFU_MODE)
+#if defined (USB_DFU_STEXTENSION)
 #include "dfu_st_extension.h"
 #endif
 
